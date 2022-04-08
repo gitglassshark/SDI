@@ -52,6 +52,8 @@
 
 #define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>(this); PCDC & cout=*me_unique_dc;
 
+#define makemedc(DC)  unique_ptr<PCDC> pdc(new PCDC(this));PCDC& DC = *pdc;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>(this);auto& cout= *cout_me_ptr;
 
 
 #define lcode(...)	cout.settcolor(dccr.red)<<L"source code is:"<<el;cout.settcolor(dccr.berry)<<"{ "#__VA_ARGS__<<L" }"<<el;cout.settcolor(dccr.green)<<L"run result is: "<<el<<starline;cout.resettcolor();__VA_ARGS__;
@@ -136,6 +138,7 @@ BEGIN_MESSAGE_MAP(CSDIView, CView)
 	ON_COMMAND(ID_STL_TUPLE_TEST, &CSDIView::OnStlTupleTest)
 	ON_COMMAND(ID_STL_TYPE_TEST, &CSDIView::OnStlTypeTest)
 	ON_COMMAND(ID_INITAL_LIST_TEST, &CSDIView::OnInitalListTest)
+	ON_COMMAND(ID_PTR_UNIQUE_TEST, &CSDIView::OnPtrUniqueTest)
 END_MESSAGE_MAP()
 
 // CSDIView 构造/析构
@@ -1718,8 +1721,8 @@ void CSDIView::OnLamdbaFuncTest()
 		return y += val * x;
 	};
 	function<int(int)> p = funl;
-	cout<< p(100)<<el;
-	SHOW(x);SHOW(y);
+	cout << p(100) << el;
+	SHOW(x); SHOW(y);
 
 }
 
@@ -1729,7 +1732,7 @@ void CSDIView::OnStlTupleTest()
 	//PCDC screen(this);
 	lscode(
 
-	using namespace std;
+		using namespace std;
 	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
 	auto tupleb = tuple<int, float, string, string, string>(22, 20.24, "good-b", "bad-b", "normal-b");
 	screen << std::get<int>(tuplea) << tab;
@@ -1799,7 +1802,7 @@ struct typestruct {
 void CSDIView::OnStlTypeTest()
 {
 	lcode(
-	CString s;
+		CString s;
 	string s2;
 	LONG x;
 	bool bcomp = std::is_same_v<decltype(x), LONG>;
@@ -1813,7 +1816,7 @@ void CSDIView::OnStlTypeTest()
 	cout << (int*)NULL << tab << sizeof(void*) << tab << typeid(int*).name() << el;
 	);
 	lscode(
-	cout << &cout << tab << &screen << el;
+		cout << &cout << tab << &screen << el;
 	showtype(cout);
 	showtype(screen);
 	cout << address(cout) << el;
@@ -1829,7 +1832,7 @@ void CSDIView::OnStlTypeTest()
 		cout << typeid(x).name() << el;
 	);
 	lcode(
-	vector<int>va;
+		vector<int>va;
 	va.push_back(1);
 	va.push_back(2);
 	gett(va)::iterator it = va.begin();
@@ -1838,13 +1841,13 @@ void CSDIView::OnStlTypeTest()
 	cout << *iit << el;
 	cout << cut;
 	FORALL(va, itx)
-	cout << *itx << tab;
+		cout << *itx << tab;
 	for (auto i : va)
-	cout << i << tab;
+		cout << i << tab;
 	FORN(va.size(), i)
-	cout << va.at(i) << tab;
+		cout << va.at(i) << tab;
 	FORV(i, va)
-	cout << i << tab; cout << el;
+		cout << i << tab; cout << el;
 	showtype(va);
 	);
 	lcode(
@@ -1881,15 +1884,61 @@ void CSDIView::OnInitalListTest()
 	showtype("Hello world!");
 	);
 	lscode(
-	vector<int>va;
+		vector<int>va;
 	NTIME(4)
-	va.push_back(ix);
-	int iy=0;
-	for(auto i:(cout<<++iy<<tab<<"ok"<<tab, va))
-		cout<<"run"<<tab<<el;
+		va.push_back(ix);
+	int iy = 0;
+	for (auto i : (cout << ++iy << tab << "ok" << tab, va))
+		cout << "run" << tab << el;
 	);
 
 }
 
+class ptr
+{
+public:
+	PCDC& the;
+	CString createname;
+public:
+	ptr(PCDC& dc,CString s):the(dc),createname(s)
+	{
+		the <<createname<<" is create" << el;
+	}
+	~ptr()
+	{
+		the <<createname<<" is decreate" << el;
+	}
+};
 
- 
+void CSDIView::OnPtrUniqueTest()
+{
+	//
+	SimulationStdCout;
+	cout << cut;
+	lscode(
+	ptr one(cout,CString("one"));
+	);
+	cout << cut;
+	lscode(
+	auto p=make_unique<ptr>(cout,CString("unique_ptr p"));
+	);
+	cout << cut;
+	lscode(
+	unique_ptr<ptr>two(new ptr(cout, CString("unique_ptr_two")));
+	);
+	cout << cut;
+	lscode(
+	unique_ptr<ptr>three=unique_ptr<ptr>(new ptr(cout, CString("unique_ptr_temp")));
+	);
+	cout << cut;
+	lscode(cout<<three->createname<<el;);
+	cout << cut;
+	lscode(three.reset(new ptr(cout,CString("unique_ptr_threereset_tmp"))));
+	cout<<cut;
+	auto parr = unique_ptr< ptr[] >(new ptr[10]);
+
+
+}
+
+
+

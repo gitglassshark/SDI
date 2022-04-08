@@ -40,19 +40,22 @@ public:
 	const LONG initalstep = 20;
 	LONG step = initalstep;
 	int ilinemod = 26;
+
+
 public:
 	char mlinechar = _T('-');
 	COLORREF m_bk = dccr.grey;
 	COLORREF m_tk = dccr.chocolate;
 	COLORREF m_bark = dccr.berry;
 	COLORREF m_linek = dccr.azure;
+	int mfontsize = 128;
 	CFont font, * pfont;
 	CDC* m_cdc = nullptr;
 	CWnd* m_pwnd = nullptr;
 	POINT p = { initalpos, initalpos };
 	CSize msize;
-	CString ms;
 	CRect mrect;
+	CString ms;
 
 
 public:

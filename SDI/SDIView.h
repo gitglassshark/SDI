@@ -104,6 +104,7 @@ public:
 	afx_msg void OnStlTupleTest();
 	afx_msg void OnStlTypeTest();
 	afx_msg void OnInitalListTest();
+	afx_msg void OnPtrUniqueTest();
 };
 
 #ifndef _DEBUG  // SDIView.cpp 中的调试版本

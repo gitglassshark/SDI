@@ -84,7 +84,7 @@ PCDC& PCDC::Create(CWnd* pwnd)
 	LOGFONT lf;
 	// zero out structure
 	memset(&lf, 0, sizeof(LOGFONT));
-	font.CreatePointFont(120, _T("Cascadia Code"));
+	font.CreatePointFont(this->mfontsize, _T("Cascadia Mono"));
 	pfont = dc.SelectObject(&font);
 
 	//根据字体大小调整步长
