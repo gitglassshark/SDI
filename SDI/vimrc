@@ -1,0 +1,772 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"rechange code for ALT
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+for i in range(97,122)
+    let c = nr2char(i)
+    exec "map \e".c." <M-".c.">"
+    exec "map! \e".c." <M-".c.">"
+endfor
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 设置<ESC>键响应时间
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set ttimeout
+set ttimeoutlen=0        
+set timeoutlen=100
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 编辑esc,cmd相关配置
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+:autocmd InsertEnter * set timeoutlen=150
+inoremap jk <esc> 
+inoremap JK <esc> 
+inoremap vv <esc> 
+inoremap VV <esc> 
+inoremap jj <esc>l
+inoremap JJ <esc>l
+inoremap kk <esc>lk
+inoremap xx <esc>lx
+inoremap uu <esc>u
+inoremap // <esc>0i// 
+:autocmd InsertLeave * set timeoutlen=200
+
+:autocmd InsertEnter * set timeoutlen=100
+inoremap ,, <esc>
+
+
+
+nnoremap ; <esc>:
+inoremap ;; <esc>:
+map ;; <esc>:
+:autocmd InsertLeave * set timeoutlen=200
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 分屏窗口移动
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+:autocmd InsertEnter * set timeoutlen=300
+noremap <leader>w <c-w>
+nnoremap wj <c-w>J
+inoremap wj <esc><c-w>J
+nnoremap wk <c-w>K
+inoremap wk <esc><c-w>K
+nnoremap wh <c-w>H
+nnoremap wl <c-w>L
+"shift+k jump to help
+:autocmd InsertLeave * set timeoutlen=200
+
+
+:autocmd InsertEnter * set timeoutlen=50
+noremap <c-j> <c-w>j
+noremap <c-k> <c-w>k
+noremap <c-h> <c-w>h
+noremap <c-l> <c-w>l
+
+
+inoremap <c-j> <esc><c-w><c-j>
+inoremap <c-k> <esc><c-w><c-k>
+inoremap <c-h> <esc><c-w><c-h>
+inoremap <c-l> <esc><c-w><c-l>
+:autocmd InsertLeave * set timeoutlen=200
+
+:autocmd InsertEnter * set timeoutlen=10
+inoremap <esc> <esc>
+:autocmd InsertLeave * set timeoutlen=100
+
+:autocmd InsertEnter * set timeoutlen=100
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 复制,剪切板
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"映射全选+复制 ctrl+a
+map <C-a> ggVG"xY<C-o><C-o>
+map! <C-a> <Esc>ggVG"xY
+map <C-c> "xy
+map <C-x> "xx
+
+
+
+nnoremap <C-e> "xP<esc>A
+vnoremap <C-e> "xP<esc>A
+inoremap <C-e> <esc>"xp<esc>A
+nnoremap <C-s> :wa<cr><cr>
+inoremap <C-s> <esc>:wa<cr><cr>
+vnoremap <C-s> :wa<cr><cr>
+  
+
+inoremap yy <esc>yy
+nnoremap <M-i> "0P
+inoremap <M-i> <esc>"0pi
+vnoremap <M-i> "0P
+
+nnoremap <M-y> "0Pi
+inoremap <M-y> <esc>"0pi
+vnoremap <M-y> "0Pi
+
+nnoremap <M-s> "Sy
+inoremap <M-s> <esc>"Syi
+vnoremap <M-s> "Sy
+
+nnoremap <M-d> "sd
+inoremap <M-d> <esc>"sdi
+vnoremap <M-d> "sd
+
+nnoremap <M-r> "sp
+inoremap <M-r> <esc>"spi
+vnoremap <M-r> "sp
+
+"alt+c,+d,+v,to copy delete and cut context and v to paste
+nnoremap <M-c> "ly
+inoremap <M-c> <esc>"lyi
+vnoremap <M-c> "ly
+
+nnoremap <M-x> "lx
+inoremap <M-x> <esc>"lxi
+vnoremap <M-x> "lx
+
+nnoremap <M-v> "lp
+inoremap <M-v> <esc>"lpi
+vnoremap <M-v> "lp
+
+
+" register status
+nnoremap <M-m> :di<cr>
+vnoremap <M-m> v:di<cr>
+inoremap <M-m> <esc>:di<cr>i
+
+inoremap <c-m> <esc>0i// 
+nnoremap <c-m> 0i//<esc>j 
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""define alt+h,alt +j to jump pageup and page down
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+
+inoremap <M-f> <esc>gg=G<C-o><C-o>i
+vnoremap <M-f> gg=G<C-o><C-o>
+nnoremap <M-f> gg=G<C-o><C-o>
+nnoremap <M-e> :!make gnu<cr><cr>
+
+
+nnoremap <M-h> <PageUp>
+vnoremap <M-h> <PageUp>
+inoremap <M-h> <PageUp>
+
+
+nnoremap <M-l> <PageDown>
+vnoremap <M-l> <PageDown>
+inoremap <M-l> <PageDown>
+:autocmd InsertLeave * set timeoutlen=200
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 通用设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let mapleader = ","      " 定义<leader>键
+filetype on              " 设置开启文件类型侦测
+filetype plugin indent on       " 设置加载对应文件类型的插件
+set noeb                 " 关闭错误的提示:
+syntax enable            " 开启语法高亮功能
+syntax on                " 自动语法高亮
+set spell
+set nocompatible         " 设置不兼容原始vi模式
+set t_Co=256             " 开启256色支持
+set cmdheight=2          " 设置命令行的高度
+set showcmd              " select模式下显示选中的行数
+set scrolloff=5
+set mouse=a
+set tags+=~/.vim/ctags/Ctags "C/C++ include ctags
+set ruler                " 总是显示光标位置
+set laststatus=2         " 总是显示状态栏
+set number               " 开启行号显示
+set sidescroll=10        " 设置向右滚动字符数
+set wrap                 " 折行
+set whichwrap+=<,>,h,l   " 设置光标键跨行
+set virtualedit=block,onemore   " 允许光标出现在最后一个字符的后面
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 代码缩进和排版
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set autoindent           " 设置自动缩进
+filetype indent on       " 自适应不同语言的智能缩进
+set cindent              " 设置使用C/C++语言的自动缩进方式
+set cinoptions=g0,:0,N-s,(0    " 设置C/C++语言的具体缩进方式
+set smartcase
+set smartindent          " 智能的选择对其方式
+set smarttab             " 在行和段开始处使用制表符
+set expandtab            " 将制表符扩展为空格
+set tabstop=4            " 设置编辑时制表符占用空格数
+set softtabstop=4        " 设置4个空格为制表符
+set shiftwidth=4         " 设置格式化时制表符占用空格数
+set backspace=2          " 使用回车键正常处理indent,eol,start等
+"set nofoldenable         " 禁用折叠代码
+set foldenable      " 允许折叠  
+set foldmethod=indent 
+"fold:zc open all:zR
+"unfold;zo unflod all:zM
+"
+set foldlevel=3 
+set foldcolumn=1
+set showmatch
+set mat=2
+set noerrorbells
+set novisualbell
+
+" 不要用空格代替制表符
+"set noexpandtab
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 代码补全
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set wildmenu             " vim自身命名行模式智能补全
+set completeopt-=preview,menu " 补全时不显示窗口，只显示补全列表
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 搜索设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set hlsearch            " 高亮显示搜索结果
+set incsearch           " 开启实时搜索功能
+set ignorecase          " 搜索时大小写不敏感
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 缓存设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nobackup            " 设置不备份
+set noswapfile          " 禁止生成临时文件
+set autoread            " 文件在vim之外修改过，自动重新读入
+set autowrite           " 设置自动保存
+set confirm             " 在处理未保存或只读文件的时候，弹出确认
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 编码设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+set encoding=utf-8
+set termencoding=utf-8
+set fileencodings=utf-8,ucs-bom,gbk,utf-16le,cp936,cp1252,iso-8859-15,gb2312,gb18030,latin1
+
+"autocmd InsertEnter * se cul    " 用浅色高亮当前行  
+set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
+set history=10000
+
+" 如果没安装过vim-plug，则下载安装
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs 
+                \https://raw.GitHub.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" load vim default plugin
+runtime macros/matchit.vim
+
+" 打开文件自动定位到最后编辑的位置
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g'\"" | endif
+
+" 主题设置
+set background=dark
+let g:gruvbox_termcolors=256
+colorscheme gruvbox
+"badwolf
+"darkblue
+"default
+"delek
+"desert
+"elford
+"gruvbox
+"koehler
+"monokai
+"morning
+"murphy
+"onedark
+"pablo
+"peachpuff
+"ron
+"slate
+"torte
+"zellner
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" gvim/macvim设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+    let system = system('uname -s')
+    set guifont=Droid\ Sans\ Mono\ Nerd\ Font\ Complete:h18 " 设置字体
+    set guioptions-=m           " 隐藏菜单栏
+    set guioptions-=T           " 隐藏工具栏
+    set guioptions-=L           " 隐藏左侧滚动条
+    set guioptions-=r           " 隐藏右侧滚动条
+    set guioptions-=b           " 隐藏底部滚动条
+    set showtabline=0           " 隐藏Tab栏
+    set guicursor=n-v-c:ver5    " 设置光标为竖线
+endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 卸载默认插件UnPlug
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"function! s:deregister(repo)
+"  let repo = substitute(a:repo, '[\/]\+$', '', '')
+"  let name = fnamemodify(repo, ':t:s?\.git$??')
+"  call remove(g:plugs, name)
+"endfunction
+"command! -nargs=1 -bar UnPlug call s:deregister(<args>)
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 插件列表
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call plug#begin('~/.vim/plugged')
+
+Plug 'chxuan/cpp-mode'
+Plug 'chxuan/vim-edit'
+Plug 'chxuan/change-colorscheme'
+Plug 'chxuan/prepare-code'
+Plug 'chxuan/vim-buffer'
+Plug 'chxuan/vimplus-startify'
+Plug 'preservim/tagbar'
+Plug 'Valloric/YouCompleteMe'
+Plug 'Yggdroot/LeaderF'
+Plug 'mileszs/ack.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'haya14busa/incsearch.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'preservim/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'godlygeek/tabular'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-endwise'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ryanoasis/vim-devicons'
+Plug 'junegunn/vim-slash'
+Plug 'junegunn/gv.vim'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+Plug 'kana/vim-textobj-syntax'
+Plug 'kana/vim-textobj-function'
+Plug 'sgur/vim-textobj-parameter'
+Plug 'Shougo/echodoc.vim'
+Plug 'terryma/vim-smooth-scroll'
+Plug 'rhysd/clever-f.vim'
+Plug 'vim-scripts/indentpython.vim'
+
+" 加载自定义插件
+if filereadable(expand($HOME . '/.vimrc.custom.plugins'))
+    source $HOME/.vimrc.custom.plugins
+endif
+
+call plug#end()  
+
+" airline
+let g:airline_theme="onedark"
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+
+
+
+
+
+:autocmd InsertEnter * set timeoutlen=500
+
+" cpp-mode
+nnoremap <leader>y :CopyCode<cr>
+nnoremap <leader>p :PasteCode<cr>
+nnoremap <leader>U :GoToFunImpl<cr>
+nnoremap <silent><leader>a :Switch<cr>
+nnoremap <leader><leader>fp :FormatFunParam<cr>
+nnoremap <leader><leader>if :FormatIf<cr>
+nnoremap <leader><leader>t dd :GenTryCatch<cr>
+xnoremap <leader><leader>t d :GenTryCatch<cr>
+
+" prepare-code
+let g:prepare_code_plugin_path = expand($HOME . "/.vim/plugged/prepare-code")
+
+" nerdtree
+nnoremap <silent> <leader>n :NERDTreeToggle<cr>
+:autocmd InsertLeave * set timeoutlen=200
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+let g:NERDTreeHighlightFolders = 1         
+let g:NERDTreeHighlightFoldersFullName = 1 
+let g:NERDTreeDirArrowExpandable='▷'
+let g:NERDTreeDirArrowCollapsible='▼'
+
+" YCM
+" 如果不指定python解释器路径，ycm会自己搜索一个合适的(与编译ycm时使用的python版本匹配)
+let g:ycm_server_python_interpreter = '/usr/bin/python3.9'
+let g:ycm_confirm_extra_conf = 0 
+let g:ycm_error_symbol = '✗'
+let g:ycm_warning_symbol = '✹'
+let g:ycm_seed_identifiers_with_syntax = 1 
+let g:ycm_complete_in_comments = 1 
+let g:ycm_complete_in_strings = 1 
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_semantic_triggers =  {
+            \   'c' : ['->', '.','re![_a-zA-z0-9]'],
+            \   'objc' : ['->', '.', 're!\[[_a-za-z]+\w*\s', 're!^\s*[^\w\d]\w*\s',
+            \             're!\[.*\]\s'],
+            \   'ocaml' : ['.', '#'],
+            \   'cpp,objcpp' : ['->', '.', '::','re![_a-za-z0-9]'],
+            \   'perl' : ['->'],
+            \   'php' : ['->', '::'],
+            \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+            \   'ruby' : ['.', '::'],
+            \   'lua' : ['.', ':'],
+            \   'erlang' : [':'],
+            \ }
+
+
+:autocmd InsertEnter * set timeoutlen=500
+
+nnoremap <leader>u :YcmCompleter GoToDeclaration<cr>
+" 已经使用cpp-mode插件提供的转到函数实现的功能
+nnoremap <leader>i :YcmCompleter GoToDefinition<cr> 
+nnoremap <leader>o :YcmCompleter GoToInclude<cr>
+nnoremap <leader>ff :YcmCompleter FixIt<cr>
+nmap <F5> :YcmDiags<cr>
+
+" tagbar
+let g:tagbar_width = 30
+nnoremap <silent> <leader>t :TagbarToggle<cr>
+:autocmd InsertLeave * set timeoutlen=200
+
+" incsearch.vim
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" nerdtree-git-plugin
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ 'Ignored'   : '☒',
+            \ "Unknown"   : "?"
+            \ }
+:autocmd InsertEnter * set timeoutlen=500
+
+:set statusline+=%-16{strftime('%R-%D')}
+
+"set statusline=\ %r%F\ \ \ \ \行列\ [*%l-%c]:%L\ \ \ \ \ \ \ \ \ \ \ \*\%{strftime('%R-%D')}
+" LeaderF
+nnoremap <leader>f :LeaderfFile .<cr>
+let g:Lf_WildIgnore = {
+            \ 'dir': ['.svn','.git','.hg','.vscode','.wine','.deepinwine','.oh-my-zsh'],
+            \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+            \}
+let g:Lf_UseCache = 0
+
+" ack
+nnoremap <leader>F :Ack!<space>
+
+" echodoc.vim
+let g:echodoc_enable_at_startup = 1
+
+" tabular
+nnoremap <leader>l :Tab /\|<cr>
+nnoremap <leader>= :Tab /=<cr>
+:autocmd InsertLeave * set timeoutlen=200
+
+" vim-smooth-scroll
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+:autocmd InsertEnter * set timeoutlen=300
+" gv
+nnoremap <leader>g :GV<cr>
+nnoremap <leader>G :GV!<cr>
+nnoremap <leader>gg :GV?<cr>
+:autocmd InsertLeave * set timeoutlen=200
+
+" 加载自定义配置
+if filereadable(expand($HOME . '/.vimrc.custom.config'))
+    source $HOME/.vimrc.custom.config
+endif
+
+" Useful mappings for register
+"nnoremap <leader><leader>p "
+"nnoremap m "
+"nnoremap " m
+
+
+:autocmd InsertEnter * set timeoutlen=500
+
+" Useful mappings for managing tabs
+nnoremap <leader>te :tabnew<cr>
+nnoremap <leader>to :tabonly<cr>
+nnoremap <leader>tc :tabclose<cr>
+nnoremap <leader>ts :tabs<cr>
+nnoremap <leader>tp :tabp<cr>
+nnoremap <leader>tm :tabmove<cr>
+nnoremap <leader>tn :tabnext<cr>
+nnoremap <leader><tab> <c-w>w
+nnoremap <leader>tk :resize +20<cr>
+nnoremap <leader>tl :resize -20<cr>
+nnoremap <leader>th :vert resize +20<cr>
+nnoremap <leader>rz :vert resize -20<cr>
+nnoremap <leader>rg :reg<cr>
+
+
+"windows option
+nnoremap <leader>wc <c-w>c
+nnoremap <leader>j <c-f><cr>
+nnoremap <leader>k <c-b><cr>
+
+
+
+" 编辑vimrc相关配置文件
+
+nnoremap <leader>er :edit $MYVIMRC<cr>
+nnoremap <leader>eg :edit ~/.gitconfig<cr>
+nnoremap <leader>eb :edit ~/.bashrc<cr>
+nnoremap <leader><leader>vc :edit ~/.vimrc.custom.config<cr>
+nnoremap <leader><leader>vp :edit ~/.vimrc.custom.plugins<cr>
+
+"新加载vimrc文件
+nnoremap <leader>el :w<cr>:source $MYVIMRC<cr>
+
+" 安装、更新、删除插件
+nnoremap <leader><leader>i :PlugInstall<cr>
+nnoremap <leader><leader>u :PlugUpdate<cr>
+nnoremap <leader><leader>c :PlugClean<cr>
+
+nnoremap <leader><leader>h :view +let\ &l:modifiable=0 ~/.vimplus/help.md<cr>
+
+" 打开当前光标所在单词的vim帮助文档
+nnoremap <leader><leader>H :execute ":help " . expand("<cword>")<cr>
+:autocmd InsertLeave * set timeoutlen=200
+" vim-buffer
+nnoremap <silent> <c-p> :PreviousBuffer<cr>
+nnoremap <silent> <c-n> :NextBuffer<cr>
+
+
+:autocmd InsertEnter * set timeoutlen=300
+nnoremap <silent> <leader>bd :CloseBuffer<cr>
+nnoremap <silent> <leader>D :BufOnly<cr>
+" Close the current buffer
+nnoremap <leader>bc :Bclose<cr>:tabclose<cr>gT
+" Close all the buffers
+nnoremap <leader>ba :bufdo bd<cr>
+nnoremap <leader>bl :bnext<cr>
+nnoremap <leader>bh :bprevious<cr>
+:autocmd InsertLeave * set timeoutlen=200
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""命令
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader><leader>w :w!<cr>
+nmap <leader><leader>f :find<cr>
+
+" change-colorscheme
+nnoremap <silent> <F9> :PreviousColorScheme<cr>
+inoremap <silent> <F9> <esc> :PreviousColorScheme<cr>
+nnoremap <silent> <F10> :NextColorScheme<cr>
+inoremap <silent> <F10> <esc> :NextColorScheme<cr>
+nnoremap <silent> <F11> :RandomColorScheme<cr>
+inoremap <silent> <F11> <esc> :RandomColorScheme<cr>
+nnoremap <silent> <F12> :ShowColorScheme<cr>
+inoremap <silent> <F12> <esc> :ShowColorScheme<cr>
+
+"vim-easymotion
+let g:EasyMotion_smartcase = 1
+map <leader>m <Plug>(easymotion-bd-w)
+nmap <leader>m <Plug>(easymotion-overwin-w)
+:autocmd InsertLeave * set timeoutlen=200
+
+""=========================================================================
+""=========================================================================
+""" DesCRiption: 适合自己使用的vimrc文件，for Linux/Windows, GUI/Console
+autocmd BufRead * normal zR
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!gcc % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'java' 
+        exec "!javac %" 
+        exec "!java %<"
+    elseif &filetype == 'sh'
+        :!./%
+    endif
+endfunc
+
+"C,C++的调试
+map <F8> :call Rungdb()<CR>
+func! Rungdb()
+    exec "w"
+    exec "!g++ % -g -o %<"
+    exec "!gdb ./%<"
+endfunc
+
+set cursorline           " 高亮显示当前行
+highlight CursorLine   cterm=NONE ctermbg=blue ctermfg=white guibg=darkyellow guifg=white
+"red（红），white（白），black（黑），green（绿），yellow（黄），blue（蓝），purple（紫），gray（灰），brown（棕），tan(褐色)，syan(青色)
+"""		*cterm-colors*
+"""	    NR-16   NR-8    颜色名 ~
+"	    0	    0	    Black (黑)
+"	    1	    4	    DarkBlue (深蓝)
+"	    2	    2	    DarkGreen (深绿)
+"	    3	    6	    DarkCyan (深青)
+"	    4	    1	    DarkRed (深红)
+"	    5	    5	    DarkMagenta (深品红)
+"	    6	    3	    Brown，DarkYellow (褐、深黄)
+"	    7	    7	    LightGray、LightGrey，Gray，Grey (浅灰)
+"	    8	    0*	    DarkGray，DarkGrey (深灰)
+"	    9	    4*	    Blue，LightBlue (浅蓝)
+"	    10	    2*	    Green，LightGreen (浅绿)
+"	    11	    6*	    Cyan，LightCyan (浅青)
+"	    12	    1*	    Red，LightRed (浅品红)
+"	    13	    5*	    Magenta，LightMagenta (浅红)
+"	    14	    3*	    Yellow，LightYellow (浅黄)
+"	    15	    7*	    White (白)
+"
+
+" Set cursor shape and color
+if &term =~ "xterm"
+    " INSERT mode
+    let &t_SI = "\<Esc>[6 q" . "\<Esc>]12;red\x7"
+    " REPLACE mode
+    let &t_SR = "\<Esc>[1 q" . "\<Esc>]12;white\x7"
+    " NORMAL mode
+    let &t_EI = "\<Esc>[1 q" . "\<Esc>]12;DarkGreen\x7"
+endif
+" 1 -> blinking block  闪烁的方块
+" 2 -> solid block  不闪烁的方块
+" 3 -> blinking underscore  闪烁的下划线
+" 4 -> solid underscore  不闪烁的下划线
+" 5 -> blinking vertical bar  闪烁的竖线
+" 6 -> solid vertical bar  不闪烁的竖线
+" <c-o> jump to old position
+" <c-i> jump to replace
+" g+f go to files of textfile
+
+
+"""""新文件标题""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+
+autocmd BufNewFile *.cpp,*.[ch],*.hpp,*.sh,*.java exec ":call SetTemplate()" | autocmd! BufNewFile
+
+func SetTemplate()
+    if expand("%:e") == 'sh'
+        call append(0,"\#!/bin/bash")
+        call append(1,"")
+    endif
+    if expand("%:e") == 'c'
+         call Addc()
+    endif
+    if expand("%:e") == 'hpp'
+         call AddHpp()
+    endif
+    if expand("%:e") == 'cpp'
+        call AddCpp()
+    endif
+endfunc
+
+
+function Addc()
+      let infor = " "
+      \."/***************************************************************************\n"
+      \."**\n"
+      \." **************************************************************************/ \n"
+      \."#include<stdio.h>\n"
+      \."#define \n"
+      \."\n"
+      \."int main(int argc,char * argv[])\n"
+      \."{\n"
+      \."\t\n"
+      \."\treturn 0;\n"
+      \."}\n"
+      \."\n"
+      \."\n"
+      silent  put! =infor
+endfunction
+function AddCpp()
+      let infor = " "
+      \."#include <iostream>\n"              
+      \."#include <string>\n"              
+      \."#include <fstream>\n"              
+      \."#include <vector>\n"              
+      \."//\n"                               
+      \."using namespace std;\n"             
+      \."\n"                                 
+      \."int main(int argc,char * argv[] )\n"
+      \."{\n"                                
+      \."   //\n"                             
+      \."   cout<<\"hello world!\"<<endl;\n"                             
+      \."   \n"                             
+      \."   return 0;\n"                     
+      \."}\n"                                
+      \."\n"                                 
+      \."\n"                                 
+      silent  put! =infor
+endfunction
+
+function AddHpp()
+      let infor = " "
+      \."/******************************************************\n"
+      \."**\n"
+      \."*******************************************************/ \n"
+      \."#pragma once\n"
+      \."#include <iostream>\n"
+      \."\n"
+      \."//\n"
+      \."\n"
+      \."\n"
+      silent  put! =infor
+endfunction
+
+set nocompatible
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+
+
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.begintestok,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+
+
+
+
+"""set [{("',, , , ;;;;;;;;;v;.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+
+
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set
+"[{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset
+"[{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe
+"ground,.'")}] place""")}]
+
+"""set [{(";;;;; 'reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]
+"""set ;[{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]"""""""set [{("',.reset  [{("',.safe ground,.'")}] place""")}]""")}])}]"set [{("',.reset  [{("',.safe ground,.'")}] place""")}]

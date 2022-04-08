@@ -1,0 +1,194 @@
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 设置<ESC>键响应时间
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set ttimeout
+set ttimeoutlen=0        
+set timeoutlen=100
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 编辑esc,cmd相关配置
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+:autocmd InsertEnter * set timeoutlen=150
+inoremap jk <esc> 
+inoremap vv <esc> 
+inoremap jj <esc>l
+inoremap JJ <esc>l
+inoremap // <esc>0i// 
+:autocmd InsertLeave * set timeoutlen=200
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 分屏窗口移动
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+:autocmd InsertEnter * set timeoutlen=300
+nnoremap wj <c-w>J
+inoremap wj <esc><c-w>J
+nnoremap wk <c-w>K
+inoremap wk <esc><c-w>K
+nnoremap wh <c-w>H
+nnoremap wl <c-w>L
+"shift+k jump to help
+:autocmd InsertLeave * set timeoutlen=200
+
+
+:autocmd InsertEnter * set timeoutlen=50
+noremap <c-j> <c-w>j
+noremap <c-k> <c-w>k
+noremap <c-h> <c-w>h
+noremap <c-l> <c-w>l
+
+
+inoremap <c-j> <esc><c-w><c-j>
+inoremap <c-k> <esc><c-w><c-k>
+inoremap <c-h> <esc><c-w><c-h>
+inoremap <c-l> <esc><c-w><c-l>
+:autocmd InsertLeave * set timeoutlen=200
+
+:autocmd InsertEnter * set timeoutlen=10
+inoremap <esc> <esc>
+:autocmd InsertLeave * set timeoutlen=100
+
+:autocmd InsertEnter * set timeoutlen=100
+
+" register status
+nnoremap <M-m> :di<cr>
+vnoremap <M-m> v:di<cr>
+inoremap <M-m> <esc>:di<cr>i
+
+inoremap <c-m> <esc>0i// 
+nnoremap <c-m> 0i//<esc>j 
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""define alt+h,alt +j to jump pageup and page down
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <M-h> <PageUp>
+vnoremap <M-h> <PageUp>
+inoremap <M-h> <PageUp>
+
+
+nnoremap <M-l> <PageDown>
+vnoremap <M-l> <PageDown>
+inoremap <M-l> <PageDown>
+:autocmd InsertLeave * set timeoutlen=200
+
+set cursorline           " 高亮显示当前行
+highlight CursorLine   cterm=NONE ctermbg=blue ctermfg=white guibg=darkyellow guifg=white
+"red（红），white（白），black（黑），green（绿），yellow（黄），blue（蓝），purple（紫），gray（灰），brown（棕），tan(褐色)，syan(青色)
+"""		*cterm-colors*
+"""	    NR-16   NR-8    颜色名 ~
+"	    0	    0	    Black (黑)
+"	    1	    4	    DarkBlue (深蓝)
+"	    2	    2	    DarkGreen (深绿)
+"	    3	    6	    DarkCyan (深青)
+"	    4	    1	    DarkRed (深红)
+"	    5	    5	    DarkMagenta (深品红)
+"	    6	    3	    Brown，DarkYellow (褐、深黄)
+"	    7	    7	    LightGray、LightGrey，Gray，Grey (浅灰)
+"	    8	    0*	    DarkGray，DarkGrey (深灰)
+"	    9	    4*	    Blue，LightBlue (浅蓝)
+"	    10	    2*	    Green，LightGreen (浅绿)
+"	    11	    6*	    Cyan，LightCyan (浅青)
+"	    12	    1*	    Red，LightRed (浅品红)
+"	    13	    5*	    Magenta，LightMagenta (浅红)
+"	    14	    3*	    Yellow，LightYellow (浅黄)
+"	    15	    7*	    White (白)
+"
+
+" Set cursor shape and color
+if &term =~ "xterm"
+    " INSERT mode
+    let &t_SI = "\<Esc>[6 q" . "\<Esc>]12;red\x7"
+    " REPLACE mode
+    let &t_SR = "\<Esc>[1 q" . "\<Esc>]12;white\x7"
+    " NORMAL mode
+    let &t_EI = "\<Esc>[1 q" . "\<Esc>]12;DarkGreen\x7"
+endif
+" 1 -> blinking block  闪烁的方块
+" 2 -> solid block  不闪烁的方块
+" 3 -> blinking underscore  闪烁的下划线
+" 4 -> solid underscore  不闪烁的下划线
+" 5 -> blinking vertical bar  闪烁的竖线
+" 6 -> solid vertical bar  不闪烁的竖线
+" <c-o> jump to old position
+" <c-i> jump to replace
+" g+f go to files of textfile
+
+
+"""""新文件标题""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+
+autocmd BufNewFile *.cpp,*.[ch],*.hpp,*.sh,*.java exec ":call SetTemplate()" | autocmd! BufNewFile
+
+func SetTemplate()
+    if expand("%:e") == 'sh'
+        call append(0,"\#!/bin/bash")
+        call append(1,"")
+    endif
+    if expand("%:e") == 'c'
+         call Addc()
+    endif
+    if expand("%:e") == 'hpp'
+         call AddHpp()
+    endif
+    if expand("%:e") == 'cpp'
+        call AddCpp()
+    endif
+endfunc
+
+
+function Addc()
+      let infor = " "
+      \."/***************************************************************************\n"
+      \."**\n"
+      \." **************************************************************************/ \n"
+      \."#include<stdio.h>\n"
+      \."#define \n"
+      \."\n"
+      \."int main(int argc,char * argv[])\n"
+      \."{\n"
+      \."\t\n"
+      \."\treturn 0;\n"
+      \."}\n"
+      \."\n"
+      \."\n"
+      silent  put! =infor
+endfunction
+function AddCpp()
+      let infor = " "
+      \."#include <iostream>\n"              
+      \."#include <string>\n"              
+      \."#include <fstream>\n"              
+      \."#include <vector>\n"              
+      \."//\n"                               
+      \."using namespace std;\n"             
+      \."\n"                                 
+      \."int main(int argc,char * argv[] )\n"
+      \."{\n"                                
+      \."   //\n"                             
+      \."   cout<<\"hello world!\"<<endl;\n"                             
+      \."   \n"                             
+      \."   return 0;\n"                     
+      \."}\n"                                
+      \."\n"                                 
+      \."\n"                                 
+      silent  put! =infor
+endfunction
+
+function AddHpp()
+      let infor = " "
+      \."/******************************************************\n"
+      \."**\n"
+      \."*******************************************************/ \n"
+      \."#pragma once\n"
+      \."#include <iostream>\n"
+      \."\n"
+      \."//\n"
+      \."\n"
+      \."\n"
+      silent  put! =infor
+endfunction
+
+set nocompatible
