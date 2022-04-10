@@ -6,6 +6,7 @@
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
 #ifndef SHARED_HANDLERS
 #include "SDI.h"
+#include "MainFrm.h"
 #endif
 
 
@@ -63,7 +64,7 @@
 #define lscode(...)  lcode(__VA_ARGS__);
 
 #define sst(code,...)  #code##","#__VA_ARGS__
-#define SHOW(name) cout<<st(name)<<_T(" is:  ")<<name<<tab;
+#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab;
 #define showtype(type)  cout<<"TYPE: "<<#type<<tab<<"NAME:  "<<typeid(type).name()<<tab <<"SIZE:  "<<sizeof(type)<<el;
 
 #define RUNTEST(message)		cout.clearscreen();\
@@ -76,14 +77,20 @@
 template <typename T>
 bool showinfo(PCDC* the, const T& c)
 {
-	PCDC& screen = *the;
-	screen << "sizeof is:" << tab << sizeof(c) << tab << "typename is :" << tab << typeid(c).name() << el;
+	PCDC& cout = *the;
+	cout << "sizeof is:" << tab << sizeof(c) << tab << "typename is :" << tab << typeid(c).name() << el;
 	return true;
 };
 
-using namespace std;
+PCDC out;
+
+
 
 class CColor dccr;
+int a;
+
+
+
 COLORREF crcolorred = RGB(255, 0, 0);
 COLORREF crcolorgreen = RGB(34, 139, 34);
 COLORREF crcolorblue = RGB(0, 0, 255);
@@ -139,6 +146,7 @@ BEGIN_MESSAGE_MAP(CSDIView, CView)
 	ON_COMMAND(ID_STL_TYPE_TEST, &CSDIView::OnStlTypeTest)
 	ON_COMMAND(ID_INITAL_LIST_TEST, &CSDIView::OnInitalListTest)
 	ON_COMMAND(ID_PTR_UNIQUE_TEST, &CSDIView::OnPtrUniqueTest)
+	ON_COMMAND(ID_LVAL_RVAL_TEST, &CSDIView::OnLvalRvalTest)
 END_MESSAGE_MAP()
 
 // CSDIView 构造/析构
@@ -209,13 +217,13 @@ POINT CSDIView::SetPoint(int x, int y, POINT* p) {
 	this->position.x = x;
 	this->position.y = y;
 
-	//返回POINT结构
-	return position;
+	//返回POINT结构return position;
 }
 
-void CSDIView::OnPaint() {
 
-	cout.Release();
+void CSDIView::OnPaint() {
+	{	LOGMESSAGE(theApp);	}
+	//cout.Release();
 	// 用于绘制的设备上下文
 	CPaintDC dc(this);
 	//设置字体颜色，准备DC
@@ -228,8 +236,9 @@ void CSDIView::OnPaint() {
 
 	//恢复用户字体DC
 	RestoreDCFont(dc);
-	cout.Create(this);
+	//cout.Create(this);
 }
+//using namespace std;
 
 void CSDIView::OnSetFont() {
 
@@ -249,6 +258,7 @@ void CSDIView::OnSetFont() {
 
 void CSDIView::OnShowlog() {
 	// TODO: 在此添加命令处理程序代码
+	SimulationStdCout;
 	if (is_show_logmessage) {
 		is_show_logmessage = false;
 		cout << theApp.messagelog << el;
@@ -308,29 +318,29 @@ void CSDIView::OnResetXY()
 
 void CSDIView::OnTestCAtlString()
 {
-
+	SimulationStdCout;
 	RUNTEST(TEST STRING);
 	char charmark = '*';
 	int nchartime = 140;
 	CAtlString strsplint(charmark, nchartime);
-	screen << strsplint << el;
+	cout << strsplint << el;
 
 	wstring wstr1(_T("wstring is ok"));
 	string astr1 = "astr1,string class";
 	CAtlString strFormat(wstr1.c_str());
-	screen << astr1 << el;
-	screen << wstr1 << el;
-	screen << strFormat << el;
+	cout << astr1 << el;
+	cout << wstr1 << el;
+	cout << strFormat << el;
 
 	wstr1 = _T("this is a wstring test string");
 	strFormat = wstr1.c_str();
-	screen << wstr1 << el;
-	screen << strFormat << el;
+	cout << wstr1 << el;
+	cout << strFormat << el;
 	strFormat = astr1.c_str();
-	screen << strFormat << el;
+	cout << strFormat << el;
 
 	wstr1 = _T("this is a wstring test string");
-	screen << wstr1 << el;
+	cout << wstr1 << el;
 
 	// 定义备用变量
 	CAtlString EnvStr, tok;
@@ -340,7 +350,7 @@ void CSDIView::OnTestCAtlString()
 
 	//测试CAtlString Appendformat 功能
 	formatv = (_T("first "));
-	screen << formatv << el;
+	cout << formatv << el;
 	formatv.AppendFormat(_T("position.x is %ld ,position.y is %ld"), position.x, position.y);
 	vecotr_paintmessage.push_back(formatv);
 	tail = "is ok";
@@ -351,7 +361,7 @@ void CSDIView::OnTestCAtlString()
 	message += " <CompareNoCase> ?qual ";
 	message += head;
 	message.AppendFormat(_T(" return value = %ld"), ii);
-	screen << message << el;
+	cout << message << el;
 	vecotr_paintmessage.push_back(message);
 
 	tail = "is ok";
@@ -362,7 +372,7 @@ void CSDIView::OnTestCAtlString()
 	message += "<CollateNoCase> ?qual ";
 	message += head;
 	message.AppendFormat(_T(" return value = %ld"), ii);
-	screen << message << el;
+	cout << message << el;
 	vecotr_paintmessage.push_back(message);
 
 	tail = _T("123456789");
@@ -371,19 +381,19 @@ void CSDIView::OnTestCAtlString()
 	tail.Delete(ii, ij);
 	message.AppendFormat(_T("从 %ld 开始删除 %ld 个字符 = "), ii, ij);
 	message += tail;
-	screen << message << el;
+	cout << message << el;
 	vecotr_paintmessage.push_back(message);
 
 	str.Format(_T("Floating point: %.2f\n"), 12345.12345);
 	_tprintf_s(_T("%s"), (LPCTSTR)str);
 	message = str;
-	screen << message << el;
+	cout << message << el;
 	vecotr_paintmessage.push_back(message);
 
 	str.Format(_T("Left-justified integer: %.6d\n"), 35);
 	_tprintf_s(_T("%s"), (LPCTSTR)str);
 	message = str;
-	screen << message << el;
+	cout << message << el;
 	vecotr_paintmessage.push_back(message);
 
 }
@@ -391,6 +401,7 @@ void CSDIView::OnTestCAtlString()
 void CSDIView::OnPrintEnvVAR()
 {
 	// 打印环境变量
+	//SimulationStdCout;
 	CAtlString EnvStr, tok;
 	EnvStr.GetEnvironmentVariable(_T("PATH"));
 	int ipos = 0;
@@ -401,7 +412,10 @@ void CSDIView::OnPrintEnvVAR()
 		tok = EnvStr.Tokenize(_T(";"), ipos);
 	};
 	for (const auto& i : vecotr_paintmessage)
-		screen << i << el;
+		cout << i << el;
+	lscode(
+		cout << "this is out dc" << tab << &cout << tab << &out << el;
+	);
 }
 
 
@@ -466,6 +480,7 @@ T divv(T a, T b)
 void CSDIView::OnObjectSize()
 {
 	//切换输出列
+	makedc(cout);
 	static int ichoice = 0;
 	if (++ichoice > 2)
 		ichoice = 1;
@@ -590,7 +605,7 @@ void CSDIView::OnAutoSetFont()
 void CSDIView::OnBitExChar()
 {
 	//设置字体颜色，准备DC
-	PCDC dc(this);
+	makedc(dc);
 
 	vector<CAtlString> v;
 	CAtlString csmessage;
@@ -874,7 +889,7 @@ void CSDIView::OnGetWindowsRect()
 	RECT rect;
 	this->GetWindowRect(&rect);
 	CString strto;
-	PCDC dcout(this);
+	makedc(dcout);
 	strto.Format(_T("step %ld "), step);
 	dcout << strto << el;
 	strto.Format(_T("rect.left %ld "), rect.left);
@@ -940,7 +955,7 @@ bool CSDIView::writedc(const CAtlString& str, CDC* pdc)
 void CSDIView::OnSTLFuncTest()
 {
 	//FCDC dcout(this);
-	PCDC dcout(this);
+	makedc(dcout);
 	int ia = 10, ib = 20;
 	float	fa = 1.1, fb = 11.0;
 	CAtlString strout;
@@ -985,79 +1000,95 @@ void CSDIView::OnExceptCatchTest()
 {
 
 	// 测试throw异常类型 
-	PCDC screen(this);
+	SimulationStdCout;
 	try {
-		screen << "before runexcept" << el;
+		cout << "before runexcept" << el;
 		//runexcept(1);
 		//被跳过
-		screen << "under runexcept" << el;
+		cout << "under runexcept" << el;
 	}
 	catch (char* e)
 	{
-		screen << typeid(e).name() << el;
+		cout << typeid(e).name() << el;
 	}
 	catch (float e) {
-		screen << e << el;
+		cout << e << el;
 	}
 	catch (double e) {
-		screen << e << el;
+		cout << e << el;
 	}
 	catch (int e) {
-		screen << e << el;
+		cout << e << el;
 	}
 	catch (char e) {
-		screen << e << el;
+		cout << e << el;
 	}
 	catch (const CString& e) {
-		screen << e << el;
+		cout << e << el;
 	}
-	catch (...) { screen << "catch all error" << el; };
+	catch (...) { cout << "catch all error" << el; };
 
 }
 
 
 void CSDIView::OnPCDCFunctionTest()
 {
-	PCDC screen(this);
-	int ia = 10, ib = 20;
-	float	fa = 31.1, fb = 41.0;
+	SimulationStdCout;
+	lscode(
+		char ca = 'a';
+	int ia = 10;
+	float fa = 31.1;
 	bool iba = true;
-	long la = 50;
+	long la = 500000;
+	long long lla = 256 * 256 * 25650;
 	double da = 62.444;
-	int* p = &ia;
-	CAtlString strout = st(This is smilate termial console for mfc DC test...);
-	std::string s = "this is a string..\t\t";
+	long double lda = 262.844;
+	int* ip = &ia;
+	char* cp = &ca;
+	long* lp = &la;
+	long long* llp = &lla;
+	double* dp = &da;
+	char* chp = "good char";
+	CAtlString catlstr = st(Smilate termial console mfc DC test , CAtlString...);
+	CString cstr = st(Smilate termial console mfc DC test ,CString...);
+	std::string cs = "This is a string..";
+	std::wstring wcs = L"This is a Wstring..";
 	size_t icount = 50;
-	screen << strout << el;
-	screen << iba << tab << la << tab << da << tab << p << tab << fa << el;
-	screen << s << ia << el;
-	screen << theApp.messagelog.size() << el;
-	screen << st(ok this is a test for strmacroand screen dc) << el;
-	screen << starline;
-	const char* ps = "this is ok";
+	cout << "beging test dc..." << tab << st(print value) << el;
+	cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
+	cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
+	cout << chp << el;
+	cout << catlstr << el;
+	cout << cstr << el;
+	cout << cs << el;
+	cout << wcs << el;
+	showtype("beging test dc...");
+	);
 
-	screen << "is ok" << el;
-	screen << ps << el;
 
-	//循环输出程序运行顺序记录
-	for (auto& i : theApp.messagelog) {
-		screen << i << el;
-	}
-	for (size_t i = 0; i < 5; )
-	{
-		screen << ++i << "#" << el;
-		for (size_t i = 0; i < 10;)
-		{
-			screen << ++i * 10 << tab;
-		}
-		screen << __func__ << __LINE__ << el;
-	}
+	//cout << starline;
+	//cout << theApp.messagelog.size() << el;
+
+	////循环输出程序运行顺序记录
+	//for (auto& i : theApp.messagelog) {
+	//	cout << i << el;
+	//}
+	//for (size_t i = 0; i < 5; )
+	//{
+	//	cout << ++i << "#" << el;
+	//	for (size_t i = 0; i < 10;)
+	//	{
+	//		cout << ++i * 10 << tab;
+	//	}
+	//	cout << __func__ << __LINE__ << el;
+	//}
 
 }
 
 
 void CSDIView::OnSTLlStringTest()
 {
+	SimulationStdCout;
 	RUNTEST(STRING TEST);
 	string s1 = "ok", s2 = "bad", s3 = "+";
 	s1.append(s3);
@@ -1067,24 +1098,25 @@ void CSDIView::OnSTLlStringTest()
 	s1.append(s3);
 	s1.append(s2);
 
-	screen << s1 << el;
-	screen << s1.find(s2) << el;
-	screen << s1.find("good") << el;
-	screen << s1.rfind(s2) << el;
+	cout << s1 << el;
+	cout << s1.find(s2) << el;
+	cout << s1.find("good") << el;
+	cout << s1.rfind(s2) << el;
 
-	screen << s1 << el;
+	cout << s1 << el;
 	s1.replace(0, 0, "byeeeee");
-	screen << s1 << el;
-	screen << s1.substr(7, 4) << el;
+	cout << s1 << el;
+	cout << s1.substr(7, 4) << el;
 	s1.insert(1, "ddd");
-	screen << s1 << el;
+	cout << s1 << el;
 	s1.erase();
-	screen << "erase after " << s1 << el;
+	cout << "erase after " << s1 << el;
 
 }
 
 void CSDIView::OnGroundTest()
 {
+	SimulationStdCout;
 	RUNTEST(VECTOR TEST);
 	vector<int>intvect;
 	for (size_t i = 0; i < 20;)
@@ -1093,62 +1125,62 @@ void CSDIView::OnGroundTest()
 	}
 
 	for (auto& i : intvect)
-		screen << i << tab;
-	screen << el;
-	screen << "The vector size is " << intvect.size() << el;
+		cout << i << tab;
+	cout << el;
+	cout << "The vector size is " << intvect.size() << el;
 
 	intvect.pop_back();
 	intvect.pop_back();
 
-	screen << st(The vector size is afthe pop two element is : ) << intvect.size() << el;
+	cout << st(The vector size is afthe pop two element is : ) << intvect.size() << el;
 
 	for (auto& i : intvect)
-		screen << i << tab;
-	screen << el;
-	screen << intvect.back() << tab << intvect.back() << tab << "size is: " << intvect.size() << tab << "max size is:" << intvect.max_size() << el;
+		cout << i << tab;
+	cout << el;
+	cout << intvect.back() << tab << intvect.back() << tab << "size is: " << intvect.size() << tab << "max size is:" << intvect.max_size() << el;
 
 	intvect.insert(intvect.begin() + 5, 10);
 	intvect.insert(intvect.begin() + 6, 20);
 	intvect.insert(intvect.begin() + 7, 30);
 
 	for (auto& i : intvect)
-		screen << i << tab;
-	screen << el;
+		cout << i << tab;
+	cout << el;
 	vector<int> intvect2(intvect.begin(), intvect.begin() + 5);
-	screen << intvect2;
-	screen << starline;
-	screen << intvect;
+	cout << intvect2;
+	cout << starline;
+	cout << intvect;
 	intvect.resize(intvect.size() / 2);
-	screen << starline;
-	screen << intvect;
-	screen << intvect2;
+	cout << starline;
+	cout << intvect;
+	cout << intvect2;
 	intvect.swap(intvect2);
-	screen << st(swap v1 & v2) << el;
+	cout << st(swap v1 & v2) << el;
 
-	screen << starline;
-	screen << intvect;
-	screen << intvect2;
-	screen << intvect.empty() << el;
+	cout << starline;
+	cout << intvect;
+	cout << intvect2;
+	cout << intvect.empty() << el;
 
-	screen << starline;
+	cout << starline;
 	intvect2.resize(15, 5);
-	screen << intvect2;
+	cout << intvect2;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		intvect2.push_back((2 + i));
 	}
-	screen << starline;
+	cout << starline;
 	intvect2.resize(15);
 	SHOW(intvect2.size());
 	SHOW(intvect2.capacity());
 	intvect2.shrink_to_fit();
-	screen << intvect2;
+	cout << intvect2;
 	SHOW(intvect2.back());
 	SHOW(intvect2.front());
 	intvect2.insert(intvect2.begin(), 999);
 	intvect2.insert(intvect2.end(), 999);
-	screen << intvect2;
-	screen << starline;
+	cout << intvect2;
+	cout << starline;
 	SHOW(intvect2.size());
 	SHOW(intvect2.capacity());
 	intvect2.resize(20);
@@ -1157,17 +1189,17 @@ void CSDIView::OnGroundTest()
 	intvect2.reserve(100);
 	SHOW(intvect2.capacity());
 	SHOW(intvect2.size());
-	screen << starline;
+	cout << starline;
 	intvect2.reserve(20);
 	SHOW(intvect2.capacity());
 	SHOW(intvect2.size());
 	vector<int>::iterator it = intvect2.begin();
 	SHOW(*it);
 	int x;
-	screen << addressof(*it) << el;
-	screen << &*it << el;
-	screen << sizeof(int*) << tab << sizeof(int) << tab << sizeof(long long) << el;
-	screen << address(x) << el;
+	cout << addressof(*it) << el;
+	cout << &*it << el;
+	cout << sizeof(int*) << tab << sizeof(int) << tab << sizeof(long long) << el;
+	cout << address(x) << el;
 
 
 	TITLE(PRINT  deque TEST);
@@ -1177,24 +1209,24 @@ void CSDIView::OnGroundTest()
 		d1.push_back(i * 2);
 	}
 	for (auto& i : d1)
-		screen << i << tab;
-	screen << el;
+		cout << i << tab;
+	cout << el;
 	d1.pop_front();
-	screen << starline;
+	cout << starline;
 	d1.push_front(1000);
 	for (int j = 0; j < 8; j++) {
-		screen << j << "#" << tab;
+		cout << j << "#" << tab;
 		for (auto& i : d1) {
-			screen << (i = i + j) << tab;
+			cout << (i = i + j) << tab;
 		}
-		screen << el;
+		cout << el;
 	}
 	CRect rect = { 0,0,0,0 };
 	//this->InvalidateRect(&rect);
-	screen << starline;
+	cout << starline;
 	for (auto& i : d1)
-		screen << i << tab;
-	screen << el;
+		cout << i << tab;
+	cout << el;
 	d1.pop_back();
 	d1.pop_front();
 	for (size_t i = 0; i < 5; i++)
@@ -1202,22 +1234,22 @@ void CSDIView::OnGroundTest()
 		d1.pop_front();
 	}
 	d1.emplace_back(888);
-	screen << d1.size() << el;
+	cout << d1.size() << el;
 	SHOW(d1.size());
 	SHOW(d1.max_size());
 	SHOW(d1.empty());
 	SHOW(d1.at(5));
-	screen << el;
-	screen.setlinechar('-');
-	screen << starline;
+	cout << el;
+	cout.setlinechar('-');
+	cout << starline;
 	for (auto& i : d1)
-		screen << i << tab;
-	screen << el;
+		cout << i << tab;
+	cout << el;
 	d1.insert(d1.begin(), 222);
-	screen << *d1.begin() << el;
+	cout << *d1.begin() << el;
 	this->GetWindowRect(&rect);
 
-	screen << rect.bottom << tab << rect.top << tab << rect.right << tab << rect.left << el;
+	cout << rect.bottom << tab << rect.top << tab << rect.right << tab << rect.left << el;
 
 
 }
@@ -1225,31 +1257,32 @@ void CSDIView::OnGroundTest()
 
 void CSDIView::OnStlStackEqueueTest()
 {
+	SimulationStdCout;
 	RUNTEST(STACK EQUEUE TEST);
-	screen.setcolor(dccr.darkslateblue, dccr.darkgreen, screen.m_bk, screen.m_tk);
-	screen << cl;
+	cout.setcolor(dccr.darkslateblue, dccr.darkgreen, cout.m_bk, cout.m_tk);
+	cout << cl;
 	stack<int>ist;
 	for (size_t i = 0; i < 20; i++)
 	{
 		ist.push(i + 10);
 	}
-	screen << ist.top() << el;
-	screen << ist.size() << tab << ist.top() << tab << (ist.pop(), ist.top()) << el;
-	screen << starline;
-	screen << ist.size() << tab << ist.top() << el;
-	screen << ist.top() << tab << ist.size() << tab << (ist.pop(), ist.top()) << tab << ist.size() << tab << ist.top() << el;
-	screen << ist.size() << tab << ist.top() << el;
-	screen << ist.empty();
+	cout << ist.top() << el;
+	cout << ist.size() << tab << ist.top() << tab << (ist.pop(), ist.top()) << el;
+	cout << starline;
+	cout << ist.size() << tab << ist.top() << el;
+	cout << ist.top() << tab << ist.size() << tab << (ist.pop(), ist.top()) << tab << ist.size() << tab << ist.top() << el;
+	cout << ist.size() << tab << ist.top() << el;
+	cout << ist.empty();
 
 	queue <int> ieq;
 	for (size_t i = 0; i < 10; i++)
 	{
 		ieq.push(i + 2);
 	}
-	screen.setlinechar('#');
-	screen << starline;
-	screen << ieq.front() << el;
-	screen << ieq.back() << el;
+	cout.setlinechar('#');
+	cout << starline;
+	cout << ieq.front() << el;
+	cout << ieq.back() << el;
 }
 
 
@@ -1324,6 +1357,7 @@ bool PrintEle(const T& v, DC& dc)
 
 void CSDIView::OnMacroTest()
 {
+	SimulationStdCout;
 	RUNTEST(LIST TEST);
 	list<int>ilt;
 	for (size_t i = 0; i < 15; i++)
@@ -1335,48 +1369,48 @@ void CSDIView::OnMacroTest()
 		*it *= 2;
 	}
 	CString ssss('2', 129);
-	screen << ssss << el;
+	cout << ssss << el;
 	for (size_t l = 0; l < ssss.GetLength(); l++)
 	{
 		if (l % 2 == 1)
 			ssss.Insert(l, '3');
 	}
-	screen << ssss << el;
+	cout << ssss << el;
 	for (size_t l = 0; l < ssss.GetLength(); l++)
 	{
 		if (l % 3 == 2)
 			ssss.Insert(l, '4');
 	}
-	screen << ssss << el;
+	cout << ssss << el;
 	list<int> l2(ilt);
-	screen.setlinechar('-');
+	cout.setlinechar('-');
 	for (list<int>::iterator it = ilt.begin(); it != ilt.end(); ++it)
 	{
 		*it *= 2;
-		screen << *it << tab;
+		cout << *it << tab;
 	}
-	screen << el;
-	screen.setlinechar('-');
+	cout << el;
+	cout.setlinechar('-');
 	for (list<int>::iterator it = l2.begin(); it != l2.end(); ++it)
 	{
 		*it *= 2;
-		screen << *it << tab;
+		cout << *it << tab;
 	}
-	screen << el;
-	screen.clearscreen();
-	lcode(ilt.erase(ilt.begin()); PrintEle(ilt, screen));
-	lcode(ilt.pop_back(); PrintEle(ilt, screen));
-	lcode(ilt.pop_front(); PrintEle(ilt, screen));
-	lcode(ilt.insert(ilt.begin(), 666); PrintEle(ilt, screen));
-	lcode(ilt.insert(ilt.begin(), 666); ilt.insert(ilt.begin(), 666); PrintEle(ilt, screen));
-	lcode(ilt.remove(*ilt.begin()); PrintEle(ilt, screen));
-	lcode(ilt.reverse(); PrintEle(ilt, screen));
-	lcode(PrintEle(l2, screen); l2.reverse(); PrintEle(l2, screen));
-	lcode(ilt.swap(l2); PrintEle(ilt, screen); PrintEle(l2, screen));
-	lcode(ilt.sort(); ilt.reverse(); PrintEle(ilt, screen););
+	cout << el;
+	cout.clearscreen();
+	lcode(ilt.erase(ilt.begin()); PrintEle(ilt, cout));
+	lcode(ilt.pop_back(); PrintEle(ilt, cout));
+	lcode(ilt.pop_front(); PrintEle(ilt, cout));
+	lcode(ilt.insert(ilt.begin(), 666); PrintEle(ilt, cout));
+	lcode(ilt.insert(ilt.begin(), 666); ilt.insert(ilt.begin(), 666); PrintEle(ilt, cout));
+	lcode(ilt.remove(*ilt.begin()); PrintEle(ilt, cout));
+	lcode(ilt.reverse(); PrintEle(ilt, cout));
+	lcode(PrintEle(l2, cout); l2.reverse(); PrintEle(l2, cout));
+	lcode(ilt.swap(l2); PrintEle(ilt, cout); PrintEle(l2, cout));
+	lcode(ilt.sort(); ilt.reverse(); PrintEle(ilt, cout););
 
-	screen << __FUNCTION__ << tab << __FUNCDNAME__ << tab << __FUNCSIG__ << el;
-	screen << __DATE__ << __TIME__ << tab << __FILE__ << tab << __LINE__ << tab << __STDC_HOSTED__ << el;
+	cout << __FUNCTION__ << tab << __FUNCDNAME__ << tab << __FUNCSIG__ << el;
+	cout << __DATE__ << __TIME__ << tab << __FILE__ << tab << __LINE__ << tab << __STDC_HOSTED__ << el;
 
 }
 
@@ -1415,6 +1449,7 @@ bool compare(int a, int b)
 
 void CSDIView::OnStlSetTest()
 {
+	SimulationStdCout;
 	RUNTEST(BEGING TEST SET AND MULTISET);
 	set<int> iset1;
 	int mod = 30;
@@ -1423,19 +1458,19 @@ void CSDIView::OnStlSetTest()
 		iset1.insert(i * rand() % mod);
 	}
 
-	lcode(PrintEle(iset1, screen););
-	lcode(iset1.insert(25); PrintEle(iset1, screen););
-	lcode(screen << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; PrintEle(iset1, screen););
+	lcode(PrintEle(iset1, cout););
+	lcode(iset1.insert(25); PrintEle(iset1, cout););
+	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; PrintEle(iset1, cout););
 
-	lcode(screen << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; PrintEle(iset1, screen););
+	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; PrintEle(iset1, cout););
 	auto it = iset1.find(8);
 	if (it == iset1.end())
-		screen << "is end" << el;
+		cout << "is end" << el;
 	lcode(iset1.insert(100););
 	lcode(iset1.insert(200););
 	lcode(iset1.insert(300););
-	lcode(screen << "find" << tab << *iset1.upper_bound(20) << el; PrintEle(iset1, screen););
-	lcode(screen << "find" << tab << *iset1.lower_bound(10) << el; PrintEle(iset1, screen););
+	lcode(cout << "find" << tab << *iset1.upper_bound(20) << el; PrintEle(iset1, cout););
+	lcode(cout << "find" << tab << *iset1.lower_bound(10) << el; PrintEle(iset1, cout););
 
 	class icompset {
 	public:
@@ -1508,17 +1543,17 @@ void CSDIView::OnStlSetTest()
 			return name;
 		};
 	};
-	screen << cl;
+	cout << cl;
 	icompset a;
-	screen << a(st(good), &screen) << tab << el;
-	screen << a(100) << tab << el;
+	cout << a(st(good), &cout) << tab << el;
+	cout << a(100) << tab << el;
 
 	list<int>ilt;
 	for (size_t i = 0; i < 15; i++)
 	{
 		ilt.push_back((rand() * i * rand()) % 100);
 	}
-	lcode(PrintEle(ilt, screen));
+	lcode(PrintEle(ilt, cout));
 
 	vector<int>intvec(20), empty;
 	int i = 0;
@@ -1529,13 +1564,13 @@ void CSDIView::OnStlSetTest()
 		i = icount++ * icountb++;
 	}
 
-	ilt.sort(a); PrintEle(ilt, screen);
-	a.sortset(true); ilt.sort(a); PrintEle(ilt, screen);
-	a.sortset(false); ilt.sort(a.sortset(false)); PrintEle(ilt, screen);
-	sort(intvec.begin(), intvec.end(), compare); PrintEle(intvec, screen);
-	sort(intvec.begin(), intvec.end(), a.sortset(true)); PrintEle(intvec, screen);
-	a.sortset(false); sort(intvec.begin(), intvec.end(), a); PrintEle(intvec, screen);
-	ilt.reverse(); PrintEle(ilt, screen);
+	ilt.sort(a); PrintEle(ilt, cout);
+	a.sortset(true); ilt.sort(a); PrintEle(ilt, cout);
+	a.sortset(false); ilt.sort(a.sortset(false)); PrintEle(ilt, cout);
+	sort(intvec.begin(), intvec.end(), compare); PrintEle(intvec, cout);
+	sort(intvec.begin(), intvec.end(), a.sortset(true)); PrintEle(intvec, cout);
+	a.sortset(false); sort(intvec.begin(), intvec.end(), a); PrintEle(intvec, cout);
+	ilt.reverse(); PrintEle(ilt, cout);
 
 
 
@@ -1548,19 +1583,19 @@ void CSDIView::OnStlSetTest()
 	cfmap.insert(make_pair(CString(wstring += wstring), pfun));
 	cfmap.insert(pair<CString, fun>(CString(wstring = st(go)), pfun));
 	cfmap.insert(map<CString, fun>::value_type(CString(st(bad)), pfun));
-	screen << cfmap.size() << el;
+	cout << cfmap.size() << el;
 
 
 	pair<int, float>x = make_pair(10, 2.3);
-	screen << x.first << tab << x.second << el;
+	cout << x.first << tab << x.second << el;
 	auto* p = &x;
 	map<int, float>imap;
 	imap.insert(make_pair(10, 2.2));
 	imap.insert(x);
 	map<int, float>::iterator iit = imap.begin();
-	lcode(screen << iit->first << tab << iit->second << el;);
-	lcode(iit = imap.end(); screen << p->first << tab << p->second << el;);
-	lcode(iit = imap.begin(); screen << p->first << tab << p->second << el;);
+	lcode(cout << iit->first << tab << iit->second << el;);
+	lcode(iit = imap.end(); cout << p->first << tab << p->second << el;);
+	lcode(iit = imap.begin(); cout << p->first << tab << p->second << el;);
 
 }
 
@@ -1580,24 +1615,22 @@ typedef int (*pfunc)(PCDC&, string);
 
 void CSDIView::OnStlMapMenu()
 {
-
-	PCDC screen(this);
-
+	SimulationStdCout;
 	map<string, pfunc> menu;
 	MAKEMENUITEM(ntest, menu);
 	string name = "map second";
 	map<string, pfunc>::iterator itt = menu.begin();
-	itt->second(screen, itt->first);
-	itt->second(screen, name);
+	itt->second(cout, itt->first);
+	itt->second(cout, name);
 
 	void* p = nullptr;
-	screen << p << el;
+	cout << p << el;
 
-	screen << (int) nullptr << tab << NULL << el;
+	cout << (int) nullptr << tab << NULL << el;
 
-	screen << sizeof(nullptr) << tab << sizeof(0) << tab << sizeof(NULL) << tab << sizeof(p) << el;
+	cout << sizeof(nullptr) << tab << sizeof(0) << tab << sizeof(NULL) << tab << sizeof(p) << el;
 
-	screen << cl;
+	cout << cl;
 	int* pint = new int[1024];
 	long long int sum = 0;
 	for (size_t i = 0; i < 128; ++i)
@@ -1607,17 +1640,17 @@ void CSDIView::OnStlMapMenu()
 	}
 	int* plint = new int;
 	*plint = sizeof(pint);
-	screen << "array size is : " << *plint << tab << "sum is " << sum << "  array elements is :" << el;
+	cout << "array size is : " << *plint << tab << "sum is " << sum << "  array elements is :" << el;
 	for (size_t i = 0; i < 1024; i++)
 	{
-		screen << pint[i] << ", ";
+		cout << pint[i] << ", ";
 	}
-	screen << el;
+	cout << el;
 	delete[]pint;
 	delete[]plint;
 	char* pc = "hello";
 	CString ss = _T("123456");
-	lcode(screen << strlen(pc) << tab << sizeof(_T("hello")) << tab << ss.GetLength() << el;);
+	lcode(cout << strlen(pc) << tab << sizeof(_T("hello")) << tab << ss.GetLength() << el;);
 
 }
 
@@ -1635,18 +1668,20 @@ T returnt()
 
 void CSDIView::OnSTLArgTest()
 {
+	//return y += val * x;
+	SimulationStdCout;
 	RUNTEST(STL ARGARMENT TEST);
 	int x = 3;
-	screen << returnt<int, 3>() << tab << sizeof(returnt<int, 3>()) << el;
-	screen << returnt<long long int, 5>() << tab << sizeof(returnt<long long, 5>()) << el;
-	screen << returnt<float, 3>() << tab << sizeof(returnt<float, 3>()) << el;
+	cout << returnt<int, 3>() << tab << sizeof(returnt<int, 3>()) << el;
+	cout << returnt<long long int, 5>() << tab << sizeof(returnt<long long, 5>()) << el;
+	cout << returnt<float, 3>() << tab << sizeof(returnt<float, 3>()) << el;
 
 	vector<int>intvect;
 	for (size_t i = 0; i < 20;)
 	{
 		intvect.push_back(++i * 3);
 	}
-	screen << intvect << el;
+	cout << intvect << el;
 
 	list<int>ilt;
 	for (size_t i = 0; i < 15; i++)
@@ -1662,13 +1697,13 @@ void CSDIView::OnSTLArgTest()
 	{
 		*it *= 2;
 	}
-	screen << ilt << el;
-	screen << l2 << el;
+	cout << ilt << el;
+	cout << l2 << el;
 	multimap<CString, string>mmap;
 	mmap.insert(pair<CString, string>(CString(st(imap first)), string("is first")));
 	mmap.insert(make_pair(CString(st(imap second)), string("is second")));
 	mmap.insert(multimap<CString, string>::value_type(CString(st(imap second)), string("is second")));
-	screen << mmap << el;
+	cout << mmap << el;
 
 	CString wstring = _T("good");
 	pair<CString, int> w = make_pair(wstring, 100);
@@ -1684,87 +1719,127 @@ void CSDIView::OnSTLArgTest()
 	{
 		iset1.insert(i * rand() % mod);
 	}
-	screen << cfmap << el;
-	screen << iset1 << el;
+	cout << cfmap << el;
+	cout << iset1 << el;
 
 }
 
 
 void CSDIView::OnCxx20StlConceptTest()
 {
-	PCDC screen(this);
+	PCDC cout(this);
 
 	//原始字符串字面量测试
-	screen << R"h(hello\thello\thello)h" << el;
+	cout << R"h(hello\thello\thello)h" << el;
 
 	vector<int>intvec(20);
 	deque<int>intvec2(10);
 	MakeEleRandom(intvec, 20);
-	screen << intvec;
+	cout << intvec;
 	MakeEleRandom(intvec2, 10);
-	screen << intvec2;
+	cout << intvec2;
 	std::copy_if(intvec.begin(), intvec.end(), std::front_inserter(intvec2), [](int v) {return v < 10; });
-	screen << intvec2 << el;
+	cout << intvec2 << el;
 	std::copy_if(intvec.begin(), intvec.end(), std::back_inserter(intvec2), [](int v) {return v > 15; });
-	screen << intvec2 << el;
+	cout << intvec2 << el;
 
 }
 
+int igi = 88;
+typedef int (*PFU)(int);
+using PTRFUN = int (*)(int);
 
 void CSDIView::OnLamdbaFuncTest()
 {
-	makedc(cout);
-
-	int x = 1, y = 2;
-	auto funl = [=](int val)mutable ->int {
-		//cout << val++ << tab << x << tab << y << el;
-		return y += val * x;
+	// TODO 测试lamdba表达式
+	lscode(
+		int x = 1, y = 2;
+	auto funl = [](int val)mutable ->int {
+		int z = 10;
+		out << "in lamdba,val is: " << val << "  z is : " << z << el;
+		return z;
 	};
 	function<int(int)> p = funl;
-	cout << p(100) << el;
+	out << p(100);
 	SHOW(x); SHOW(y);
+	out << el;
+	);
+	lscode(
+		showtype(p);
+	showtype(funl);
+	showtype(PTRFUN);
+	);
+	lcode(
+		auto funl1 = [&](int val)mutable ->int {
+			int z = 210;
+			showtype(z);
+			return igi + val;
+		};
+	function<int(int)> p1 = funl1;
+	showtype(funl1);
+	showtype(p1);
+	);
+	lcode(
+		PTRFUN p3 = funl;
+	cout << p3(100) << tab;
+	);
+	lcode(
+		int m = 7, n = 6;
+	int* pm = &m;
+	int& rm = *pm;
+	cout << "m " << m << tab << "*pm  " << *pm << tab << "rm  " << rm << tab << el;
+	cout << "&m " << &m << tab << "pm  " << pm << tab << "&rm  " << &rm << tab << "&pm  " << &pm << el;
+	);
+	cout << cut;
+	lcode(
+		pm = &n;
+	cout << "m " << m << tab << "*pm  " << *pm << tab << "rm  " << rm << tab << el;
+	cout << "&m " << &m << tab << "pm  " << pm << tab << "&rm  " << &rm << tab << "&pm  " << &pm << el;
+	);
+
 
 }
 
 
 void CSDIView::OnStlTupleTest()
 {
-	//PCDC screen(this);
+	SimulationStdCout;
+	cout.clearscreen();
 	lscode(
 
 		using namespace std;
 	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
 	auto tupleb = tuple<int, float, string, string, string>(22, 20.24, "good-b", "bad-b", "normal-b");
-	screen << std::get<int>(tuplea) << tab;
-	screen << std::get<1>(tuplea) << tab;
-	screen << std::get<2>(tuplea) << tab;
-	screen << std::get<3>(tuplea) << tab;
-	screen << std::get<4>(tuplea) << el;
+	cout << std::get<int>(tuplea) << tab;
+	cout << std::get<1>(tuplea) << tab;
+	cout << std::get<2>(tuplea) << tab;
+	cout << std::get<3>(tuplea) << tab;
+	cout << std::get<4>(tuplea) << el;
 	std::get<4>(tuplea) = "change";
-	screen << std::get<4>(tuplea) << tab;
-	screen << cut;
-	screen << std::get<0>(tupleb) << tab;
-	screen << std::get<1>(tupleb) << tab;
-	screen << std::get<2>(tupleb) << tab;
-	screen << std::get<3>(tupleb) << tab;
-	screen << std::get<4>(tupleb) << tab;
+	cout << std::get<4>(tuplea) << tab;
+	cout << cut;
+	cout << std::get<0>(tupleb) << tab;
+	cout << std::get<1>(tupleb) << tab;
+	cout << std::get<2>(tupleb) << tab;
+	cout << std::get<3>(tupleb) << tab;
+	cout << std::get<4>(tupleb) << tab;
 
 	swap(tuplea, tupleb);
-	screen << std::get<0>(tupleb) << tab;
-	screen << std::get<1>(tupleb) << tab;
-	screen << std::get<2>(tupleb) << tab;
-	screen << std::get<3>(tupleb) << tab;
-	screen << std::get<4>(tupleb) << tab;
+	cout << std::get<0>(tupleb) << tab;
+	cout << std::get<1>(tupleb) << tab;
+	cout << std::get<2>(tupleb) << tab;
+	cout << std::get<3>(tupleb) << tab;
+	cout << std::get<4>(tupleb) << tab;
 
 	typedef std::tuple<int, double, int, double> Mytuple;
 	Mytuple c0(0, 1, 2, 3);
 
 	// display contents " 0 1 2 3"
-	screen << " " << std::get<0>(c0);
-	screen << " " << std::get<1>(c0);
-	screen << " " << std::get<2>(c0);
-	screen << " " << std::get<3>(c0);
-	screen << el;
+	cout << " " << std::get<0>(c0);
+	cout << " " << std::get<1>(c0);
+	cout << " " << std::get<2>(c0);
+	cout << " " << std::get<3>(c0);
+	cout << el;
 
 	int v4 = 4;
 	double v5 = 5;
@@ -1773,18 +1848,18 @@ void CSDIView::OnStlTupleTest()
 	std::tie(v4, v5, v6, v7) = c0;
 
 	// display contents " 0 1 2 3"
-	screen << " " << v4;
-	screen << " " << v5;
-	screen << " " << v6;
-	screen << " " << v7;
-	screen << el;
+	cout << " " << v4;
+	cout << " " << v5;
+	cout << " " << v6;
+	cout << " " << v7;
+	cout << el;
 	v7 = 10;
-	screen << " " << std::get<3>(c0);
-	screen << el;
+	cout << " " << std::get<3>(c0);
+	cout << el;
 	std::get<0>(c0) = 8;
 	v4 = 9;
-	screen << " " << std::get<0>(c0);
-	screen << " " << v4;
+	cout << " " << std::get<0>(c0);
+	cout << " " << v4;
 	)
 
 }
@@ -1801,6 +1876,7 @@ struct typestruct {
 
 void CSDIView::OnStlTypeTest()
 {
+	SimulationStdCout;
 	lcode(
 		CString s;
 	string s2;
@@ -1816,9 +1892,9 @@ void CSDIView::OnStlTypeTest()
 	cout << (int*)NULL << tab << sizeof(void*) << tab << typeid(int*).name() << el;
 	);
 	lscode(
-		cout << &cout << tab << &screen << el;
+		cout << &cout << tab << &cout << el;
 	showtype(cout);
-	showtype(screen);
+	showtype(cout);
 	cout << address(cout) << el;
 	cout << address(std::cout) << el;
 	cout << this << tab << &s << tab << &s2 << tab << &x << el;
@@ -1873,7 +1949,7 @@ void CSDIView::OnStlTypeTest()
 
 void CSDIView::OnInitalListTest()
 {
-	makedc(cout);
+	SimulationStdCout;
 	lscode(
 		NTIME(4) {
 		cout << ix << tab << "good" << tab;
@@ -1897,48 +1973,125 @@ void CSDIView::OnInitalListTest()
 class ptr
 {
 public:
-	PCDC& the;
-	CString createname;
+	CString createname = _T("noname");
+	PCDC* pdc = nullptr;
+	int mid = 0;
+	static int iall;
+	static int icreate;
 public:
-	ptr(PCDC& dc,CString s):the(dc),createname(s)
+	ptr() {
+		static int i = 0;
+		++i;
+		iall = i;
+	}
+	ptr(PCDC& dc, CString s) : createname(s)
 	{
-		the <<createname<<" is create" << el;
+		icreate++;
+		dc << createname << " is create,iall is" << tab << iall << tab << "icreate is " << tab << icreate << el;
+		pdc = &dc;
+	}
+	bool set(PCDC& dc, int id, CString s = CString("noname"))
+	{
+		mid = id;
+		pdc = &dc;
+		createname = s;
+		return true;
 	}
 	~ptr()
 	{
-		the <<createname<<" is decreate" << el;
+		--iall;
+		if (pdc)
+			*pdc << createname << " is decreate,iall is" << tab << iall << tab << "icreate is " << tab << icreate << el;
 	}
 };
 
+int ptr::iall = 0;
+int ptr::icreate = 0;
+
+//#ifndef _MAKE_UNIQUE_HPP_
+//#define _MAKE_UNIQUE_HPP_
+//#include <type_traits>
+//#include <memory>
+//
+// 单一元素类模板定义
+//template <typename T>
+//using Ele = typename std::enable_if<!std::is_array<T>::value, std::unique_ptr<T> >::type;
+//
+// 变长数组类模板定义
+//template <typename T>
+//using Slice = typename std::enable_if<std::is_array<T>::value&& std::extent<T>::value == 0, std::unique_ptr<T>>::type;
+//
+// 定长数组类模板定义
+//template <typename T>
+//using Arr = typename std::enable_if<std::extent<T>::value != 0, void>::type;
+//
+// 支持普通指针
+//template <typename T, typename ... Args> inline
+//Ele<T> make_unique(Args && ... args) {
+//	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+//}
+//
+// 支持动态数组
+//template <typename T> inline
+//Slice<T> make_unique(size_t size) {
+//	using U = typename std::remove_extent<T>::type;
+//	return std::unique_ptr<T>(new U[size]);
+//}
+//
+// 过滤定长数组
+//template <typename T, typename ... Args>
+//Arr<T> make_unique(Args &&...) = delete;
+//
+//#endif
+
 void CSDIView::OnPtrUniqueTest()
 {
-	//
 	SimulationStdCout;
-	cout << cut;
 	lscode(
-	ptr one(cout,CString("one"));
+		unique_ptr<ptr[]>three = make_unique<ptr[]>(10);
+	CString s;
+	CString name = _T("array unique_ptr#");
+	CString finalname;
+	for (int i = 0; i < 10; ++i) {
+		s.Format(_T("%ld"), i);
+		finalname = name + s;
+		three[i].set(cout, i, finalname);
+	}
+	lscode(cout << three[0].createname << el;);
+	showtype(cout);
 	);
-	cout << cut;
-	lscode(
-	auto p=make_unique<ptr>(cout,CString("unique_ptr p"));
-	);
-	cout << cut;
-	lscode(
-	unique_ptr<ptr>two(new ptr(cout, CString("unique_ptr_two")));
-	);
-	cout << cut;
-	lscode(
-	unique_ptr<ptr>three=unique_ptr<ptr>(new ptr(cout, CString("unique_ptr_temp")));
-	);
-	cout << cut;
-	lscode(cout<<three->createname<<el;);
-	cout << cut;
-	lscode(three.reset(new ptr(cout,CString("unique_ptr_threereset_tmp"))));
-	cout<<cut;
-	auto parr = unique_ptr< ptr[] >(new ptr[10]);
-
 
 }
+
+
+void CSDIView::OnLvalRvalTest()
+{
+	// TODO: lVAL RVAL
+	SimulationStdCout;
+	lscode(
+		int&& o = 4; cout << o << tab;
+	const int&& g = 4;
+	const int c = 5;
+	o = 8;
+	cout << o << el;
+	showtype(o);
+	showtype(int&&);
+	);
+	lscode(
+		vector<int>va = { 1,3,5,5,9,10 };
+	for (auto i : va)
+		cout << i << tab;
+	cout << el;
+	);
+	lscode(
+		map<int, float>mapa = { {2,3.2},{3,4.2},{5,6.7},{7,8.8} };
+	for (auto i : mapa)
+		cout << i.first << " , " << i.second << tab;
+	cout << el;
+	);
+
+}
+
 
 
 

@@ -8,6 +8,11 @@
 #include "CDialogExDoModal.h"
 #include "PCDC.h"
 
+
+extern PCDC out;
+
+
+
 class CSDIView : public CView
 {
 protected: // 仅从序列化创建
@@ -24,8 +29,7 @@ public:
 	unsigned int step = 20;
 
 public:
-	PCDC cout;
-	PCDC &screen=cout;
+	PCDC& cout = out;
 	CDC* m_dc;
 	RECT m_max_rect = { 5,100,1890,2045 };
 	LOGFONT  m_userset_logfont = { 0 };
@@ -105,6 +109,7 @@ public:
 	afx_msg void OnStlTypeTest();
 	afx_msg void OnInitalListTest();
 	afx_msg void OnPtrUniqueTest();
+	afx_msg void OnLvalRvalTest();
 };
 
 #ifndef _DEBUG  // SDIView.cpp 中的调试版本

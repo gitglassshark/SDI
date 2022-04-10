@@ -79,6 +79,8 @@
 #define ID_INITAL_LIST_TEST             32832
 #define ID_32833                        32833
 #define ID_PTR_UNIQUE_TEST              32834
+#define ID_32835                        32835
+#define ID_LVAL_RVAL_TEST               32836
 #define IDS_ERRMESSAGE                  61204
 
 // Next default values for new objects
@@ -86,7 +88,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32835
+#define _APS_NEXT_COMMAND_VALUE         32837
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

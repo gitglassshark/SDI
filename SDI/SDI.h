@@ -31,6 +31,19 @@
 		objectname##.messagelog.push_back(strmessage);\
 		}
 
+#define LOG(objectname)  {\
+		CString strmessage;\
+		static unsigned long icount = 0;\
+		++icount;\
+		strmessage.Format(_T("Run Path in %ldth times,The Class:$"), icount);\
+		strmessage += " @";\
+		strmessage += __func__;\
+		strmessage += "()";\
+		strmessage += " file: *";\
+		strmessage += __FILE__;\
+		objectname##.messagelog.push_back(strmessage);\
+		}
+
 #endif
 
 #ifndef _DEBUG
@@ -168,7 +181,8 @@
 
 #ifndef st
 
-#define st(string) (_T(#string))
+#define st(...) (_T(###__VA_ARGS__))
+
 
 #endif	
 
@@ -181,8 +195,6 @@
 #define OBSIZEBEGIN(vectorname,stringname) vector<CAtlString> vectorname;CAtlString stringname;
 
 #define  OBSIZE(obname,message,v) 	{message.Format(_T("The "#obname" size of is %d"), sizeof(obname));v.push_back(message);}
-
-
 
 
 class CColor {
@@ -232,3 +244,6 @@ public:
 };
 
 extern CSDIApp theApp;
+
+
+

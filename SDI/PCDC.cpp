@@ -2,8 +2,8 @@
 #include "PCDC.h"
 #include "SDI.h"
 
-extern class CColor dccr;
 
+extern class CColor dccr;
 
 PCDC& starline(PCDC& dc)
 {
@@ -54,10 +54,28 @@ PCDC& el(PCDC& dc)
 }
 
 
-PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
+
+size_t PCDC::icount = 0;
+
+PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {
-	return (*op) (*this);
+	if (!pwnd) {
+		return;
+	}
+	id = icount;
+	++icount;
+	Create(pwnd);
 }
+
+
+PCDC::~PCDC()
+{
+	*this << starline;
+	--icount;
+	*this << "#" << id << st(cout is be destory...) <<" count is "<<icount<< el;
+	this->Release();
+}
+
 
 PCDC& PCDC::Create(CWnd* pwnd)
 {
@@ -98,19 +116,14 @@ PCDC& PCDC::Create(CWnd* pwnd)
 	}
 	*this << cl;
 	icreate = true;
+	*this << "#" << id << st(cout is be ready...) <<" count is "<<icount<< el;
+	*this << starline;
 	return *this;
 }
 
-PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
-{
-	if (!pwnd) {
-		return;
-	}
-	Create(pwnd);
-}
 
 PCDC& PCDC::Release()
-{   
+{
 	if (!icreate)
 		return *this;
 	CDC& dc = *this;
@@ -123,9 +136,129 @@ PCDC& PCDC::Release()
 	return *this;
 }
 
-PCDC::~PCDC()
+
+const CSize& PCDC::imresizeout(const CString& cs)
 {
-	this->Release();
+	m_pwnd->GetClientRect(&mrect);
+	msize = GetOutputTextExtent(cs);
+
+	CString news('x');
+	auto size = GetOutputTextExtent(news);
+
+	LONG linelen = mrect.right - mrect.left - initalpos * 2;
+	LONG strlen = msize.cx;
+	int cslen = cs.GetLength();
+	news = cs;
+	CString heads;
+	CString tails;
+	int tkpos = cslen * linelen / strlen - 1;
+	if (strlen > (linelen - size.cx)) {
+		for (int i = cslen; i >= 0; i -= tkpos)
+		{
+			heads = news.Mid(0, tkpos);
+			tails = news.Mid(tkpos, news.GetLength());
+			imresizeout(heads);
+			news = tails;
+		}
+	}
+	else {
+		if (p.x + msize.cx >= mrect.right - mrect.left - initalpos)
+		{
+			p.x = mrect.left + initalpos;
+			p.y += step;
+		}
+		if (p.y >= mrect.bottom - mrect.top - initalpos)
+		{
+			this->FillSolidRect(mrect, m_bk);
+			this->clearscreen();
+			p.y = mrect.top + initalpos + wbar;
+		}
+		//need recalc ned***
+		TextOutW(p.x, p.y, cs);
+		p.x += msize.cx;
+	}
+	return msize;
+
+}
+
+
+PCDC& PCDC::resettcolor()
+{
+	this->SetTextColor(m_tk);
+	return *this;
+}
+
+
+PCDC& PCDC::settcolor(COLORREF tk)
+{
+	this->SetTextColor(tk);
+	return *this;
+}
+
+
+PCDC& PCDC::setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk)
+{
+	m_bk = bk;
+	m_tk = tk;
+	m_bark = bar;
+	m_linek = line;
+	return *this;
+}
+
+
+PCDC& PCDC::setimod(int imod)
+{
+	this->ilinemod = imod;
+	return *this;
+}
+
+
+const char PCDC::setlinechar(const char& c)
+{
+	char rc = this->mlinechar;
+	this->mlinechar = c;
+	return rc;
+}
+
+
+const void PCDC::clearscreen(const CRect* r, const COLORREF* cr)
+{
+	m_pwnd->GetClientRect(&mrect);
+	CRect rect(mrect);
+	if (r != nullptr)
+	{
+		mrect = *r;
+	}
+	else
+	{
+		cr != nullptr ? m_bk = *cr : true;
+		p.x = mrect.left + initalpos;
+		p.y = mrect.top + wbar * 3;// +initalpos;
+
+		rect.left = 0;
+		rect.top = 0;
+		FillSolidRect(rect, m_bark);
+
+		rect.bottom -= wbar;
+		rect.left += wbar;
+		rect.right -= wbar;
+		rect.top += wbar;
+		FillSolidRect(rect, m_linek);
+	}
+
+	wbar = 12;
+	rect.bottom -= wbar;
+	rect.left += wbar;
+	rect.right -= wbar;
+	rect.top += wbar;
+	FillSolidRect(rect, m_bk);
+
+};
+
+
+PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
+{
+	return (*op) (*this);
 }
 
 
@@ -141,10 +274,22 @@ PCDC& PCDC::operator <<(LPCTSTR cs)
 }
 
 
-PCDC& PCDC::operator <<(const char* cs)
+//PCDC& PCDC::operator <<(const char* cs)
+//{
+//	//
+//	if ((cs != nullptr) && (strlen(cs)))
+//	{
+//		ms = cs;
+//		imresizeout(ms);
+//	}
+//	return *this;
+//}
+
+
+PCDC& PCDC::operator <<(char const cs[] )
 {
 	//
-	if ((cs != nullptr) && (*cs != '\0'))
+	if ((cs != nullptr) && (strlen(cs)))
 	{
 		ms = cs;
 		imresizeout(ms);
@@ -162,6 +307,7 @@ PCDC& PCDC::operator <<(const CAtlString& s)
 	//
 	return *this;
 }
+
 
 PCDC& PCDC::operator <<(const std::wstring& s)
 {
@@ -193,6 +339,35 @@ PCDC& PCDC::operator <<(const CString& s)
 	if (!s.IsEmpty()) {
 		imresizeout(s);
 	}
+	//
+	return *this;
+}
+
+
+PCDC& PCDC::operator <<(const int n)
+{
+	//
+	ms.Format(_T("%ld"), n);
+	imresizeout(ms);
+	//
+	return *this;
+}
+
+
+PCDC& PCDC::operator<<(const char c)
+{
+	//
+	ms = c;
+	if (c == '\n') {
+		p.y += step;
+		p.x = initalpos;
+		return *this;
+	}
+	if (c == '\t')
+	{
+		ms = "    ";
+	}
+	imresizeout(ms);
 	//
 	return *this;
 }
@@ -268,35 +443,6 @@ PCDC& PCDC::operator <<(const bool b)
 	}
 	imresizeout(ms);
 
-	//
-	return *this;
-}
-
-
-PCDC& PCDC::operator <<(const int n)
-{
-	//
-	ms.Format(_T("%ld"), n);
-	imresizeout(ms);
-	//
-	return *this;
-}
-
-
-PCDC& PCDC::operator<<(const char c)
-{
-	//
-	ms = c;
-	if (c == '\n') {
-		p.y += step;
-		p.x = initalpos;
-		return *this;
-	}
-	if (c == '\t')
-	{
-		ms = "    ";
-	}
-	imresizeout(ms);
 	//
 	return *this;
 }

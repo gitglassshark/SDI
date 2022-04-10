@@ -156,4 +156,10 @@ void CSDIApp::OnAppAbout()
 // CSDIApp 消息处理程序
 
 
+int fun(int)
+{
+	{	LOG(theApp);	}
+	return 100;
+}
 
+int ilook = fun(100);

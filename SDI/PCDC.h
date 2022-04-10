@@ -10,9 +10,10 @@
 #include <string>
 #include "SDI.h"
 
+
 #define nonull(v) (((v )!=nullptr )&&(&(v )!=nullptr ) )
 
-
+class PCDC;
 extern class CColor dccr;
 
 typedef struct _tag_iosset {
@@ -20,8 +21,6 @@ typedef struct _tag_iosset {
 	byte flag;
 
 }ioset;
-
-class PCDC;
 
 PCDC& cl(PCDC& dc);
 PCDC& cut(PCDC& dc);
@@ -40,6 +39,8 @@ public:
 	const LONG initalstep = 20;
 	LONG step = initalstep;
 	int ilinemod = 26;
+	static size_t icount;
+	size_t id=0;
 
 
 public:
@@ -59,9 +60,6 @@ public:
 
 
 public:
-
-
-public:
 	PCDC(CWnd* pwnd = nullptr);
 	PCDC& Create(CWnd* pwnd);
 	PCDC& Release();
@@ -72,7 +70,8 @@ public:
 
 public:
 	PCDC& operator<<(const char c);
-	PCDC& operator<<(const char* s);
+	//PCDC& operator<<(const char* s);
+	PCDC& operator<<(char const cs[] );
 	PCDC& operator<<(LPCTSTR s);
 	PCDC& operator<<(const std::string& s);
 	PCDC& operator<<(const std::wstring& s);
@@ -92,115 +91,14 @@ public:
 	PCDC& operator<< (PCDC& (*op) (PCDC& dc));
 
 
-
 public:
-	inline PCDC& resettcolor()
-	{
-		this->SetTextColor(m_tk);
-		return *this;
-	}
-	inline PCDC& settcolor(COLORREF tk)
-	{
-		this->SetTextColor(tk);
-		return *this;
-	}
-	inline PCDC& setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk)
-	{
-		m_bk = bk;
-		m_tk = tk;
-		m_bark = bar;
-		m_linek = line;
-		return *this;
-	}
-	inline PCDC& setimod(int imod)
-	{
-		this->ilinemod = imod;
-		return *this;
-	}
-	inline const char setlinechar(const char& c = '=')
-	{
-		char rc = this->mlinechar;
-		this->mlinechar = c;
-		return rc;
-	}
-	inline const void clearscreen(const CRect* r = nullptr, const COLORREF* cr = nullptr)
-	{
-		m_pwnd->GetClientRect(&mrect);
-		CRect rect(mrect);
-		if (r != nullptr)
-		{
-			mrect = *r;
-		}
-		else
-		{
-			cr != nullptr ? m_bk = *cr : true;
-			p.x = mrect.left + initalpos;
-			p.y = mrect.top + wbar * 3;// +initalpos;
-
-			rect.left = 0;
-			rect.top = 0;
-			FillSolidRect(rect, m_bark);
-
-			rect.bottom -= wbar;
-			rect.left += wbar;
-			rect.right -= wbar;
-			rect.top += wbar;
-			FillSolidRect(rect, m_linek);
-		}
-
-		wbar = 12;
-		rect.bottom -= wbar;
-		rect.left += wbar;
-		rect.right -= wbar;
-		rect.top += wbar;
-		FillSolidRect(rect, m_bk);
-
-	};
-
-
-	inline const CSize& imresizeout(const CString& cs)
-	{
-		m_pwnd->GetClientRect(&mrect);
-		msize = GetOutputTextExtent(cs);
-
-		CString news('x');
-		auto size = GetOutputTextExtent(news);
-
-		LONG linelen = mrect.right - mrect.left - initalpos * 2;
-		LONG strlen = msize.cx;
-		int cslen = cs.GetLength();
-		news = cs;
-		CString heads;
-		CString tails;
-		int tkpos = cslen * linelen / strlen - 1;
-		if (strlen > (linelen - size.cx)) {
-			for (int i = cslen; i >= 0; i -= tkpos)
-			{
-				heads = news.Mid(0, tkpos);
-				tails = news.Mid(tkpos, news.GetLength());
-				imresizeout(heads);
-				news = tails;
-			}
-		}
-		else {
-			if (p.x + msize.cx >= mrect.right - mrect.left - initalpos)
-			{
-				p.x = mrect.left + initalpos;
-				p.y += step;
-			}
-			if (p.y >= mrect.bottom - mrect.top - initalpos)
-			{
-				this->FillSolidRect(mrect, m_bk);
-				this->clearscreen();
-				p.y = mrect.top + initalpos + wbar;
-			}
-			//need recalc ned***
-			TextOutW(p.x, p.y, cs);
-			p.x += msize.cx;
-		}
-		return msize;
-
-	}
+	PCDC& resettcolor();
+	PCDC& settcolor(COLORREF tk);
+	PCDC& setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk);
+	PCDC& setimod(int imod);
+	const char setlinechar(const char& c = '=');
+	const void clearscreen(const CRect* r = nullptr, const COLORREF* cr = nullptr);
+	const CSize& imresizeout(const CString& cs);
 
 
 public:
@@ -216,14 +114,13 @@ public:
 	template <typename T> PCDC& operator <<(const deque<T>& d);
 
 
-
 };
 
 
 template<typename T>
-PCDC& PCDC::operator <<(T* n)
+PCDC& PCDC::operator <<( T* p)
 {
-	ms.Format(_T("%p"), n);
+	ms.Format(_T("%p"), p);
 	imresizeout(ms);
 	return *this;
 };
@@ -233,7 +130,7 @@ template<typename Tstring>
 PCDC& PCDC::operator <<(Tstring s)
 {
 	//
-	if (decltype(s) == decltype(NULL)|| decltype(s) == decltype(nullptr) || decltype(s) == decltype(void*))
+	if (decltype(s) == decltype(NULL) || decltype(s) == decltype(nullptr) || decltype(s) == decltype(void*))
 	{
 		ms.Format(_T("%p"), s);
 	}
@@ -338,7 +235,6 @@ template <typename T> PCDC& PCDC::operator <<(const multiset<T>& s)
 }
 
 
-
 template <typename T> PCDC& PCDC::operator <<(const set<T>& s)
 {
 	int il = 0;
@@ -373,6 +269,7 @@ template <typename T> PCDC& PCDC::operator <<(const list<T>& l)
 	*this << el;
 	return *this;
 }
+
 
 template<typename Tstring>
 PCDC& PCDC::titleline(const Tstring& s)
@@ -410,6 +307,7 @@ PCDC& PCDC::titleline(const Tstring& s)
 	return dc;
 }
 
+
 template <typename T>
 CString address(T& x)
 {
@@ -432,8 +330,6 @@ bool swap(T& a, T& b)
 	}
 	return false;
 }
-
-
 
 
 
