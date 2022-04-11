@@ -61,11 +61,12 @@
 
 #define showcode(...)	lcode(__VA_ARGS__)
 #define showcodes(...)	lcode(__VA_ARGS__)
-#define lscode(...)  lcode(__VA_ARGS__);
+#define lscode(...)  lcode(__VA_ARGS__)
 
 #define sst(code,...)  #code##","#__VA_ARGS__
 #define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab;
-#define showtype(type)  cout<<"TYPE: "<<#type<<tab<<"NAME:  "<<typeid(type).name()<<tab <<"SIZE:  "<<sizeof(type)<<el;
+#define showtype(...)  cout<<"NAME: "<<#__VA_ARGS__<<tab<<"TYPE:  "<<typeid(##__VA_ARGS__).name()<<tab <<"SIZE:  "<<sizeof(##__VA_ARGS__)<<"  HASHCODE:"<<typeid(##__VA_ARGS__).hash_code()<<el;
+
 
 #define RUNTEST(message)		cout.clearscreen();\
 								cout.titleline(wstring(st(message)));
@@ -82,9 +83,8 @@ bool showinfo(PCDC* the, const T& c)
 	return true;
 };
 
+
 PCDC out;
-
-
 
 class CColor dccr;
 int a;
@@ -147,6 +147,7 @@ BEGIN_MESSAGE_MAP(CSDIView, CView)
 	ON_COMMAND(ID_INITAL_LIST_TEST, &CSDIView::OnInitalListTest)
 	ON_COMMAND(ID_PTR_UNIQUE_TEST, &CSDIView::OnPtrUniqueTest)
 	ON_COMMAND(ID_LVAL_RVAL_TEST, &CSDIView::OnLvalRvalTest)
+	ON_COMMAND(ID_STL_STD_FORWARD_TEST, &CSDIView::OnStlStdForwardTest)
 END_MESSAGE_MAP()
 
 // CSDIView 构造/析构
@@ -223,7 +224,7 @@ POINT CSDIView::SetPoint(int x, int y, POINT* p) {
 
 void CSDIView::OnPaint() {
 	{	LOGMESSAGE(theApp);	}
-	//cout.Release();
+	//out.Create(this);
 	// 用于绘制的设备上下文
 	CPaintDC dc(this);
 	//设置字体颜色，准备DC
@@ -236,7 +237,7 @@ void CSDIView::OnPaint() {
 
 	//恢复用户字体DC
 	RestoreDCFont(dc);
-	//cout.Create(this);
+	//out.Release();
 }
 //using namespace std;
 
@@ -527,6 +528,14 @@ void CSDIView::OnObjectSize()
 		showtype(WINDOWPLACEMENT);
 		showtype(AFX_MSGMAP);
 		showtype(AFX_MSGMAP_ENTRY);
+		showtype(LPARAM);
+		showtype(WPARAM);
+		showtype(string);
+		showtype(CAtlString);
+		showtype(CString);
+		showtype(DWORD);
+		showtype(WORD);
+		showtype(dccr.berry);
 	}
 
 	if (ichoice == 2)
@@ -535,7 +544,13 @@ void CSDIView::OnObjectSize()
 		showtype(byte);
 		showtype(BYTE);
 		showtype(char);
+		showtype(char&);
+		showtype(const char);
+		showtype(const char&);
 		showtype(int);
+		showtype(int&);
+		showtype(const int);
+		showtype(const int&);
 		showtype(short);
 		showtype(long);
 		showtype(LONG);
@@ -548,24 +563,23 @@ void CSDIView::OnObjectSize()
 		showtype(size_t);
 		showtype(NULL);
 		showtype(void*);
+		showtype(int*);
+		showtype(const int*);
+		showtype(int*&);
+		showtype(const int*&);
+		showtype(char*);
+		showtype(const char*);
+		showtype(char*&);
 		showtype(uintptr_t);
 		showtype(intptr_t);
 		showtype(shared_ptr<int>);
 		showtype(unique_ptr<int>);
 		showtype(nullptr);
-		showtype(LPARAM);
-		showtype(WPARAM);
-		showtype(string);
-		showtype(CAtlString);
-		showtype(CString);
 		showtype(set<int>);
 		showtype(vector<int>);
-		showtype(DWORD);
-		showtype(WORD);
-		showtype(int&);
-		showtype(dccr.berry);
-		showtype('a');
-		showtype(0);
+		showtype(map<int, string>);
+		showtype(multimap<int, string>);
+		showtype(tuple<int, string, CString>);
 	}
 
 }
@@ -1034,8 +1048,13 @@ void CSDIView::OnExceptCatchTest()
 void CSDIView::OnPCDCFunctionTest()
 {
 	SimulationStdCout;
+
+	static size_t imod = 0;
+
+	cout << cl;
 	lscode(
-		char ca = 'a';
+		lscode(
+			char ca = 'a';
 	int ia = 10;
 	float fa = 31.1;
 	bool iba = true;
@@ -1043,45 +1062,80 @@ void CSDIView::OnPCDCFunctionTest()
 	long long lla = 256 * 256 * 25650;
 	double da = 62.444;
 	long double lda = 262.844;
+	size_t icount = 50;
 	int* ip = &ia;
 	char* cp = &ca;
 	long* lp = &la;
 	long long* llp = &lla;
 	double* dp = &da;
-	char* chp = "good char";
-	CAtlString catlstr = st(Smilate termial console mfc DC test , CAtlString...);
-	CString cstr = st(Smilate termial console mfc DC test ,CString...);
-	std::string cs = "This is a string..";
-	std::wstring wcs = L"This is a Wstring..";
-	size_t icount = 50;
-	cout << "beging test dc..." << tab << st(print value) << el;
-	cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
-	cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
-	cout << chp << el;
-	cout << catlstr << el;
-	cout << cstr << el;
-	cout << cs << el;
-	cout << wcs << el;
-	showtype("beging test dc...");
+	char* chp = "const char []";
+	char chpa[] = "char []";
+	CAtlString catlstr = st(Smilate termial console mfc DC test, CAtlString...);
+	CString cstr = st(Smilate termial console mfc DC test, CString...);
+	std::string cs = "This is a string...   ";
+	std::wstring wcs = L"This is a Wstring...   ";
 	);
 
+	if (imod % 4 == 0)
+	{
 
-	//cout << starline;
-	//cout << theApp.messagelog.size() << el;
+		{
+			cout << "beging test dc..." << tab << st(print value) << el;
+			cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
+		}
+		);
 
-	////循环输出程序运行顺序记录
-	//for (auto& i : theApp.messagelog) {
-	//	cout << i << el;
-	//}
-	//for (size_t i = 0; i < 5; )
-	//{
-	//	cout << ++i << "#" << el;
-	//	for (size_t i = 0; i < 10;)
-	//	{
-	//		cout << ++i * 10 << tab;
-	//	}
-	//	cout << __func__ << __LINE__ << el;
-	//}
+	lscode(
+		{
+		cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
+		}
+	);
+
+	lscode(
+		{
+		cout << chp << tab; showtype(chp);
+		cout << chpa << tab;  showtype(chpa);
+		cout << catlstr << tab; showtype(catlstr);
+		cout << cstr << tab; showtype(cstr);
+		cout << cs << tab; showtype(cs);
+		cout << wcs << tab; showtype(wcs);
+		}
+	);
+	}
+	lscode(
+		vector<int>va = { 12,234,56,78,892,8,235,86 };
+	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	);
+	if (imod % 4 == 1)
+	{
+		lcode(
+			{
+			cout << va << el << mif << el;
+			}
+		);
+	}
+
+	if (imod % 4 == 2)
+	{
+		cout << cl;
+		cout.pl(icount, ca, ia, fa, iba, la, lla, da,cs,wcs);
+		cout.pb(icount, ca, ia, fa, iba, la, lla, da,cstr);
+		cout.pc(icount, ca, ia, fa, iba, la, lla, da,cstr);
+		cout.pt(icount, ca, ia, fa, iba, la, lla, da);
+		cout.adress(da);
+		lscode(
+		cout.pt(va, mif)<< cut;
+		cout.pb(va,mif)<<cut;
+		cout.pc(va,mif)<<cut;
+		cout.type(cout,ca,ia);
+		);
+	}
+
+	++imod;
+	if (imod == 3)
+		imod = 0;
+	//cout << theApp.messagelog;
+
 
 }
 
@@ -1606,7 +1660,9 @@ int ntest(PCDC& dc, string p)
 	return 0;
 }
 
+
 typedef int (*pfunc)(PCDC&, string);
+
 
 #define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
 					pfunc p=fname;\
@@ -1665,6 +1721,7 @@ T returnt()
 	}
 	return 100.22 * ib;
 };
+
 
 void CSDIView::OnSTLArgTest()
 {
@@ -1745,24 +1802,27 @@ void CSDIView::OnCxx20StlConceptTest()
 
 }
 
+
 int igi = 88;
 typedef int (*PFU)(int);
 using PTRFUN = int (*)(int);
 
+
 void CSDIView::OnLamdbaFuncTest()
 {
 	// TODO 测试lamdba表达式
+	SimulationStdCout;
 	lscode(
 		int x = 1, y = 2;
-	auto funl = [](int val)mutable ->int {
+	auto funl = [&](int val)mutable ->int {
 		int z = 10;
-		out << "in lamdba,val is: " << val << "  z is : " << z << el;
+		cout << "in lamdba,val is: " << val << "  z is : " << z << el;
 		return z;
 	};
 	function<int(int)> p = funl;
-	out << p(100);
+	cout << p(100);
 	SHOW(x); SHOW(y);
-	out << el;
+	cout << el;
 	);
 	lscode(
 		showtype(p);
@@ -1778,10 +1838,6 @@ void CSDIView::OnLamdbaFuncTest()
 	function<int(int)> p1 = funl1;
 	showtype(funl1);
 	showtype(p1);
-	);
-	lcode(
-		PTRFUN p3 = funl;
-	cout << p3(100) << tab;
 	);
 	lcode(
 		int m = 7, n = 6;
@@ -1864,15 +1920,18 @@ void CSDIView::OnStlTupleTest()
 
 }
 
+
 int f(int a, int b)
 {
 	return a + b;
 }
 
+
 template<class T>
 struct typestruct {
 	typedef map<int, T> mytype;
 };
+
 
 void CSDIView::OnStlTypeTest()
 {
@@ -2052,7 +2111,7 @@ void CSDIView::OnPtrUniqueTest()
 	CString s;
 	CString name = _T("array unique_ptr#");
 	CString finalname;
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		s.Format(_T("%ld"), i);
 		finalname = name + s;
 		three[i].set(cout, i, finalname);
@@ -2060,6 +2119,9 @@ void CSDIView::OnPtrUniqueTest()
 	lscode(cout << three[0].createname << el;);
 	showtype(cout);
 	);
+	int* pa = new int{ 99 };
+	unique_ptr<int>unaptr(pa);
+	cout << *unaptr << tab << unaptr << tab << address(unaptr) << tab << pa << tab; cout.type(unaptr);
 
 }
 
@@ -2089,6 +2151,79 @@ void CSDIView::OnLvalRvalTest()
 		cout << i.first << " , " << i.second << tab;
 	cout << el;
 	);
+
+}
+
+
+void fun(PCDC& out, int& a)
+{
+	out << "int& a" << tab << a << el;
+}
+
+
+void fun(PCDC& out, const int& a)
+{
+	out << "const int& a" << tab << a << el;
+}
+
+
+void fun(PCDC& out, int&& a)
+{
+	out << "int &&a " << tab << a << el;
+}
+
+void fun(PCDC& out, const int&& a)
+{
+	out << "const int &&a " << tab << a << el;
+}
+
+void fun(PCDC& out, int* a)
+{
+	out << "int* a " << tab << a << el;
+}
+
+
+template<typename T>
+void funt(PCDC& out, T&& a)
+{
+	out << typeid(std::forward<T>(a)).name() << tab << a << tab << typeid(T&&).name() << el;
+}
+
+template <typename T>
+void callf(PCDC& out, T&& v)
+{
+	fun(out, v);
+	fun(out, (T&&)v);
+	fun(out, (T&&)(v));
+	fun(out, std::forward<T>(v));
+}
+
+
+void CSDIView::OnStlStdForwardTest()
+{
+	SimulationStdCout;
+	lscode(
+		int i = 1;
+	int ia = 2;
+	const int ci = 3;
+	const int ic = 5;
+	int& r = ia;
+	int&& rr = 4;
+	const int& irc = ic;
+	const int&& irr = 7;
+	int* p = &i;
+	callf(cout, i);
+	callf(cout, ci);
+	callf(cout, r);
+	callf(cout, rr);
+	callf(cout, irc);
+	callf(cout, irr);
+	callf(cout, 7);
+	callf(cout, i + 7);
+
+	);
+
+
 
 }
 

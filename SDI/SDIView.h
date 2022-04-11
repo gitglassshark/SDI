@@ -110,6 +110,7 @@ public:
 	afx_msg void OnInitalListTest();
 	afx_msg void OnPtrUniqueTest();
 	afx_msg void OnLvalRvalTest();
+	afx_msg void OnStlStdForwardTest();
 };
 
 #ifndef _DEBUG  // SDIView.cpp 中的调试版本

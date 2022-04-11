@@ -3,13 +3,12 @@
 #include "SDI.h"
 
 
+size_t PCDC::icount = 0;
 extern class CColor dccr;
 
 PCDC& starline(PCDC& dc)
 {
 	CString cs;
-	CString st;
-	st = dc.mlinechar;
 	cs = dc.mlinechar;
 	CSize size = dc.GetOutputTextExtent(cs);
 	dc.m_pwnd->GetClientRect(&dc.mrect);
@@ -54,9 +53,6 @@ PCDC& el(PCDC& dc)
 }
 
 
-
-size_t PCDC::icount = 0;
-
 PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {
 	if (!pwnd) {
@@ -72,7 +68,7 @@ PCDC::~PCDC()
 {
 	*this << starline;
 	--icount;
-	*this << "#" << id << st(cout is be destory...) <<" count is "<<icount<< el;
+	*this << id << "#  " << st(Similation screen DC is be destory...) << " count is " << icount << el;
 	this->Release();
 }
 
@@ -116,7 +112,7 @@ PCDC& PCDC::Create(CWnd* pwnd)
 	}
 	*this << cl;
 	icreate = true;
-	*this << "#" << id << st(cout is be ready...) <<" count is "<<icount<< el;
+	*this << id << "#  " << st(Similation screen DC is be ready...) << " count is " << icount << el;
 	*this << starline;
 	return *this;
 }
@@ -253,7 +249,7 @@ const void PCDC::clearscreen(const CRect* r, const COLORREF* cr)
 	rect.top += wbar;
 	FillSolidRect(rect, m_bk);
 
-};
+}
 
 
 PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
@@ -264,7 +260,6 @@ PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
 
 PCDC& PCDC::operator <<(LPCTSTR cs)
 {
-	//
 	if ((cs != nullptr) && (*cs != '\0'))
 	{
 		ms = cs;
@@ -274,21 +269,19 @@ PCDC& PCDC::operator <<(LPCTSTR cs)
 }
 
 
-//PCDC& PCDC::operator <<(const char* cs)
-//{
-//	//
-//	if ((cs != nullptr) && (strlen(cs)))
-//	{
-//		ms = cs;
-//		imresizeout(ms);
-//	}
-//	return *this;
-//}
-
-
-PCDC& PCDC::operator <<(char const cs[] )
+PCDC& PCDC::operator <<(char cs[])
 {
-	//
+	if ((cs != nullptr) && (strlen(cs)))
+	{
+		ms = cs;
+		imresizeout(ms);
+	}
+	return *this;
+}
+
+
+PCDC& PCDC::operator <<(char const cs[])
+{
 	if ((cs != nullptr) && (strlen(cs)))
 	{
 		ms = cs;
@@ -300,63 +293,52 @@ PCDC& PCDC::operator <<(char const cs[] )
 
 PCDC& PCDC::operator <<(const CAtlString& s)
 {
-	//
 	if (!s.IsEmpty()) {
 		imresizeout(s);
 	}
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const std::wstring& s)
 {
-	//
 	if ((s.length()) && (s.at(0) != '\0')) {
 		ms = s.c_str();
 		imresizeout(ms);
 	}
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const std::string& s)
 {
-	//
 	if ((s.length()) && (s.at(0) != '\0')) {
 		ms = s.c_str();
 		imresizeout(ms);
 	}
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const CString& s)
 {
-	//
 	if (!s.IsEmpty()) {
 		imresizeout(s);
 	}
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const int n)
 {
-	//
 	ms.Format(_T("%ld"), n);
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator<<(const char c)
 {
-	//
 	ms = c;
 	if (c == '\n') {
 		p.y += step;
@@ -368,14 +350,12 @@ PCDC& PCDC::operator<<(const char c)
 		ms = "    ";
 	}
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const float n)
 {
-	//
 	ms.Format(_T("%4.2f"), n);
 	imresizeout(ms);
 	return *this;
@@ -384,7 +364,6 @@ PCDC& PCDC::operator <<(const float n)
 
 PCDC& PCDC::operator <<(const double n)
 {
-	//
 	ms.Format(_T("%f"), n);
 	imresizeout(ms);
 	return *this;
@@ -393,47 +372,38 @@ PCDC& PCDC::operator <<(const double n)
 
 PCDC& PCDC::operator <<(const long double n)
 {
-	//
 	ms.Format(_T("%lf"), n);
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const long int n)
 {
-	//
 	ms.Format(_T("%ld"), n);
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const long long n)
 {
-	//
 	ms.Format(_T("%lld"), n);
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const size_t n)
 {
-	//
 	ms.Format(_T("%zd"), n);
 	imresizeout(ms);
-	//
 	return *this;
 }
 
 
 PCDC& PCDC::operator <<(const bool b)
 {
-	//
 	if (b == true)
 	{
 		ms = st(true);
@@ -442,8 +412,6 @@ PCDC& PCDC::operator <<(const bool b)
 		ms = st(false);
 	}
 	imresizeout(ms);
-
-	//
 	return *this;
 }
 
