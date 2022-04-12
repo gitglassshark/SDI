@@ -548,3 +548,47 @@ num<C-a> :第一个遇到的数字加num
 num<C-x> :第一个遇到的数字减num 
 tips:
 :help [   index帮助文档中，所有命令
+	vector<CAtlString> v;
+	CAtlString csmessage;
+
+	static CHAR CHAR64BIT[256] = { 0 };
+	LONGLONG long64bit = 256 * 256 * 256 * 256 - 1;
+	Long64ToChar(long64bit, CHAR64BIT);
+	v.push_back(CAtlString(CHAR64BIT));
+	dc << CAtlString(CHAR64BIT) << el;
+
+	bitset<64> bit64a = 256;
+	string sbitstr;
+
+	sbitstr = bit64a.template to_string<char, char_traits<char>, allocator<char> >();
+
+	CAtlString catstrbit32(sbitstr.c_str());
+	v.push_back(CAtlString(catstrbit32));
+	dc << catstrbit32 << el;
+
+	bit64a = 256 * 256 * 256 * 256 * 256 * 256 * 256 * 256 - 1;
+	sbitstr = bit64a.template to_string<char, char_traits<char>, allocator<char> >();
+	v.push_back(CAtlString(sbitstr.c_str()));
+	dc << CAtlString(sbitstr.c_str()) << el;
+
+	dc.titleline(wstring(st(start test except catch try and throw...)));
+	dc << typeid(catstrbit32).name() << el;
+
+	for (auto& i : v) {
+		position.y += step;
+		dc << i << el;
+		//COUTCS((dc), i);
+
+       CAtlString csmessage;
+
+	static CHAR CHAR64BIT[256] = { 0 };
+	LONGLONG long64bit = 256 * 256 * 256 * 256 - 1;
+	Long64ToChar(long64bit, CHAR64BIT);
+
+	bitset<64> bit64a = this->m_int_decnum;
+	string sbitstr;
+
+	sbitstr = bit64a.template to_string<char, char_traits<char>, allocator<char> >();
+
+	CAtlString catstrbit32(sbitstr.c_str());
+

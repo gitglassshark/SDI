@@ -2,6 +2,7 @@
 #include <afxwin.h>
 #include <iostream>
 #include <set>
+#include <bitset>
 #include <list>
 #include <vector>
 #include <deque>
@@ -33,7 +34,7 @@ public:
 	bool icreate = false;
 	size_t id = 0;
 	static size_t icount;
-
+	int iargs = 0;
 
 public:
 	LONG wbar = 8;
@@ -118,8 +119,24 @@ public:
 	template <typename T, typename X> PCDC& operator <<(const multimap<T, X>& m);
 	template <typename T, typename X> PCDC& operator <<(const map<T, X>& m);
 	template <typename T> PCDC& operator <<(const set<T>& s);
+	template <typename  int N = 64> PCDC& operator <<(bitset<N>& bits)
+	{
+		string str = bits.to_string();
+		ms = str.c_str();
+		imresizeout(ms);
+		return *this;
+	}
+	template <typename  int N = 64> PCDC& operator <<(const bitset<N>& bits)
+	{
+		string str = bits.to_string();
+		ms = str.c_str();
+		imresizeout(ms);
+		return *this;
+	};
 	template <typename T> PCDC& operator <<(const multiset<T>& s);
 	template <typename T> PCDC& operator <<(const deque<T>& d);
+	template <typename T, size_t len> PCDC& operator <<(const array<T, len>& a);
+	template<typename T> PCDC& forprintr(T* b, T* e);
 	template<typename T> PCDC& forprintv(T&& v);
 	template<typename T> PCDC& forprintm(T&& m);
 	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
@@ -131,16 +148,43 @@ public:
 	template <typename T, typename ...X> PCDC& pc(T a, X...args);
 	template <typename X> PCDC& pb(X a);
 	template <typename T, typename ...X> PCDC& pb(T a, X...args);
-
 	PCDC& pl() { return *this; }
 	template <typename T, typename ...X> PCDC& pl(T a, X...args);
-
 	template <typename X> PCDC& adress(X a);
 	template <typename T, typename ...X> PCDC& adress(T a, X...args);
-
 	PCDC& type() { return *this; };
 	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
 
+
+public:
+	PCDC& args()
+	{
+		*this << __func__ << "  args4#" << iargs++ << el;
+		return *this;
+	}
+
+	template <typename X>
+	PCDC& args(X&& a)
+	{
+		*this << __func__ << "  args3#" << iargs++ << el;
+		return *this;
+	}
+
+	template <typename... X>
+	PCDC& args(X&&...Args)
+	{
+		*this << __func__ << "  args2#" << iargs++ << " sizeof is: " << sizeof...(Args) << el;
+		args((X&&)Args...);
+		return *this;
+	}
+
+	template <typename T, typename... X>
+	PCDC& args(T a, X&&...Args)
+	{
+		*this << __func__ << " args1# " << iargs++ << " sizeof is: " << sizeof...(Args) << el;
+		args((X&&)Args...);
+		return *this;
+	}
 
 };
 
@@ -243,7 +287,8 @@ PCDC& PCDC::operator <<(T* p)
 }
 
 
-template <typename X> PCDC& PCDC::operator <<(const unique_ptr<X>& unptr)
+template <typename X>
+PCDC& PCDC::operator <<(const unique_ptr<X>& unptr)
 {
 	ms.Format(_T("%p"), unptr.get());
 	imresizeout(ms);
@@ -281,6 +326,19 @@ void PCDC::linemod(S l, S linemod, PCDC& (*op)(PCDC&), char* stail)
 
 
 template<typename T>
+PCDC& PCDC::forprintr(T* b, T* e)
+{
+	int il = 0;
+	for (auto* it = b; it != e; ++it)
+	{
+		*this << *it << tab;
+		linemod(il, ilinemod);
+	}
+	return *this;
+}
+
+
+template<typename T>
 PCDC& PCDC::forprintv(T&& v)
 {
 	int il = 0;
@@ -306,7 +364,18 @@ PCDC& PCDC::forprintm(T&& m)
 }
 
 
-template <typename X> PCDC& PCDC::operator <<(const vector<X>& v)
+template <typename T, size_t len>
+PCDC& PCDC::operator <<(const array<T, len>& a)
+{
+	if (len == 0 || &a == nullptr)
+		return *this;
+	else
+		return forprintv(a);
+}
+
+
+template <typename X>
+PCDC& PCDC::operator <<(const vector<X>& v)
 {
 	if (v.empty())
 		return *this;
@@ -315,7 +384,8 @@ template <typename X> PCDC& PCDC::operator <<(const vector<X>& v)
 }
 
 
-template <typename T> PCDC& PCDC::operator <<(const deque<T>& d)
+template <typename T>
+PCDC& PCDC::operator <<(const deque<T>& d)
 {
 	if (d.empty())
 		return *this;
@@ -324,7 +394,8 @@ template <typename T> PCDC& PCDC::operator <<(const deque<T>& d)
 }
 
 
-template <typename T, typename X> PCDC& PCDC::operator <<(const map<T, X>& m)
+template <typename T, typename X>
+PCDC& PCDC::operator <<(const map<T, X>& m)
 {
 	if (!m.size())
 		return *this;
@@ -333,7 +404,8 @@ template <typename T, typename X> PCDC& PCDC::operator <<(const map<T, X>& m)
 }
 
 
-template <typename T, typename X> PCDC& PCDC::operator <<(const multimap<T, X>& m)
+template <typename T, typename X>
+PCDC& PCDC::operator <<(const multimap<T, X>& m)
 {
 	if (!m.size())
 		return *this;
@@ -342,7 +414,8 @@ template <typename T, typename X> PCDC& PCDC::operator <<(const multimap<T, X>& 
 }
 
 
-template <typename T> PCDC& PCDC::operator <<(const multiset<T>& s)
+template <typename T>
+PCDC& PCDC::operator <<(const multiset<T>& s)
 {
 	if (!s.size())
 		return *this;
@@ -351,7 +424,8 @@ template <typename T> PCDC& PCDC::operator <<(const multiset<T>& s)
 }
 
 
-template <typename T> PCDC& PCDC::operator <<(const set<T>& s)
+template <typename T>
+PCDC& PCDC::operator <<(const set<T>& s)
 {
 	if (!s.size())
 		return *this;
@@ -360,7 +434,10 @@ template <typename T> PCDC& PCDC::operator <<(const set<T>& s)
 }
 
 
-template <typename T> PCDC& PCDC::operator <<(const list<T>& l)
+
+
+template <typename T>
+PCDC& PCDC::operator <<(const list<T>& l)
 {
 	if (!l.size())
 		return *this;
@@ -428,6 +505,8 @@ bool swap(T& a, T& b)
 	}
 	return false;
 }
+
+
 
 
 

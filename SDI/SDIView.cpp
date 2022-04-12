@@ -27,6 +27,7 @@
 #include <memory>
 #include <set>
 #include <map>
+#include <array>
 #include <vector>
 #include <list>
 #include <deque>
@@ -616,42 +617,31 @@ void CSDIView::OnAutoSetFont()
 	dc.SelectObject(pOldFont);
 }
 
+
 void CSDIView::OnBitExChar()
 {
-	//设置字体颜色，准备DC
-	makedc(dc);
-
-	vector<CAtlString> v;
+	SimulationStdCout;
+	CAtlString catstrbit32;
 	CAtlString csmessage;
-
-	static CHAR CHAR64BIT[256] = { 0 };
-	LONGLONG long64bit = 256 * 256 * 256 * 256 - 1;
-	Long64ToChar(long64bit, CHAR64BIT);
-	v.push_back(CAtlString(CHAR64BIT));
-	dc << CAtlString(CHAR64BIT) << el;
-
-	bitset<64> bit64a = 256;
+	LONGLONG i = 256 * 256 * 256;
 	string sbitstr;
-
+	bitset<64> bit64a = 256;
+	vector<CAtlString> v;
 	sbitstr = bit64a.template to_string<char, char_traits<char>, allocator<char> >();
+	catstrbit32 = sbitstr.c_str();
 
-	CAtlString catstrbit32(sbitstr.c_str());
-	v.push_back(CAtlString(catstrbit32));
-	dc << catstrbit32 << el;
+	cout << bit64a << el;
+	cout << bitset<64>(256) << el;
+	cout << catstrbit32 << cut;
 
 	bit64a = 256 * 256 * 256 * 256 * 256 * 256 * 256 * 256 - 1;
+	cout << bit64a << el;
+
 	sbitstr = bit64a.template to_string<char, char_traits<char>, allocator<char> >();
-	v.push_back(CAtlString(sbitstr.c_str()));
-	dc << CAtlString(sbitstr.c_str()) << el;
+	cout << CAtlString(sbitstr.c_str()) << el;
 
-	dc.titleline(wstring(st(start test except catch try and throw...)));
-	dc << typeid(catstrbit32).name() << el;
-
-	for (auto& i : v) {
-		position.y += step;
-		dc << i << el;
-		//COUTCS((dc), i);
-	}
+	cout << typeid(catstrbit32).name() << el;
+	cout.titleline(wstring(st(start test except catch try and throw...)));
 
 }
 
@@ -1045,6 +1035,22 @@ void CSDIView::OnExceptCatchTest()
 }
 
 
+template<typename X>
+X value(X a)
+{
+	return a;
+}
+
+template<typename ...X>
+int  argsvalue(X...args)
+{
+	int i = 0;
+	int ai[] = { (value(args),0)... };
+	return i;
+}
+
+
+
 void CSDIView::OnPCDCFunctionTest()
 {
 	SimulationStdCout;
@@ -1053,8 +1059,7 @@ void CSDIView::OnPCDCFunctionTest()
 
 	cout << cl;
 	lscode(
-		lscode(
-			char ca = 'a';
+		char ca = 'a';
 	int ia = 10;
 	float fa = 31.1;
 	bool iba = true;
@@ -1078,61 +1083,74 @@ void CSDIView::OnPCDCFunctionTest()
 
 	if (imod % 4 == 0)
 	{
+		argsvalue(1, 2, 3, 4, 5);
+		lscode(
+			{
+			cout << chp << tab; showtype(chp);
+			cout << chpa << tab;  showtype(chpa);
+			cout << catlstr << tab; showtype(catlstr);
+			cout << cstr << tab; showtype(cstr);
+			cout << cs << tab; showtype(cs);
+			cout << wcs << tab; showtype(wcs);
+			}
+		);
+	}
+	if (imod % 4 == 1)
+	{
 
 		{
 			cout << "beging test dc..." << tab << st(print value) << el;
 			cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
 		}
+
+		lscode(
+			{
+			cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
+			}
 		);
 
-	lscode(
-		{
-		cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
-		}
-	);
-
-	lscode(
-		{
-		cout << chp << tab; showtype(chp);
-		cout << chpa << tab;  showtype(chpa);
-		cout << catlstr << tab; showtype(catlstr);
-		cout << cstr << tab; showtype(cstr);
-		cout << cs << tab; showtype(cs);
-		cout << wcs << tab; showtype(wcs);
-		}
-	);
 	}
 	lscode(
 		vector<int>va = { 12,234,56,78,892,8,235,86 };
 	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
 	);
-	if (imod % 4 == 1)
+	if (imod % 4 == 2)
 	{
 		lcode(
 			{
 			cout << va << el << mif << el;
 			}
 		);
-	}
+	};
+	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 
-	if (imod % 4 == 2)
+	if (imod % 4 == 3)
 	{
 		cout << cl;
-		cout.pl(icount, ca, ia, fa, iba, la, lla, da,cs,wcs);
-		cout.pb(icount, ca, ia, fa, iba, la, lla, da,cstr);
-		cout.pc(icount, ca, ia, fa, iba, la, lla, da,cstr);
+		cout << arrone << el;
+		cout.pl(icount, ca, ia, fa, iba, la, lla, da, cs, wcs);
+		cout.pb(icount, ca, ia, fa, iba, la, lla, da, cstr);
+		cout.pc(icount, ca, ia, fa, iba, la, lla, da, cstr);
 		cout.pt(icount, ca, ia, fa, iba, la, lla, da);
-		cout.adress(da);
+		cout.adress(icount, ca, ia, fa, iba, la, lla, da);
+		cout.pt(va, mif) << cut;
+		cout.pb(va, mif) << cut;
+		cout.pc(va, mif) << cut;
+		cout.type(cout, ca, ia);
 		lscode(
-		cout.pt(va, mif)<< cut;
-		cout.pb(va,mif)<<cut;
-		cout.pc(va,mif)<<cut;
-		cout.type(cout,ca,ia);
+			cout << cut;
+		cout.args();
+		cout << cut;
+		cout.args(1);
+		cout << cut;
+		cout.args(1, 2);
+		cout << cut;
+		cout.args(1, 2, 3);
 		);
 	}
 
 	++imod;
-	if (imod == 3)
+	if (imod == 4)
 		imod = 0;
 	//cout << theApp.messagelog;
 
@@ -2193,15 +2211,74 @@ template <typename T>
 void callf(PCDC& out, T&& v)
 {
 	fun(out, v);
-	fun(out, (T&&)v);
 	fun(out, (T&&)(v));
 	fun(out, std::forward<T>(v));
+}
+
+
+template<typename V, typename T>
+T emax(V v)
+{
+	T imax = *v.begin();
+	if (v.size()) {
+		for (const auto& i : v)
+		{
+			imax = max(imax, i);
+		}
+	}
+	return imax;
+}
+
+
+template<typename T = long double, typename ...X>
+T gmax(T a, X...args)
+{
+	initializer_list<T>il{ (T)a,(T)(args)... };
+	return emax<initializer_list<T>, T>(il);
+}
+
+
+template<typename T = int, typename ...X>
+T imax(X...args)
+{
+	initializer_list<T>il{ (T)(args)... };
+	return emax<initializer_list<T>, T>(il);
+}
+
+
+template<typename T = int>
+T lex(T a = T())
+{
+	return a;
+}
+
+#define vec(T) vector<T> 
+
+template<typename int ic = 100, typename C>
+auto sum(C c)
+{
+	C t;
+	auto a = (*c.begin() - *c.begin());
+	for (size_t icount = 0; icount < ic; ++icount)
+		t.insert(t.end(), *c.begin());
+	for (auto i : t)
+		a += i;
+	return a;
+}
+
+template<typename T, typename E, typename int ic = 1000*1000>
+auto cinsert(T t, E e)
+{
+	NTIME(ic)
+		t.insert(t.end(), e);
+	return e;
 }
 
 
 void CSDIView::OnStlStdForwardTest()
 {
 	SimulationStdCout;
+	cout << cl;
 	lscode(
 		int i = 1;
 	int ia = 2;
@@ -2210,7 +2287,7 @@ void CSDIView::OnStlStdForwardTest()
 	int& r = ia;
 	int&& rr = 4;
 	const int& irc = ic;
-	const int&& irr = 7;
+	const int&& irr = 7000;
 	int* p = &i;
 	callf(cout, i);
 	callf(cout, ci);
@@ -2220,10 +2297,28 @@ void CSDIView::OnStlStdForwardTest()
 	callf(cout, irr);
 	callf(cout, 7);
 	callf(cout, i + 7);
-
 	);
-
-
+	lscode(
+		cout << __cplusplus << el;
+	cout << max(3, 8, 9, 10, 22, 12) << el;
+	cout << imax(3, 8, 9, 10, 22, 12, i, ia, ci, irr, irc) << el;
+	cout << gmax(3.4, 898.8, 0.9, 10, 200.22, 12.0) << el;
+	cout << gmax(3.40) << el;
+	cout << gmax(898.8, 0.9) << el;
+	cout << lex<int>() << el;
+	cout << lex<float>() << el;
+	cout << lex() << el;
+	);
+	vector<float> va = { 10000.23,9,9,8,2000 };
+	cout << sum<1000>(multiset<float>{100.2}) << el;
+	cout << cl;
+	cout << cut;
+	cout << __TIME__ << el;
+	time_t begin = time(nullptr);
+	cout << cinsert(list<int>(), 100) << el;
+	time_t end = time(nullptr);
+	cout << __TIME__ << el;
+	cout << end - begin << el;
 
 }
 

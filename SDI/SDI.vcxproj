@@ -253,6 +253,7 @@
     <ResourceCompile Include="SDI.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="C:\Users\bbc\_vsvimrc" />
     <None Include="res\SDI.rc2" />
     <None Include="vimrc" />
   </ItemGroup>
