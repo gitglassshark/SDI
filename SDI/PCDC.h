@@ -3,12 +3,14 @@
 #include <iostream>
 #include <set>
 #include <bitset>
+#include <tuple>
 #include <list>
 #include <vector>
 #include <deque>
 #include <map>
 #include <sstream>
 #include <string>
+#include <initializer_list>
 #include "SDI.h"
 
 #define nonull(v) (((v )!=nullptr )&&(&(v )!=nullptr ) )
@@ -110,35 +112,40 @@ public:
 	const CSize& imresizeout(const CString& cs);
 
 
+
 public:
+	template<typename T>
+	using init = initializer_list<T>;
 	template<typename T> PCDC& operator <<(T* p);
-	template<typename Tstring> PCDC& operator <<(Tstring s);
+	template<typename T >
+	PCDC& operator ()(initializer_list<T> c)
+	{
+		T ibegin = *c.begin() - *c.begin();
+		forprintv(c);
+		return *this;
+	}
+	template<typename T >
+	PCDC& operator<<(initializer_list<T> c)
+	{
+		T ibegin = *c.begin() - *c.begin();
+		forprintv(c);
+		return *this;
+	}
+	
 	template<typename Tstring> PCDC& titleline(const Tstring& s);
 	template <typename X> PCDC& operator <<(const vector<X>& v);
 	template <typename T> PCDC& operator <<(const list<T>& l);
 	template <typename T, typename X> PCDC& operator <<(const multimap<T, X>& m);
 	template <typename T, typename X> PCDC& operator <<(const map<T, X>& m);
 	template <typename T> PCDC& operator <<(const set<T>& s);
-	template <typename  int N = 64> PCDC& operator <<(bitset<N>& bits)
-	{
-		string str = bits.to_string();
-		ms = str.c_str();
-		imresizeout(ms);
-		return *this;
-	}
-	template <typename  int N = 64> PCDC& operator <<(const bitset<N>& bits)
-	{
-		string str = bits.to_string();
-		ms = str.c_str();
-		imresizeout(ms);
-		return *this;
-	};
+	template <typename  int N = 64> PCDC& operator <<(bitset<N>& bits);
+	template <typename  int N = 64> PCDC& operator <<(const bitset<N>& bits);
 	template <typename T> PCDC& operator <<(const multiset<T>& s);
 	template <typename T> PCDC& operator <<(const deque<T>& d);
 	template <typename T, size_t len> PCDC& operator <<(const array<T, len>& a);
-	template<typename T> PCDC& forprintr(T* b, T* e);
-	template<typename T> PCDC& forprintv(T&& v);
-	template<typename T> PCDC& forprintm(T&& m);
+	template<typename T> PCDC& forprintr(const T* b, const T* e);
+	template<typename T> PCDC& forprintv(const T& v);
+	template<typename T> PCDC& forprintm(const T& m);
 	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
 	template <typename X> PCDC& operator <<(const unique_ptr<X>& unptr);
 
@@ -154,6 +161,10 @@ public:
 	template <typename T, typename ...X> PCDC& adress(T a, X...args);
 	PCDC& type() { return *this; };
 	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
+	template <typename A, typename B> bool comp(A a, B b)
+	{
+		return a > b;
+	};
 
 
 public:
@@ -186,6 +197,26 @@ public:
 		return *this;
 	}
 
+};
+
+
+template <typename  int N>
+PCDC& PCDC::operator <<(bitset<N>& bits)
+{
+	string str = bits.to_string();
+	ms = str.c_str();
+	imresizeout(ms);
+	return *this;
+}
+
+
+template <typename  int N>
+PCDC& PCDC::operator <<(const bitset<N>& bits)
+{
+	string str = bits.to_string();
+	ms = str.c_str();
+	imresizeout(ms);
+	return *this;
 };
 
 
@@ -296,22 +327,6 @@ PCDC& PCDC::operator <<(const unique_ptr<X>& unptr)
 }
 
 
-template<typename Tstring>
-PCDC& PCDC::operator <<(Tstring s)
-{
-	if (decltype(s) == decltype(NULL) || decltype(s) == decltype(nullptr) || decltype(s) == decltype(void*))
-	{
-		ms.Format(_T("%p"), (Tstring&&)s);
-	}
-	else {
-		if ((s.length()) && (s.at(0) != '\0')) {
-			ms = s.c_str();
-		}
-	}
-	imresizeout(ms);
-	return *this;
-}
-
 
 template<typename S>
 void PCDC::linemod(S l, S linemod, PCDC& (*op)(PCDC&), char* stail)
@@ -326,7 +341,7 @@ void PCDC::linemod(S l, S linemod, PCDC& (*op)(PCDC&), char* stail)
 
 
 template<typename T>
-PCDC& PCDC::forprintr(T* b, T* e)
+PCDC& PCDC::forprintr(const T* b, const T* e)
 {
 	int il = 0;
 	for (auto* it = b; it != e; ++it)
@@ -339,10 +354,10 @@ PCDC& PCDC::forprintr(T* b, T* e)
 
 
 template<typename T>
-PCDC& PCDC::forprintv(T&& v)
+PCDC& PCDC::forprintv(const T& v)
 {
 	int il = 0;
-	for (const auto& i : v)
+	for (auto i : v)
 	{
 		*this << i << tab;
 		linemod(il, ilinemod);
@@ -352,7 +367,7 @@ PCDC& PCDC::forprintv(T&& v)
 
 
 template<typename T>
-PCDC& PCDC::forprintm(T&& m)
+PCDC& PCDC::forprintm(const T& m)
 {
 	int il = 0;
 	for (const auto& i : m)
@@ -434,8 +449,6 @@ PCDC& PCDC::operator <<(const set<T>& s)
 }
 
 
-
-
 template <typename T>
 PCDC& PCDC::operator <<(const list<T>& l)
 {
@@ -507,6 +520,97 @@ bool swap(T& a, T& b)
 }
 
 
+template<typename V, typename T>
+T emax(V v)
+{
+	T imax = *v.begin();
+	if (v.size()) {
+		for (const auto& i : v)
+		{
+			imax = max(imax, i);
+		}
+	}
+	return imax;
+}
+
+
+template<typename T = long double, typename ...X>
+T gmax(T a, X...args)
+{
+	initializer_list<T>il{ (T)a,(T)(args)... };
+	return emax<initializer_list<T>, T>(il);
+}
+
+
+template<typename T = int, typename ...X>
+T imax(X...args)
+{
+	initializer_list<T>il{ (T)(args)... };
+	return emax<initializer_list<T>, T>(il);
+}
+
+
+template<typename T = int>
+T lex(T a = T())
+{
+	return a;
+}
+
+#define vec(T) vector<T> 
+
+template<typename int ic = 100, typename C>
+auto sum(C c)
+{
+	C t;
+	auto a = (*c.begin() - *c.begin());
+	for (size_t icount = 0; icount < ic; ++icount)
+		t.insert(t.end(), *c.begin());
+	for (auto i : t)
+		a += i;
+	return a;
+}
+#include <initializer_list>
+
+
+template<typename T >
+auto sum(vector<T> c)
+{
+	T isum = *c.begin() - *c.begin();
+	for (auto i : c)
+		isum += i;
+	return isum;
+}
+
+
+template<typename T >
+auto sum(initializer_list<T> c)
+{
+	T isum = *c.begin() - *c.begin();
+	for (auto i : c)
+		isum += i;
+	return isum;
+}
 
 
 
+
+//template<typename...Args, int N,int SIZE>
+	//PCDC& disptuple(tuple<Args...> tu)
+	//{
+	//	if(N<=SIZE)
+	//		*this<<std::get<N>(tu);
+	//	else
+	//		disptupe<tuple<Args...>,N+1,SIZE>(tu);
+	//	return *this;
+	//}
+
+	//template<typename...Args>
+	//PCDC& operator<<(tuple<Args...> tu)
+	//{
+	//	constexpr size_t length = sizeof...(Args);
+	//	if (sizeof...(Args) == 0)
+	//		return *this;
+	//	*this << "{ " << std::get<0>(tu);
+	//	disptuple<tuple < Args...>, 1,length>(tu);
+	//	return *this;
+	//}

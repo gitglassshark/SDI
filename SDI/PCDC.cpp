@@ -55,20 +55,17 @@ PCDC& el(PCDC& dc)
 
 PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {
-	if (!pwnd) {
-		return;
+	if (m_pwnd) {
+		id = icount;
+		++icount;
+		Create(m_pwnd);
 	}
-	id = icount;
-	++icount;
-	Create(pwnd);
 }
 
 
 PCDC::~PCDC()
 {
-	*this << starline;
 	--icount;
-	*this << id << "#  " << st(Similation screen DC is be destory...) << " count is " << icount << el;
 	this->Release();
 }
 
@@ -79,7 +76,7 @@ PCDC& PCDC::Create(CWnd* pwnd)
 		m_pwnd = pwnd;
 	if (icreate)
 		return *this;
-	this->m_hDC = pwnd->GetWindowDC()->m_hDC;
+	this->m_hDC = m_pwnd->GetWindowDC()->m_hDC;
 	CDC& dc = *this;
 	auto tcolor = dccr.chocolate;
 	auto bcolor = dccr.grey;
@@ -126,7 +123,7 @@ PCDC& PCDC::Release()
 	dc.SelectObject(pfont);
 	m_pwnd->ReleaseDC(this);
 	font.DeleteObject();
-	m_hDC = nullptr;
+	m_pwnd = nullptr;
 	m_cdc = nullptr;
 	icreate = false;
 	return *this;

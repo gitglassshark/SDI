@@ -9,7 +9,6 @@
 #include "PCDC.h"
 
 
-extern PCDC out;
 
 
 
@@ -29,7 +28,6 @@ public:
 	unsigned int step = 20;
 
 public:
-	PCDC& cout = out;
 	CDC* m_dc;
 	RECT m_max_rect = { 5,100,1890,2045 };
 	LOGFONT  m_userset_logfont = { 0 };

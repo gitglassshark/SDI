@@ -85,10 +85,7 @@ bool showinfo(PCDC* the, const T& c)
 };
 
 
-PCDC out;
-
 class CColor dccr;
-int a;
 
 
 
@@ -225,7 +222,6 @@ POINT CSDIView::SetPoint(int x, int y, POINT* p) {
 
 void CSDIView::OnPaint() {
 	{	LOGMESSAGE(theApp);	}
-	//out.Create(this);
 	// 用于绘制的设备上下文
 	CPaintDC dc(this);
 	//设置字体颜色，准备DC
@@ -238,7 +234,6 @@ void CSDIView::OnPaint() {
 
 	//恢复用户字体DC
 	RestoreDCFont(dc);
-	//out.Release();
 }
 //using namespace std;
 
@@ -403,7 +398,7 @@ void CSDIView::OnTestCAtlString()
 void CSDIView::OnPrintEnvVAR()
 {
 	// 打印环境变量
-	//SimulationStdCout;
+	SimulationStdCout;
 	CAtlString EnvStr, tok;
 	EnvStr.GetEnvironmentVariable(_T("PATH"));
 	int ipos = 0;
@@ -416,7 +411,7 @@ void CSDIView::OnPrintEnvVAR()
 	for (const auto& i : vecotr_paintmessage)
 		cout << i << el;
 	lscode(
-		cout << "this is out dc" << tab << &cout << tab << &out << el;
+		cout << "this is out dc" << tab << &cout << tab << el;
 	);
 }
 
@@ -1049,6 +1044,26 @@ int  argsvalue(X...args)
 	return i;
 }
 
+class A {
+public:
+	template<typename T >
+	auto operator<<(initializer_list<T> c)
+	{
+		T isum = *c.begin() - *c.begin();
+		for (auto i : c)
+			isum += i;
+		return isum;
+	}
+
+	template<typename T >
+	auto sum(initializer_list<T> c)
+	{
+		T isum = *c.begin() - *c.begin();
+		for (auto i : c)
+			isum += i;
+		return isum;
+	}
+};
 
 
 void CSDIView::OnPCDCFunctionTest()
@@ -1079,9 +1094,29 @@ void CSDIView::OnPCDCFunctionTest()
 	CString cstr = st(Smilate termial console mfc DC test, CString...);
 	std::string cs = "This is a string...   ";
 	std::wstring wcs = L"This is a Wstring...   ";
-	);
+	int iitem = 5;
+	int& ria = ia;
+	int&& rra = 10
+		);
 
-	if (imod % 4 == 0)
+	if (imod % iitem == 0)
+	{
+		lscode(
+		cout.type(ia);
+		cout.type(ria);
+		cout.type(rra);
+		cout.type((std::move(ia)));
+		cout.type((std::move(ria)));
+		cout.type((std::move(rra)));
+
+
+
+
+
+		);
+	}
+
+	if (imod % iitem == 4)
 	{
 		argsvalue(1, 2, 3, 4, 5);
 		lscode(
@@ -1095,7 +1130,7 @@ void CSDIView::OnPCDCFunctionTest()
 			}
 		);
 	}
-	if (imod % 4 == 1)
+	if (imod % iitem == 1)
 	{
 
 		{
@@ -1114,7 +1149,7 @@ void CSDIView::OnPCDCFunctionTest()
 		vector<int>va = { 12,234,56,78,892,8,235,86 };
 	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
 	);
-	if (imod % 4 == 2)
+	if (imod % iitem == 2)
 	{
 		lcode(
 			{
@@ -1123,8 +1158,13 @@ void CSDIView::OnPCDCFunctionTest()
 		);
 	};
 	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+	int i = 500;
+	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
 
-	if (imod % 4 == 3)
+	initializer_list<int> v = { 3,4,5,6 };
+	vector<int>vecta{ 3, 4, 5, 6,1 };
+
+	if (imod % iitem == 3)
 	{
 		cout << cl;
 		cout << arrone << el;
@@ -1146,17 +1186,30 @@ void CSDIView::OnPCDCFunctionTest()
 		cout.args(1, 2);
 		cout << cut;
 		cout.args(1, 2, 3);
+		cout.pl(3, i, ia, 6.0, "good");
+		cout.pt(3, i, ia, 6.0, "good");
+		cout.pb(3, i, ia, 6.0, "good");
+		cout.pc(3, i, ia, 6.0, "good");
+		cout << sum({ 3, 4, 5, 6 }) << el;
+		cout << set<int>{ 3, 4, 5, 6, 2} << el;
+		cout << (initializer_list<int>{ 2, 3, 4, 5, 6, 7, 9 });
+		cout << vecta << el;
+		cout << " " << tuple_size<decltype(tuplea)>::value << el;
+		cout << " " << typeid(decltype(tuplea)).name() << el;
 		);
 	}
+
+
 
 	++imod;
 	if (imod == 4)
 		imod = 0;
-	//cout << theApp.messagelog;
 
 
 }
 
+
+#define addmenu(name) addmenuitem(#name,name);
 
 void CSDIView::OnSTLlStringTest()
 {
@@ -1829,49 +1882,39 @@ using PTRFUN = int (*)(int);
 void CSDIView::OnLamdbaFuncTest()
 {
 	// TODO 测试lamdba表达式
-	SimulationStdCout;
-	lscode(
-		int x = 1, y = 2;
-	auto funl = [&](int val)mutable ->int {
-		int z = 10;
-		cout << "in lamdba,val is: " << val << "  z is : " << z << el;
-		return z;
+	SimulationStdCout
+		auto funl = [](int val1, int val2)mutable ->bool {
+		return val1 > val2;
 	};
-	function<int(int)> p = funl;
-	cout << p(100);
-	SHOW(x); SHOW(y);
+	int x = 1, y = 2;
+	cout << x << el;
+	function<bool(int, int)> p = funl;
+	cout << p(100, 200);
 	cout << el;
-	);
-	lscode(
-		showtype(p);
+	showtype(p);
 	showtype(funl);
 	showtype(PTRFUN);
-	);
-	lcode(
-		auto funl1 = [&](int val)mutable ->int {
-			int z = 210;
-			showtype(z);
-			return igi + val;
-		};
+	auto funl1 = [&](int val)mutable ->int {
+		int z = 210;
+		showtype(z);
+		return igi + val;
+	};
 	function<int(int)> p1 = funl1;
 	showtype(funl1);
 	showtype(p1);
-	);
-	lcode(
-		int m = 7, n = 6;
-	int* pm = &m;
-	int& rm = *pm;
-	cout << "m " << m << tab << "*pm  " << *pm << tab << "rm  " << rm << tab << el;
-	cout << "&m " << &m << tab << "pm  " << pm << tab << "&rm  " << &rm << tab << "&pm  " << &pm << el;
-	);
 	cout << cut;
-	lcode(
-		pm = &n;
-	cout << "m " << m << tab << "*pm  " << *pm << tab << "rm  " << rm << tab << el;
-	cout << "&m " << &m << tab << "pm  " << pm << tab << "&rm  " << &rm << tab << "&pm  " << &pm << el;
-	);
 
-
+	vector<int> iset1;
+	int mod = 30;
+	for (size_t i = 0; i < 30; i++)
+	{
+		iset1.insert(iset1.end(), i * rand() % mod);
+	}
+	cout << iset1 << el << cut;
+	sort(iset1.begin(), iset1.end(), std::function<bool(int, int)>([](int a, int b) ->bool { return a < b; }));
+	cout << iset1 << el << cut;
+	sort(iset1.begin(), iset1.end(), funl);
+	cout << iset1;
 }
 
 
@@ -2175,13 +2218,13 @@ void CSDIView::OnLvalRvalTest()
 
 void fun(PCDC& out, int& a)
 {
-	out << "int& a" << tab << a << el;
+	out << "int a" << tab << a << el;
 }
 
 
 void fun(PCDC& out, const int& a)
 {
-	out << "const int& a" << tab << a << el;
+	out << "const int a" << tab << a << el;
 }
 
 
@@ -2208,7 +2251,7 @@ void funt(PCDC& out, T&& a)
 }
 
 template <typename T>
-void callf(PCDC& out, T&& v)
+void callf(PCDC& out, T v)
 {
 	fun(out, v);
 	fun(out, (T&&)(v));
@@ -2216,62 +2259,20 @@ void callf(PCDC& out, T&& v)
 }
 
 
-template<typename V, typename T>
-T emax(V v)
-{
-	T imax = *v.begin();
-	if (v.size()) {
-		for (const auto& i : v)
-		{
-			imax = max(imax, i);
-		}
-	}
-	return imax;
-}
-
-
-template<typename T = long double, typename ...X>
-T gmax(T a, X...args)
-{
-	initializer_list<T>il{ (T)a,(T)(args)... };
-	return emax<initializer_list<T>, T>(il);
-}
-
-
-template<typename T = int, typename ...X>
-T imax(X...args)
-{
-	initializer_list<T>il{ (T)(args)... };
-	return emax<initializer_list<T>, T>(il);
-}
-
-
-template<typename T = int>
-T lex(T a = T())
-{
-	return a;
-}
-
-#define vec(T) vector<T> 
-
-template<typename int ic = 100, typename C>
-auto sum(C c)
-{
-	C t;
-	auto a = (*c.begin() - *c.begin());
-	for (size_t icount = 0; icount < ic; ++icount)
-		t.insert(t.end(), *c.begin());
-	for (auto i : t)
-		a += i;
-	return a;
-}
-
-template<typename T, typename E, typename int ic = 1000*1000>
+template<typename T, typename E, typename int ic = 1000 * 1000>
 auto cinsert(T t, E e)
 {
 	NTIME(ic)
 		t.insert(t.end(), e);
 	return e;
+}
+
+
+template<template <class> class C, typename t >
+auto con(C<t> v)
+{
+	t a = *v.begin();
+	return *v.begin();
 }
 
 
@@ -2298,29 +2299,32 @@ void CSDIView::OnStlStdForwardTest()
 	callf(cout, 7);
 	callf(cout, i + 7);
 	);
-	lscode(
-		cout << __cplusplus << el;
-	cout << max(3, 8, 9, 10, 22, 12) << el;
-	cout << imax(3, 8, 9, 10, 22, 12, i, ia, ci, irr, irc) << el;
-	cout << gmax(3.4, 898.8, 0.9, 10, 200.22, 12.0) << el;
-	cout << gmax(3.40) << el;
-	cout << gmax(898.8, 0.9) << el;
-	cout << lex<int>() << el;
-	cout << lex<float>() << el;
-	cout << lex() << el;
-	);
-	vector<float> va = { 10000.23,9,9,8,2000 };
-	cout << sum<1000>(multiset<float>{100.2}) << el;
-	cout << cl;
-	cout << cut;
-	cout << __TIME__ << el;
-	time_t begin = time(nullptr);
-	cout << cinsert(list<int>(), 100) << el;
-	time_t end = time(nullptr);
-	cout << __TIME__ << el;
-	cout << end - begin << el;
+	//lscode(
+	//	cout << __cplusplus << el;
+	//cout << max(3, 8, 9, 10, 22, 12) << el;
+	//cout << imax(3, 8, 9, 10, 22, 12, i, ia, ci, irr, irc) << el;
+	//cout << gmax(3.4, 898.8, 0.9, 10, 200.22, 12.0) << el;
+	//cout << gmax(3.40) << el;
+	//cout << gmax(898.8, 0.9) << el;
+	//cout << lex<int>() << el;
+	//cout << lex<float>() << el;
+	//cout << lex() << el;
+	//);
+	//vector<int> va = { 10000,9,9,8,2000 };
+	//cout << cut;
+	//cout << __TIME__ << el;
+	//time_t begin = time(nullptr);
+	//cout << cinsert(list<int>(), 100) << el;
+	//time_t end = time(nullptr);
+	//cout << __TIME__ << el;
+	//cout << end - begin << el;
+	//cout << typeid(decltype(*va.begin())).name() << el;
+	//decltype(va)::value_type ixa = *va.begin();
+	//cout << ixa << el;
 
 }
+
+
 
 
 
