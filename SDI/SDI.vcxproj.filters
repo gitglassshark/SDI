@@ -96,5 +96,6 @@
   <ItemGroup>
     <Text Include="..\快捷键.txt" />
     <Text Include="code.demo.txt" />
+    <Text Include="test.txt" />
   </ItemGroup>
 </Project>

@@ -33,6 +33,7 @@ public:
 	size_t id = 0;
 	static size_t icount;
 	int iargs = 0;
+	bool ibegin = true;
 
 public:
 	LONG wbar = 8;
@@ -83,7 +84,7 @@ public:
 	PCDC& operator<<(char const cs[]);
 	PCDC& operator<<(signed char const cs[]) { return *this << (const char*)cs; };
 	PCDC& operator<<(unsigned char const cs[]) { return *this << (const char*)cs; };
-	//PCDC& operator<<(LPCTSTR s);
+	PCDC& operator<<(LPCTSTR s);
 	PCDC& operator<<(const std::string& s);
 	PCDC& operator<<(const std::wstring& s);
 	PCDC& operator<<(const CString& s);
@@ -98,6 +99,18 @@ public:
 	PCDC& operator<<(const double n);
 	PCDC& operator<<(const long double n);
 	PCDC& operator<<(const size_t n);
+	PCDC& operator<<(const PCDC& me) {
+		if (this != &me)
+		{
+			if (!me.ms.IsEmpty())
+			{
+				*this << me.ms << tab;
+			}
+			this->address(me);
+			*this->type(me);
+		}
+		return *this;
+	};
 
 
 public:
@@ -116,6 +129,33 @@ public:
 
 
 public:
+	template <typename... Args>
+	PCDC& operator<<(tuple<Args...> tup)
+	{
+		if (ibegin == true) {
+			*this << "{ ";
+			ibegin = false;
+		}
+			*this<<"{"<<tup._Myfirst._Val;
+		if (tuple_size<decltype(tup)>::value == 1)
+		{
+			*this << "} ";
+		}
+		else
+		{
+			*this << "},";
+		}
+		return *this<<(tup._Get_rest());
+	}
+
+	template<>
+	PCDC& operator<<(tuple<> tup)
+	{
+		*this << "}";
+		ibegin = true;
+		return *this;
+	}
+
 	template<typename T>
 	using init = initializer_list<T>;
 	template<typename T> PCDC& operator <<(T* p);
@@ -137,10 +177,12 @@ public:
 	template<typename T> PCDC& forprintm(const T& m);
 	template<typename Tstring> PCDC& titleline(const Tstring& s);
 	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
-	template <typename X> PCDC& adress(X a);
-	template <typename T, typename ...X> PCDC& adress(T a, X...args);
+	template <typename X> PCDC& address(X&& a);
+	template <typename X> PCDC& address(X& a);
+	template <typename T, typename ...X> PCDC& address(T a, X...args);
 	PCDC& type() { return *this; };
 	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
+	template <typename T, typename ...X> PCDC& type(T& a, X&...args);
 
 	template <typename X> PCDC& pt(X a);
 	template <typename T, typename ...X> PCDC& pt(T a, X...args);
@@ -188,13 +230,13 @@ public:
 	template <typename A>
 	auto getnext(A a)
 	{
-		if (std::is_same<A,tuple<>>::value)
+		if (std::is_same<A, tuple<>>::value)
 		{
 			return *this;
 		}
 		else
 		{
-			*this << a._myFirst<< el;
+			*this << a._myFirst << el;
 			return getnext(a._Get_rest());
 		}
 	};
@@ -294,28 +336,44 @@ template <typename T, typename ...X>
 PCDC& PCDC::pb(T a, X...args)
 {
 	*this << '{' << a << "},";
-	pb(args...);
+	return pb(args...);
+}
+
+
+template <typename X>
+PCDC& PCDC::address(X&& a)
+{
+	ms.Format(_T("[0x%p]"), &a);
+	imresizeout(ms);
+	*this << '\t';
 	return *this;
 }
 
 
 template <typename X>
-PCDC& PCDC::adress(X a)
+PCDC& PCDC::address(X& a)
 {
 	ms.Format(_T("[0x%p]"), &a);
 	imresizeout(ms);
-	*this << '\n';
+	*this << '\t';
 	return *this;
 }
 
 
 template <typename T, typename ...X>
-PCDC& PCDC::adress(T a, X...args)
+PCDC& PCDC::address(T a, X...args)
 {
 	ms.Format(_T("[0x%p],"), &a);
 	imresizeout(ms);
-	adress(args...);
-	return *this;
+	return address(args...);
+}
+
+
+template <typename T, typename ...X>
+PCDC& PCDC::type(T& a, X&...args)
+{
+	*this << "TYPE:  " << typeid(a).name() << '\t' << "SIZE:  " << sizeof(a) << '\t' << "HASHCODE: " << typeid(a).hash_code() << el;
+	return type(args...);
 }
 
 
@@ -323,8 +381,7 @@ template <typename T, typename ...X>
 PCDC& PCDC::type(T&& a, X&&...args)
 {
 	*this << "TYPE:  " << typeid(a).name() << '\t' << "SIZE:  " << sizeof(a) << '\t' << "HASHCODE: " << typeid(a).hash_code() << el;
-	type((X&&)args...);
-	return *this;
+	return type(args...);
 }
 
 

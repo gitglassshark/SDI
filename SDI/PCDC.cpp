@@ -255,15 +255,15 @@ PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
 }
 
 
-//PCDC& PCDC::operator <<(LPCTSTR cs)
-//{
-//	if ((cs != nullptr) && (*cs != '\0'))
-//	{
-//		ms = cs;
-//		imresizeout(ms);
-//	}
-//	return *this;
-//}
+PCDC& PCDC::operator <<(LPCTSTR cs)
+{
+	if ((cs != nullptr) && (*cs != '\0'))
+	{
+		ms = cs;
+		imresizeout(ms);
+	}
+	return *this;
+}
 
 
 PCDC& PCDC::operator <<(char cs[])

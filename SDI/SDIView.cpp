@@ -40,6 +40,7 @@
 #define new DEBUG_NEW
 #endif
 
+#define addmenu(name) addmenuitem(#name,name);
 
 #define gett(name)  decltype(name)
 #define getI(name)  gett(name.begin())
@@ -65,7 +66,8 @@
 #define lscode(...)  lcode(__VA_ARGS__)
 
 #define sst(code,...)  #code##","#__VA_ARGS__
-#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab;
+#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
+#define showv(name) st(name)<<_T(" is: ")<<name<<tab
 #define showtype(...)  cout<<"NAME: "<<#__VA_ARGS__<<tab<<"TYPE:  "<<typeid(##__VA_ARGS__).name()<<tab <<"SIZE:  "<<sizeof(##__VA_ARGS__)<<"  HASHCODE:"<<typeid(##__VA_ARGS__).hash_code()<<el;
 
 
@@ -146,6 +148,7 @@ BEGIN_MESSAGE_MAP(CSDIView, CView)
 	ON_COMMAND(ID_PTR_UNIQUE_TEST, &CSDIView::OnPtrUniqueTest)
 	ON_COMMAND(ID_LVAL_RVAL_TEST, &CSDIView::OnLvalRvalTest)
 	ON_COMMAND(ID_STL_STD_FORWARD_TEST, &CSDIView::OnStlStdForwardTest)
+	ON_COMMAND(ID_PAINT_DC_TEST, &CSDIView::OnPaintDcTest)
 END_MESSAGE_MAP()
 
 // CSDIView 构造/析构
@@ -218,7 +221,6 @@ POINT CSDIView::SetPoint(int x, int y, POINT* p) {
 
 	//返回POINT结构return position;
 }
-
 
 void CSDIView::OnPaint() {
 	{	LOGMESSAGE(theApp);	}
@@ -312,7 +314,6 @@ void CSDIView::OnResetXY()
 
 }
 
-
 void CSDIView::OnTestCAtlString()
 {
 	SimulationStdCout;
@@ -321,76 +322,76 @@ void CSDIView::OnTestCAtlString()
 	CAtlString strsplint(charmark, nchartime);
 	cout << strsplint << el;
 
-	////wstring wstr1(_T("wstring is ok"));
-	//string astr1 = "astr1,string class";
-	////CAtlString strFormat(wstr1.c_str());
-	//cout << astr1 << el;
-	//cout << wstr1 << el;
-	//cout << strFormat << el;
+	wstring wstr1(_T("wstring is ok"));
+	string astr1 = "astr1,string class";
+	CAtlString strFormat(wstr1.c_str());
+	cout << astr1 << el;
+	cout << wstr1 << el;
+	cout << strFormat << el;
 
-	//wstr1 = _T("this is a wstring test string");
-	//strFormat = wstr1.c_str();
-	//cout << wstr1 << el;
-	//cout << strFormat << el;
-	//strFormat = astr1.c_str();
-	//cout << strFormat << el;
+	wstr1 = _T("this is a wstring test string");
+	strFormat = wstr1.c_str();
+	cout << wstr1 << el;
+	cout << strFormat << el;
+	strFormat = astr1.c_str();
+	cout << strFormat << el;
 
-	//wstr1 = _T("this is a wstring test string");
-	//cout << wstr1 << el;
+	wstr1 = _T("this is a wstring test string");
+	cout << wstr1 << el;
 
-	//// 定义备用变量
-	//CAtlString EnvStr, tok;
-	//CAtlString midle, temp, liststr, dome, grep, name, dock;
-	//CAtlString message, formatv, tail, head, result, str;
-	//unsigned long int ii = 0, ij = 0, itt = 0, icount = 0, imark = 0, itail = 0, imid = 0;
+	// 定义备用变量
+	CAtlString EnvStr, tok;
+	CAtlString midle, temp, liststr, dome, grep, name, dock;
+	CAtlString message, formatv, tail, head, result, str;
+	unsigned long int ii = 0, ij = 0, itt = 0, icount = 0, imark = 0, itail = 0, imid = 0;
 
-	////测试CAtlString Appendformat 功能
-	//formatv = (_T("first "));
-	//cout << formatv << el;
-	//formatv.AppendFormat(_T("position.x is %ld ,position.y is %ld"), position.x, position.y);
-	//vecotr_paintmessage.push_back(formatv);
-	//tail = "is ok";
-	//head = "is ok";
-	//ii = tail.CompareNoCase(head);
-	//message.Format(_T("#%ld"), ++icount);
-	//message = tail;
-	//message += " <CompareNoCase> ?qual ";
-	//message += head;
-	//message.AppendFormat(_T(" return value = %ld"), ii);
-	//cout << message << el;
-	//vecotr_paintmessage.push_back(message);
+	//测试CAtlString Appendformat 功能
+	formatv = (_T("first "));
+	cout << formatv << el;
+	formatv.AppendFormat(_T("position.x is %ld ,position.y is %ld"), position.x, position.y);
+	vecotr_paintmessage.push_back(formatv);
+	tail = "is ok";
+	head = "is ok";
+	ii = tail.CompareNoCase(head);
+	message.Format(_T("#%ld"), ++icount);
+	message = tail;
+	message += " <CompareNoCase> ?qual ";
+	message += head;
+	message.AppendFormat(_T(" return value = %ld"), ii);
+	cout << message << el;
+	vecotr_paintmessage.push_back(message);
 
-	//tail = "is ok";
-	//head = "Is oK";
-	//ii = tail.CollateNoCase(head);
-	//message.Format(_T("#%ld"), ++icount);
-	//message = tail;
-	//message += "<CollateNoCase> ?qual ";
-	//message += head;
-	//message.AppendFormat(_T(" return value = %ld"), ii);
-	//cout << message << el;
-	//vecotr_paintmessage.push_back(message);
+	tail = "is ok";
+	head = "Is oK";
+	ii = tail.CollateNoCase(head);
+	message.Format(_T("#%ld"), ++icount);
+	message = tail;
+	message += "<CollateNoCase> ?qual ";
+	message += head;
+	message.AppendFormat(_T(" return value = %ld"), ii);
+	cout << message << el;
+	vecotr_paintmessage.push_back(message);
 
-	//tail = _T("123456789");
-	//ii = 5; ij = 3;
-	//message = tail;
-	//tail.Delete(ii, ij);
-	//message.AppendFormat(_T("从 %ld 开始删除 %ld 个字符 = "), ii, ij);
-	//message += tail;
-	//cout << message << el;
-	//vecotr_paintmessage.push_back(message);
+	tail = _T("123456789");
+	ii = 5; ij = 3;
+	message = tail;
+	tail.Delete(ii, ij);
+	message.AppendFormat(_T("从 %ld 开始删除 %ld 个字符 = "), ii, ij);
+	message += tail;
+	cout << message << el;
+	vecotr_paintmessage.push_back(message);
 
-	//str.Format(_T("Floating point: %.2f\n"), 12345.12345);
-	//_tprintf_s(_T("%s"), (LPCTSTR)str);
-	//message = str;
-	//cout << message << el;
-	//vecotr_paintmessage.push_back(message);
+	str.Format(_T("Floating point: %.2f\n"), 12345.12345);
+	_tprintf_s(_T("%s"), (LPCTSTR)str);
+	message = str;
+	cout << message << el;
+	vecotr_paintmessage.push_back(message);
 
-	//str.Format(_T("Left-justified integer: %.6d\n"), 35);
-	//_tprintf_s(_T("%s"), (LPCTSTR)str);
-	//message = str;
-	//cout << message << el;
-	//vecotr_paintmessage.push_back(message);
+	str.Format(_T("Left-justified integer: %.6d\n"), 35);
+	_tprintf_s(_T("%s"), (LPCTSTR)str);
+	message = str;
+	cout << message << el;
+	vecotr_paintmessage.push_back(message);
 
 }
 
@@ -413,7 +414,6 @@ void CSDIView::OnPrintEnvVAR()
 		cout << "this is out dc" << tab << &cout << tab << el;
 	);
 }
-
 
 void CSDIView::OnUpperLower()
 
@@ -447,7 +447,6 @@ void CSDIView::OnUpperLower()
 
 	this->Invalidate(true);
 }
-
 
 template <typename T>
 T add(T a, T b)
@@ -610,7 +609,6 @@ void CSDIView::OnAutoSetFont()
 	dc.SelectObject(pOldFont);
 }
 
-
 void CSDIView::OnBitExChar()
 {
 	SimulationStdCout;
@@ -698,13 +696,11 @@ bool CSDIView::RestoreDCFont(CDC& dc)
 	return true;
 }
 
-
 void CSDIView::OnDialgoModal()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_fontresize_CDialogExDoModal.DoModal();
 }
-
 
 void CSDIView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
@@ -718,7 +714,6 @@ void CSDIView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CView::OnLButtonDblClk(nFlags, point);
 }
 
-
 void CSDIView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
@@ -728,7 +723,6 @@ void CSDIView::OnMouseMove(UINT nFlags, CPoint point)
 
 	CView::OnMouseMove(nFlags, point);
 }
-
 
 void CSDIView::OnReadFile()
 {
@@ -771,7 +765,6 @@ void CSDIView::OnReadFile()
 	//恢复用户字体DC
 	RestoreDCFont(dc);
 }
-
 
 void CSDIView::OnVectorTest()
 {
@@ -872,7 +865,6 @@ void CSDIView::OnMacroFuncPointTemplateTest()
 	RestoreDCFont(dc);
 }
 
-
 void CSDIView::OnGetWindowsRect()
 {
 	//设置字体颜色，准备DC
@@ -896,32 +888,6 @@ void CSDIView::OnGetWindowsRect()
 	theApp.m_pMainWnd->SetWindowText(strwindowstitle);
 
 }
-
-
-
-//bool  CSDIView::spline(CDC& dc, string tips, int line, char c, int ntime)
-//{
-//	int x = 50;
-//	int y = (line == -1) ? position.y : line;
-//	int linestep = 30;
-//	int lstep = 120;
-//	char charmark = c;
-//	size_t nchartime = ntime;
-//	CAtlString strsplint(charmark, nchartime);
-//	CAtlString strtips = _T("**");
-//	strtips += tips.c_str();
-//	strtips += _T("****");
-//	dc.TextOut(x, y += linestep, strsplint);
-//	if (tips != "0") {
-//		dc.TextOut(x, y += linestep, strtips);
-//		dc.TextOut(x, y += linestep, strsplint);
-//	}
-//	position.y = y;
-//
-//
-//	return true;
-//
-//}
 
 bool CSDIView::writedc(const CAtlString& str, CDC* pdc)
 {
@@ -977,14 +943,12 @@ void runexcept(int ia = 1, float fa = 2.1, char* ps = nullptr)throw(int, float, 
 	if (ia == 6) { CString e; e = _T("somthing is error "); e += __func__; throw e; }
 };
 
-
 void CSDIView::OnClearRecord()
 {
 	////清空记录
 	vecotr_paintmessage.clear();
 	this->Invalidate(true);
 }
-
 
 void CSDIView::OnExceptCatchTest()
 {
@@ -1019,7 +983,6 @@ void CSDIView::OnExceptCatchTest()
 	catch (...) { cout << "catch all error" << el; };
 
 }
-
 
 template<typename X>
 X value(X a)
@@ -1056,7 +1019,6 @@ public:
 	}
 };
 
-
 void CSDIView::OnPCDCFunctionTest()
 {
 	SimulationStdCout;
@@ -1078,7 +1040,7 @@ void CSDIView::OnPCDCFunctionTest()
 	long* lp = &la;
 	long long* llp = &lla;
 	double* dp = &da;
-	const char* chp = _T("const char []");
+	const char* chp = "const char []";
 	const char chpa[] = "char []";
 	CAtlString catlstr = st(Smilate termial console mfc DC test, CAtlString...);
 	CString cstr = st(Smilate termial console mfc DC test, CString...);
@@ -1087,21 +1049,26 @@ void CSDIView::OnPCDCFunctionTest()
 	int iitem = 5;
 	int& ria = ia;
 	int&& rra = 10;
+	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+	int i = 500;
+	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
+
+	initializer_list<int> v = { 3,4,5,6 };
+	vector<int>vecta{ 3, 4, 5, 6,1 };
+	vector<int>va = { 12,234,56,78,892,8,235,86 };
+	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	int length = tuple_size<decltype(tuplea)>::value;
 
 	if (imod % iitem == 0)
 	{
 		lscode(
-			cout.type(ia);
+		cout.type(ia);
 		cout.type(ria);
 		cout.type(rra);
 		cout.type((std::move(ia)));
 		cout.type((std::move(ria)));
 		cout.type((std::move(rra)));
-
-
-
-
-
+		cout <<length<<tab<<tuplea << el;
 		);
 	}
 
@@ -1119,6 +1086,7 @@ void CSDIView::OnPCDCFunctionTest()
 			}
 		);
 	}
+
 	if (imod % iitem == 1)
 	{
 
@@ -1129,15 +1097,11 @@ void CSDIView::OnPCDCFunctionTest()
 
 		lscode(
 			{
-			cout << ip << tab << cp << tab << lp << tab << llp << tab << dp << el << cut;
+			cout << ip << tab << *cp << tab << lp << tab << llp << tab << dp << el << cut;
 			}
 		);
 
 	}
-	lscode(
-		vector<int>va = { 12,234,56,78,892,8,235,86 };
-	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
-	);
 	if (imod % iitem == 2)
 	{
 		lcode(
@@ -1146,12 +1110,6 @@ void CSDIView::OnPCDCFunctionTest()
 			}
 		);
 	};
-	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
-	int i = 500;
-	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
-
-	initializer_list<int> v = { 3,4,5,6 };
-	vector<int>vecta{ 3, 4, 5, 6,1 };
 
 	if (imod % iitem == 3)
 	{
@@ -1161,7 +1119,7 @@ void CSDIView::OnPCDCFunctionTest()
 		cout.pb(icount, ca, ia, fa, iba, la, lla, da, cstr);
 		cout.pc(icount, ca, ia, fa, iba, la, lla, da, cstr);
 		cout.pt(icount, ca, ia, fa, iba, la, lla, da);
-		cout.adress(icount, ca, ia, fa, iba, la, lla, da);
+		cout.address(icount, ca, ia, fa, iba, la, lla, da);
 		cout.pt(va, mif) << cut;
 		cout.pb(va, mif) << cut;
 		cout.pc(va, mif) << cut;
@@ -1187,25 +1145,12 @@ void CSDIView::OnPCDCFunctionTest()
 		cout << " " << typeid(decltype(tuplea)).name() << el;
 		);
 	}
-	//cout << std::get<0>(tuplea) << tab;
-	//int length = tuple_size<decltype(tuplea)>::value;
-	//auto xt = tuplea._Get_rest();
-	//auto temp = xt._Get_rest();
-	//for (size_t i = 0; i < length; i++)
-	//{
-	//	auto xa = temp._Get_rest();
-	//	temp = xa;
-	//}
+
 
 	++imod;
 	if (imod == 4)
 		imod = 0;
-
-
 }
-
-
-#define addmenu(name) addmenuitem(#name,name);
 
 void CSDIView::OnSTLlStringTest()
 {
@@ -1342,7 +1287,6 @@ void CSDIView::OnGroundTest()
 		cout << el;
 	}
 	CRect rect = { 0,0,0,0 };
-	//this->InvalidateRect(&rect);
 	cout << starline;
 	for (auto& i : d1)
 		cout << i << tab;
@@ -1374,7 +1318,6 @@ void CSDIView::OnGroundTest()
 
 }
 
-
 void CSDIView::OnStlStackEqueueTest()
 {
 	SimulationStdCout;
@@ -1404,7 +1347,6 @@ void CSDIView::OnStlStackEqueueTest()
 	cout << ieq.front() << el;
 	cout << ieq.back() << el;
 }
-
 
 class clist;
 
@@ -1444,14 +1386,12 @@ public:
 	}
 };
 
-
 template <typename T, typename DC>
 bool PrintSingleEle(T& e, DC& dc)
 {
 	dc << e << tab;
 	return true;
 }
-
 
 template <typename T, typename DC>
 bool PrintEle(const T& v, DC& dc)
@@ -1473,7 +1413,6 @@ bool PrintEle(const T& v, DC& dc)
 	dc << el;
 	return true;
 }
-
 
 void CSDIView::OnMacroTest()
 {
@@ -1533,13 +1472,11 @@ void CSDIView::OnMacroTest()
 
 }
 
-
 template <typename T>
 void MakeSingleEleRandom(T& r, const int mod)
 {
 	r = rand() % mod;
 }
-
 
 template <typename T>
 bool MakeEleRandom(T& r, const int mod)
@@ -1550,7 +1487,6 @@ bool MakeEleRandom(T& r, const int mod)
 		MakeSingleEleRandom(i, mod);
 	return true;
 }
-
 
 bool iset = false;
 bool compare(int a, int b)
@@ -1564,7 +1500,6 @@ bool compare(int a, int b)
 		return a < b;
 	}
 }
-
 
 void CSDIView::OnStlSetTest()
 {
@@ -1717,21 +1652,17 @@ void CSDIView::OnStlSetTest()
 
 }
 
-
 int ntest(PCDC& dc, string p)
 {
 	dc << p << el;
 	return 0;
 }
 
-
 typedef int (*pfunc)(PCDC&, string);
-
 
 #define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
 					pfunc p=fname;\
 					menumap.insert(make_pair(str,p));}
-
 
 void CSDIView::OnStlMapMenu()
 {
@@ -1768,12 +1699,9 @@ void CSDIView::OnStlMapMenu()
 	cout << el;
 	delete[]pint;
 	delete[]plint;
-	//char* pc = "hello";
 	CString ss = _T("123456");
-	//lcode(cout << strlen(pc) << tab << sizeof(_T("hello")) << tab << ss.GetLength() << el;);
 
 }
-
 
 template <typename T = int, int N = 1>
 T returnt()
@@ -1785,7 +1713,6 @@ T returnt()
 	}
 	return 100.22 * ib;
 };
-
 
 void CSDIView::OnSTLArgTest()
 {
@@ -1844,7 +1771,6 @@ void CSDIView::OnSTLArgTest()
 
 }
 
-
 void CSDIView::OnCxx20StlConceptTest()
 {
 	PCDC cout(this);
@@ -1865,11 +1791,9 @@ void CSDIView::OnCxx20StlConceptTest()
 
 }
 
-
 int igi = 88;
 typedef int (*PFU)(int);
 using PTRFUN = int (*)(int);
-
 
 void CSDIView::OnLamdbaFuncTest()
 {
@@ -1908,7 +1832,6 @@ void CSDIView::OnLamdbaFuncTest()
 	sort(iset1.begin(), iset1.end(), funl);
 	cout << iset1;
 }
-
 
 void CSDIView::OnStlTupleTest()
 {
@@ -1973,18 +1896,15 @@ void CSDIView::OnStlTupleTest()
 
 }
 
-
 int f(int a, int b)
 {
 	return a + b;
 }
 
-
 template<class T>
 struct typestruct {
 	typedef map<int, T> mytype;
 };
-
 
 void CSDIView::OnStlTypeTest()
 {
@@ -2058,7 +1978,6 @@ void CSDIView::OnStlTypeTest()
 
 }
 
-
 void CSDIView::OnInitalListTest()
 {
 	SimulationStdCout;
@@ -2081,7 +2000,6 @@ void CSDIView::OnInitalListTest()
 	);
 
 }
-
 
 class ptr
 {
@@ -2143,7 +2061,6 @@ void CSDIView::OnPtrUniqueTest()
 
 }
 
-
 void CSDIView::OnLvalRvalTest()
 {
 	// TODO: lVAL RVAL
@@ -2172,18 +2089,15 @@ void CSDIView::OnLvalRvalTest()
 
 }
 
-
 void fun(PCDC& out, int& a)
 {
 	out << "int a" << tab << a << el;
 }
 
-
 void fun(PCDC& out, const int& a)
 {
 	out << "const int a" << tab << a << el;
 }
-
 
 void fun(PCDC& out, int&& a)
 {
@@ -2200,7 +2114,6 @@ void fun(PCDC& out, int* a)
 	out << "int* a " << tab << a << el;
 }
 
-
 template<typename T>
 void funt(PCDC& out, T&& a)
 {
@@ -2215,7 +2128,6 @@ void callf(PCDC& out, T v)
 	fun(out, std::forward<T>(v));
 }
 
-
 template<typename T, typename E, typename int ic = 1000 * 1000>
 auto cinsert(T t, E e)
 {
@@ -2223,7 +2135,6 @@ auto cinsert(T t, E e)
 		t.insert(t.end(), e);
 	return e;
 }
-
 
 template<template <class> class C, typename t >
 auto con(C<t> v)
@@ -2287,6 +2198,47 @@ void CSDIView::OnStlStdForwardTest()
 	decltype(va)::value_type ixa = *va.begin();
 
 }
+
+void CSDIView::OnPaintDcTest()
+{
+	//开始绘图
+	SimulationStdCout;
+	//CRect rect(800, 800,1000,1000);
+	cout << cl;/*cout.Rectangle(&rect);*/
+	lscode(
+		cout << cout.m_cdc << tab << cout.m_hDC << tab
+		<< cout.m_hAttribDC << tab << cout.m_bPrinting << el;
+	cout << "good" << tab << cout.ms.IsEmpty() << tab << cout.ms << el;
+	);
+	lscode(
+		CFile ofile(_T("D:/VS2022/MFC/SDI/SDI/test.txt"), CFile::modeCreate | CFile::modeReadWrite);
+	string str = "This is a text.txt test string\n";
+	ofile.Write(str.c_str(), str.length());
+	ofile.Write(str.c_str(), str.length());
+	ofile.Write(str.c_str(), str.length());
+	ofile.SeekToBegin();
+	);
+	lscode(
+		char strr[256]{};
+	size_t len = ofile.Read(strr, 256);
+	cout << ofile.m_hFile << tab << ofile.GetFileName() << tab << ofile.GetFilePath() << tab
+		<< ofile.GetFileTitle() << tab << ofile.GetLength() << tab << ofile.GetPosition()
+		<< el;
+	string strt(strr);
+	cout << strt << el;
+	);
+	cout.type(cout);
+	cout.address(cout) << el;
+	cout << showv(ofile.GetFileName()) << el;
+	cout << showv(ofile.GetFilePath()) << el;
+	cout << showv(ofile.GetLength()) << el;
+	cout << showv(ofile.GetFileTitle()) << el;
+	cout << showv(ofile.GetPosition()) << el;
+
+
+
+}
+
 
 
 
