@@ -69,11 +69,11 @@
 #define showtype(...)  cout<<"NAME: "<<#__VA_ARGS__<<tab<<"TYPE:  "<<typeid(##__VA_ARGS__).name()<<tab <<"SIZE:  "<<sizeof(##__VA_ARGS__)<<"  HASHCODE:"<<typeid(##__VA_ARGS__).hash_code()<<el;
 
 
-#define RUNTEST(message)		cout.clearscreen();\
-								cout.titleline(wstring(st(message)));
+#define RUNTEST(message)		/*cout.clearscreen();\
+								cout.titleline(wstring(st(message)));*/
 
-#define TITLE(message)      cout.clearscreen();\
-							cout.titleline(wstring(st(message)));
+#define TITLE(message)      /*cout.clearscreen();\
+							cout.titleline(wstring(st(message)));*/
 
 
 template <typename T>
@@ -316,82 +316,81 @@ void CSDIView::OnResetXY()
 void CSDIView::OnTestCAtlString()
 {
 	SimulationStdCout;
-	RUNTEST(TEST STRING);
 	char charmark = '*';
 	int nchartime = 140;
 	CAtlString strsplint(charmark, nchartime);
 	cout << strsplint << el;
 
-	wstring wstr1(_T("wstring is ok"));
-	string astr1 = "astr1,string class";
-	CAtlString strFormat(wstr1.c_str());
-	cout << astr1 << el;
-	cout << wstr1 << el;
-	cout << strFormat << el;
+	////wstring wstr1(_T("wstring is ok"));
+	//string astr1 = "astr1,string class";
+	////CAtlString strFormat(wstr1.c_str());
+	//cout << astr1 << el;
+	//cout << wstr1 << el;
+	//cout << strFormat << el;
 
-	wstr1 = _T("this is a wstring test string");
-	strFormat = wstr1.c_str();
-	cout << wstr1 << el;
-	cout << strFormat << el;
-	strFormat = astr1.c_str();
-	cout << strFormat << el;
+	//wstr1 = _T("this is a wstring test string");
+	//strFormat = wstr1.c_str();
+	//cout << wstr1 << el;
+	//cout << strFormat << el;
+	//strFormat = astr1.c_str();
+	//cout << strFormat << el;
 
-	wstr1 = _T("this is a wstring test string");
-	cout << wstr1 << el;
+	//wstr1 = _T("this is a wstring test string");
+	//cout << wstr1 << el;
 
-	// 定义备用变量
-	CAtlString EnvStr, tok;
-	CAtlString midle, temp, liststr, dome, grep, name, dock;
-	CAtlString message, formatv, tail, head, result, str;
-	unsigned long int ii = 0, ij = 0, itt = 0, icount = 0, imark = 0, itail = 0, imid = 0;
+	//// 定义备用变量
+	//CAtlString EnvStr, tok;
+	//CAtlString midle, temp, liststr, dome, grep, name, dock;
+	//CAtlString message, formatv, tail, head, result, str;
+	//unsigned long int ii = 0, ij = 0, itt = 0, icount = 0, imark = 0, itail = 0, imid = 0;
 
-	//测试CAtlString Appendformat 功能
-	formatv = (_T("first "));
-	cout << formatv << el;
-	formatv.AppendFormat(_T("position.x is %ld ,position.y is %ld"), position.x, position.y);
-	vecotr_paintmessage.push_back(formatv);
-	tail = "is ok";
-	head = "is ok";
-	ii = tail.CompareNoCase(head);
-	message.Format(_T("#%ld"), ++icount);
-	message = tail;
-	message += " <CompareNoCase> ?qual ";
-	message += head;
-	message.AppendFormat(_T(" return value = %ld"), ii);
-	cout << message << el;
-	vecotr_paintmessage.push_back(message);
+	////测试CAtlString Appendformat 功能
+	//formatv = (_T("first "));
+	//cout << formatv << el;
+	//formatv.AppendFormat(_T("position.x is %ld ,position.y is %ld"), position.x, position.y);
+	//vecotr_paintmessage.push_back(formatv);
+	//tail = "is ok";
+	//head = "is ok";
+	//ii = tail.CompareNoCase(head);
+	//message.Format(_T("#%ld"), ++icount);
+	//message = tail;
+	//message += " <CompareNoCase> ?qual ";
+	//message += head;
+	//message.AppendFormat(_T(" return value = %ld"), ii);
+	//cout << message << el;
+	//vecotr_paintmessage.push_back(message);
 
-	tail = "is ok";
-	head = "Is oK";
-	ii = tail.CollateNoCase(head);
-	message.Format(_T("#%ld"), ++icount);
-	message = tail;
-	message += "<CollateNoCase> ?qual ";
-	message += head;
-	message.AppendFormat(_T(" return value = %ld"), ii);
-	cout << message << el;
-	vecotr_paintmessage.push_back(message);
+	//tail = "is ok";
+	//head = "Is oK";
+	//ii = tail.CollateNoCase(head);
+	//message.Format(_T("#%ld"), ++icount);
+	//message = tail;
+	//message += "<CollateNoCase> ?qual ";
+	//message += head;
+	//message.AppendFormat(_T(" return value = %ld"), ii);
+	//cout << message << el;
+	//vecotr_paintmessage.push_back(message);
 
-	tail = _T("123456789");
-	ii = 5; ij = 3;
-	message = tail;
-	tail.Delete(ii, ij);
-	message.AppendFormat(_T("从 %ld 开始删除 %ld 个字符 = "), ii, ij);
-	message += tail;
-	cout << message << el;
-	vecotr_paintmessage.push_back(message);
+	//tail = _T("123456789");
+	//ii = 5; ij = 3;
+	//message = tail;
+	//tail.Delete(ii, ij);
+	//message.AppendFormat(_T("从 %ld 开始删除 %ld 个字符 = "), ii, ij);
+	//message += tail;
+	//cout << message << el;
+	//vecotr_paintmessage.push_back(message);
 
-	str.Format(_T("Floating point: %.2f\n"), 12345.12345);
-	_tprintf_s(_T("%s"), (LPCTSTR)str);
-	message = str;
-	cout << message << el;
-	vecotr_paintmessage.push_back(message);
+	//str.Format(_T("Floating point: %.2f\n"), 12345.12345);
+	//_tprintf_s(_T("%s"), (LPCTSTR)str);
+	//message = str;
+	//cout << message << el;
+	//vecotr_paintmessage.push_back(message);
 
-	str.Format(_T("Left-justified integer: %.6d\n"), 35);
-	_tprintf_s(_T("%s"), (LPCTSTR)str);
-	message = str;
-	cout << message << el;
-	vecotr_paintmessage.push_back(message);
+	//str.Format(_T("Left-justified integer: %.6d\n"), 35);
+	//_tprintf_s(_T("%s"), (LPCTSTR)str);
+	//message = str;
+	//cout << message << el;
+	//vecotr_paintmessage.push_back(message);
 
 }
 
@@ -537,7 +536,6 @@ void CSDIView::OnObjectSize()
 	if (ichoice == 2)
 	{
 		cout << cl;
-		showtype(byte);
 		showtype(BYTE);
 		showtype(char);
 		showtype(char&);
@@ -636,7 +634,7 @@ void CSDIView::OnBitExChar()
 	cout << CAtlString(sbitstr.c_str()) << el;
 
 	cout << typeid(catstrbit32).name() << el;
-	cout.titleline(wstring(st(start test except catch try and throw...)));
+	//cout.titleline(wstring(st(start test except catch try and throw...)));
 
 }
 
@@ -715,7 +713,7 @@ void CSDIView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	strwindowstitle.Format(_T("Reset Current print position is x:%ld,y:%ld !"), position.x, position.y);
 	position.x = point.x;
 	position.y = point.y;
-	theApp.m_pMainWnd->SetWindowTextW(strwindowstitle);
+	theApp.m_pMainWnd->SetWindowText(strwindowstitle);
 
 	CView::OnLButtonDblClk(nFlags, point);
 }
@@ -726,7 +724,7 @@ void CSDIView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	CAtlString strwindowstitle;
 	strwindowstitle.Format(_T("Current print position is x:%ld,y:%ld ,current cursor positon is x:%ld,y:%ld . TIP:Double click mouse left can reset the positon."), position.x, position.y, point.x, point.y);
-	theApp.m_pMainWnd->SetWindowTextW(strwindowstitle);
+	theApp.m_pMainWnd->SetWindowText(strwindowstitle);
 
 	CView::OnMouseMove(nFlags, point);
 }
@@ -799,7 +797,7 @@ void CSDIView::OnVectorTest()
 		{
 			i = icount++ / icountb++;
 			strFormat.Format(_T("%2.4lf"), i);
-			dc.TextOutW(x, y += step, strFormat);
+			dc.TextOut(x, y += step, strFormat);
 		}
 		x += lstep;
 		y = 50;
@@ -809,11 +807,11 @@ void CSDIView::OnVectorTest()
 	{
 		intvec.swap(empty);
 		strFormat.Format(_T("%ld"), intvec.size());
-		dc.TextOutW(x, y += step, strFormat);
+		dc.TextOut(x, y += step, strFormat);
 		vector<float>xvect;
 		intvec.swap(xvect);
 		strFormat.Format(_T("%ld"), intvec.size());
-		dc.TextOutW(x, y += step, strFormat);
+		dc.TextOut(x, y += step, strFormat);
 	}
 
 	//恢kj复用户字体DC
@@ -840,13 +838,6 @@ void CSDIView::OnMacroFuncPointTemplateTest()
 
 	//测试宏
 
-	PRINTSCREEN(20, 20, is  good);
-	PRINTN(x, y += step, a);
-	PRINTN(x, y += step, add(a, b));
-	PRINTN(x, y += step, sub(a, b));
-	PRINTN(x, y += step, mul(a, b));
-	PRINTN(x, y += step, divv(a, b));
-
 	//测试函数指针
 	CAtlString strFormat;
 	pt<int>;
@@ -854,28 +845,28 @@ void CSDIView::OnMacroFuncPointTemplateTest()
 	float (*fund)(float a, float b);
 	func = add<int>;
 	strFormat.Format(_T("%ld"), func(a, b));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 	fund = add;
 	strFormat.Format(_T("*func=add %ld"), func(a, b));
-	dc.TextOutW(x, y += step, strFormat);
+	//dc.(x, y += step, strFormat);
 	//出现异常
 	/*func = pt<int>;
 	strFormat.Format(_T("(*func) add<int>%ld"), func(a, b));
-	dc.TextOutW(x, y += step, strFormat);*/
+	dc.TextOut(x, y += step, strFormat);*/
 	func = add;
 	strFormat.Format(_T("(*func) add<int>%ld"), func(a, b));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 	strFormat.Format(_T("%lf"), fund(fa, fb));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 	strFormat.Format(_T("%ld"), func(a, b));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 	strFormat.Format(_T("%lf"), fund(fa, fb));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 
 	strFormat.Format(_T("%lf"), divv(fa, fb));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 	strFormat.Format(_T("%lf"), fund(fa, fb));
-	dc.TextOutW(x, y += step, strFormat);
+	dc.TextOut(x, y += step, strFormat);
 
 	//恢复用户字体DC
 	RestoreDCFont(dc);
@@ -902,35 +893,35 @@ void CSDIView::OnGetWindowsRect()
 
 	CAtlString strwindowstitle;
 	strwindowstitle.Format(_T("Current print position is x:%ld,y:%ld"), position.x, position.y);
-	theApp.m_pMainWnd->SetWindowTextW(strwindowstitle);
+	theApp.m_pMainWnd->SetWindowText(strwindowstitle);
 
 }
 
 
 
-bool  CSDIView::spline(CDC& dc, string tips, int line, char c, int ntime)
-{
-	int x = 50;
-	int y = (line == -1) ? position.y : line;
-	int linestep = 30;
-	int lstep = 120;
-	char charmark = c;
-	size_t nchartime = ntime;
-	CAtlString strsplint(charmark, nchartime);
-	CAtlString strtips = _T("**");
-	strtips += tips.c_str();
-	strtips += _T("****");
-	dc.TextOutW(x, y += linestep, strsplint);
-	if (tips != "0") {
-		dc.TextOutW(x, y += linestep, strtips);
-		dc.TextOutW(x, y += linestep, strsplint);
-	}
-	position.y = y;
-
-
-	return true;
-
-}
+//bool  CSDIView::spline(CDC& dc, string tips, int line, char c, int ntime)
+//{
+//	int x = 50;
+//	int y = (line == -1) ? position.y : line;
+//	int linestep = 30;
+//	int lstep = 120;
+//	char charmark = c;
+//	size_t nchartime = ntime;
+//	CAtlString strsplint(charmark, nchartime);
+//	CAtlString strtips = _T("**");
+//	strtips += tips.c_str();
+//	strtips += _T("****");
+//	dc.TextOut(x, y += linestep, strsplint);
+//	if (tips != "0") {
+//		dc.TextOut(x, y += linestep, strtips);
+//		dc.TextOut(x, y += linestep, strsplint);
+//	}
+//	position.y = y;
+//
+//
+//	return true;
+//
+//}
 
 bool CSDIView::writedc(const CAtlString& str, CDC* pdc)
 {
@@ -942,7 +933,7 @@ bool CSDIView::writedc(const CAtlString& str, CDC* pdc)
 		pdc = &this->SetDefaultFontDC();
 		dcreset = true;
 	}
-	pdc->TextOutW(position.x, position.y, str);
+	pdc->TextOut(position.x, position.y, str);
 	position.y += step;
 
 	//恢复用户字体DC
@@ -981,7 +972,7 @@ void runexcept(int ia = 1, float fa = 2.1, char* ps = nullptr)throw(int, float, 
 	if (ia == 1) { int e = ia; throw e; }
 	if (ia == 2) { float e = fa; throw e; }
 	if (ia == 3) { double e = 8.888; throw e; }
-	if (ia == 4) { char* e = "is error"; throw e; }
+	//if (ia == 4) { char* e = "is error"; throw e; }
 	if (ia == 5) { char e = 'a'; throw e; }
 	if (ia == 6) { CString e; e = _T("somthing is error "); e += __func__; throw e; }
 };
@@ -1073,8 +1064,7 @@ void CSDIView::OnPCDCFunctionTest()
 	static size_t imod = 0;
 
 	cout << cl;
-	lscode(
-		char ca = 'a';
+	char ca = 'a';
 	int ia = 10;
 	float fa = 31.1;
 	bool iba = true;
@@ -1088,21 +1078,20 @@ void CSDIView::OnPCDCFunctionTest()
 	long* lp = &la;
 	long long* llp = &lla;
 	double* dp = &da;
-	char* chp = "const char []";
-	char chpa[] = "char []";
+	const char* chp = _T("const char []");
+	const char chpa[] = "char []";
 	CAtlString catlstr = st(Smilate termial console mfc DC test, CAtlString...);
 	CString cstr = st(Smilate termial console mfc DC test, CString...);
 	std::string cs = "This is a string...   ";
 	std::wstring wcs = L"This is a Wstring...   ";
 	int iitem = 5;
 	int& ria = ia;
-	int&& rra = 10
-		);
+	int&& rra = 10;
 
 	if (imod % iitem == 0)
 	{
 		lscode(
-		cout.type(ia);
+			cout.type(ia);
 		cout.type(ria);
 		cout.type(rra);
 		cout.type((std::move(ia)));
@@ -1198,8 +1187,15 @@ void CSDIView::OnPCDCFunctionTest()
 		cout << " " << typeid(decltype(tuplea)).name() << el;
 		);
 	}
-
-
+	//cout << std::get<0>(tuplea) << tab;
+	//int length = tuple_size<decltype(tuplea)>::value;
+	//auto xt = tuplea._Get_rest();
+	//auto temp = xt._Get_rest();
+	//for (size_t i = 0; i < length; i++)
+	//{
+	//	auto xa = temp._Get_rest();
+	//	temp = xa;
+	//}
 
 	++imod;
 	if (imod == 4)
@@ -1242,7 +1238,6 @@ void CSDIView::OnSTLlStringTest()
 void CSDIView::OnGroundTest()
 {
 	SimulationStdCout;
-	RUNTEST(VECTOR TEST);
 	vector<int>intvect;
 	for (size_t i = 0; i < 20;)
 	{
@@ -1483,7 +1478,6 @@ bool PrintEle(const T& v, DC& dc)
 void CSDIView::OnMacroTest()
 {
 	SimulationStdCout;
-	RUNTEST(LIST TEST);
 	list<int>ilt;
 	for (size_t i = 0; i < 15; i++)
 	{
@@ -1575,7 +1569,6 @@ bool compare(int a, int b)
 void CSDIView::OnStlSetTest()
 {
 	SimulationStdCout;
-	RUNTEST(BEGING TEST SET AND MULTISET);
 	set<int> iset1;
 	int mod = 30;
 	for (size_t i = 0; i < 30; i++)
@@ -1775,9 +1768,9 @@ void CSDIView::OnStlMapMenu()
 	cout << el;
 	delete[]pint;
 	delete[]plint;
-	char* pc = "hello";
+	//char* pc = "hello";
 	CString ss = _T("123456");
-	lcode(cout << strlen(pc) << tab << sizeof(_T("hello")) << tab << ss.GetLength() << el;);
+	//lcode(cout << strlen(pc) << tab << sizeof(_T("hello")) << tab << ss.GetLength() << el;);
 
 }
 
@@ -1798,7 +1791,6 @@ void CSDIView::OnSTLArgTest()
 {
 	//return y += val * x;
 	SimulationStdCout;
-	RUNTEST(STL ARGARMENT TEST);
 	int x = 3;
 	cout << returnt<int, 3>() << tab << sizeof(returnt<int, 3>()) << el;
 	cout << returnt<long long int, 5>() << tab << sizeof(returnt<long long, 5>()) << el;
@@ -2090,6 +2082,7 @@ void CSDIView::OnInitalListTest()
 
 }
 
+
 class ptr
 {
 public:
@@ -2127,42 +2120,6 @@ public:
 
 int ptr::iall = 0;
 int ptr::icreate = 0;
-
-//#ifndef _MAKE_UNIQUE_HPP_
-//#define _MAKE_UNIQUE_HPP_
-//#include <type_traits>
-//#include <memory>
-//
-// 单一元素类模板定义
-//template <typename T>
-//using Ele = typename std::enable_if<!std::is_array<T>::value, std::unique_ptr<T> >::type;
-//
-// 变长数组类模板定义
-//template <typename T>
-//using Slice = typename std::enable_if<std::is_array<T>::value&& std::extent<T>::value == 0, std::unique_ptr<T>>::type;
-//
-// 定长数组类模板定义
-//template <typename T>
-//using Arr = typename std::enable_if<std::extent<T>::value != 0, void>::type;
-//
-// 支持普通指针
-//template <typename T, typename ... Args> inline
-//Ele<T> make_unique(Args && ... args) {
-//	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-//}
-//
-// 支持动态数组
-//template <typename T> inline
-//Slice<T> make_unique(size_t size) {
-//	using U = typename std::remove_extent<T>::type;
-//	return std::unique_ptr<T>(new U[size]);
-//}
-//
-// 过滤定长数组
-//template <typename T, typename ... Args>
-//Arr<T> make_unique(Args &&...) = delete;
-//
-//#endif
 
 void CSDIView::OnPtrUniqueTest()
 {
@@ -2275,6 +2232,18 @@ auto con(C<t> v)
 	return *v.begin();
 }
 
+namespace type {
+	typedef int INT;
+	typedef double DOUB;
+	using CHPtr = char*;
+}
+
+struct sType {
+	typedef int INT;
+	typedef double DOUB;
+#define LNT  INT
+	using CHPtr = char*;
+};
 
 void CSDIView::OnStlStdForwardTest()
 {
@@ -2299,28 +2268,23 @@ void CSDIView::OnStlStdForwardTest()
 	callf(cout, 7);
 	callf(cout, i + 7);
 	);
-	//lscode(
-	//	cout << __cplusplus << el;
-	//cout << max(3, 8, 9, 10, 22, 12) << el;
-	//cout << imax(3, 8, 9, 10, 22, 12, i, ia, ci, irr, irc) << el;
-	//cout << gmax(3.4, 898.8, 0.9, 10, 200.22, 12.0) << el;
-	//cout << gmax(3.40) << el;
-	//cout << gmax(898.8, 0.9) << el;
-	//cout << lex<int>() << el;
-	//cout << lex<float>() << el;
-	//cout << lex() << el;
-	//);
-	//vector<int> va = { 10000,9,9,8,2000 };
-	//cout << cut;
-	//cout << __TIME__ << el;
-	//time_t begin = time(nullptr);
-	//cout << cinsert(list<int>(), 100) << el;
-	//time_t end = time(nullptr);
-	//cout << __TIME__ << el;
-	//cout << end - begin << el;
-	//cout << typeid(decltype(*va.begin())).name() << el;
-	//decltype(va)::value_type ixa = *va.begin();
-	//cout << ixa << el;
+	cout << cl;
+	using namespace type;
+	showtype(type::INT);
+	showtype(type::DOUB);
+	showtype(type::CHPtr);
+	showtype(sType::CHPtr);
+	showtype(sType::LNT);
+	showtype(LNT);
+	lscode(
+		cout << imax(3, 8, 9, 10, 22, 12, i, ia, ci, irr, irc) << el;
+	cout << gmax(3.4, 898.8, 0.9, 10, 200.22, 12.0) << el;
+	cout << lex<int>() << el;
+	cout << lex<float>() << el;
+	cout << lex() << el;
+	);
+	vector<int> va = { 10000,9,9,8,2000 };
+	decltype(va)::value_type ixa = *va.begin();
 
 }
 

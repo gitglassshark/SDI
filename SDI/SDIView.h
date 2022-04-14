@@ -78,7 +78,7 @@ public:
 	afx_msg void OnBitExChar();
 
 public:
-	bool  CSDIView::spline(CDC& dc, string tips = "0", int line = -1, char c = '=', int ntime = 120);
+	//bool CSDIView::spline(CDC& dc, string tips = "0", int line = -1, char c = '=', int ntime = 120);
 	CDC& SetDefaultFontDC(CDC* pdc = nullptr);
 	bool RestoreDCFont(CDC& dc);
 

@@ -79,7 +79,7 @@ FCDC& FCDC::operator <<(LPCTSTR cs)
 	{
 		CString s;
 		s = cs;
-		m_cdc->TextOutW(p.x, p.y, cs);
+		m_cdc->TextOut(p.x, p.y, cs);
 		CSize size;
 		size = m_cdc->GetOutputTextExtent(cs);
 		p.x += size.cx;
@@ -95,7 +95,7 @@ FCDC& FCDC::operator <<(const char* cs)
 	{
 		CString s;
 		s = cs;
-		m_cdc->TextOutW(p.x, p.y, s);
+		m_cdc->TextOut(p.x, p.y, s);
 		CSize size;
 		size = m_cdc->GetOutputTextExtent(s);
 		p.x += size.cx;
@@ -108,7 +108,7 @@ FCDC& FCDC::operator <<(const CAtlString& s)
 {
 	//
 	if (!s.IsEmpty()) {
-		m_cdc->TextOutW(p.x, p.y, s);
+		m_cdc->TextOut(p.x, p.y, s);
 		CSize size;
 		size = m_cdc->GetOutputTextExtent(s);
 		p.x += size.cx;
@@ -124,7 +124,7 @@ FCDC& FCDC::operator <<(const std::string& s)
 	if ((s.length()) && (s.at(0) != '\0')) {
 		CString cs;
 		cs = s.c_str();
-		m_cdc->TextOutW(p.x, p.y, cs);
+		m_cdc->TextOut(p.x, p.y, cs);
 		CSize size;
 		size = m_cdc->GetOutputTextExtent(cs);
 		p.x += size.cx;
@@ -138,7 +138,7 @@ FCDC& FCDC::operator <<(const CString& s)
 {
 	//
 	if (!s.IsEmpty()) {
-		m_cdc->TextOutW(p.x, p.y, s);
+		m_cdc->TextOut(p.x, p.y, s);
 		CSize size;
 		size = m_cdc->GetOutputTextExtent(s);
 		p.x += size.cx;
@@ -154,7 +154,7 @@ FCDC& FCDC::operator <<(const double n)
 	CString s;
 	CSize size;
 	s.Format(_T("%f"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 	//
@@ -168,7 +168,7 @@ FCDC& FCDC::operator <<(const long double n)
 	CString s;
 	CSize size;
 	s.Format(_T("%lf"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 	//
@@ -182,7 +182,7 @@ FCDC& FCDC::operator <<(const long int n)
 	CString s;
 	CSize size;
 	s.Format(_T("%ld"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 
@@ -197,7 +197,7 @@ FCDC& FCDC::operator <<(const long long n)
 	CString s;
 	CSize size;
 	s.Format(_T("%lld"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 
@@ -212,7 +212,7 @@ FCDC& FCDC::operator <<(const size_t n)
 	CString s;
 	CSize size;
 	s.Format(_T("%zd"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 
@@ -233,7 +233,7 @@ FCDC& FCDC::operator <<(const bool b)
 	else {
 		s = st(false);
 	}
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 
@@ -248,7 +248,7 @@ FCDC& FCDC::operator <<(const int n)
 	CString s;
 	CSize size;
 	s.Format(_T("%ld"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 
@@ -267,7 +267,7 @@ FCDC& FCDC::operator<<(const char& c)
 	}
 	CString s;
 	s = c;
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	CSize size;
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;

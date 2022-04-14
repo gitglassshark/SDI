@@ -13,9 +13,6 @@
 #include "resource.h"       // 主符号
 #include <vector>
 
-#ifndef _DEBUG
-
-#define _DEBUG
 
 #define LOGMESSAGE(objectname)  {\
 		CString strmessage;\
@@ -44,19 +41,7 @@
 		objectname##.messagelog.push_back(strmessage);\
 		}
 
-#endif
 
-#ifndef _DEBUG
-
-#define LOGMESSAGE(objectname)
-
-#endif
-
-#ifdef _NDEBUG
-
-#define LOGMESSAGE(objectname)
-
-#endif
 
 #define SHOWSPLITLWINDOW(objectname)  {\
 		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
@@ -89,7 +74,7 @@
 		strmessage.Format(_T(#text));\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		dc.TextOutW(ix, iy, strmessage);\
+		dc.TextOut(ix, iy, strmessage);\
 		}
 
 #define TEXTFORMATOUTDC(dc,x,y,ftstr,value) {\
@@ -99,7 +84,7 @@
 		strmessage.Format(_T(#ftstr),value);\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		dc.TextOutW(ix, iy, strmessage);\
+		dc.TextOut(ix, iy, strmessage);\
 		}
 
 #define TEXTOUTCSTR(pdc,x,y,Cstrmessage) {\
@@ -109,7 +94,7 @@
 		int iy=y;\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		dc.TextOutW(ix, iy, Cstrmessage);\
+		dc.TextOut(ix, iy, Cstrmessage);\
 		}
 #define PRINTN(x,y,number) {\
 		CDC* pdc= this->GetWindowDC();\
@@ -117,7 +102,7 @@
 		strmessage.Format(_T(#number" is :""%ld ."),number);\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		pdc->TextOutW(x, y, strmessage);\
+		pdc->TextOut(x, y, strmessage);\
 		}
 
 
@@ -127,7 +112,7 @@
 		int iy=y;\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		pdc->TextOutW(ix, iy, CString(_T(#strmessage)));\
+		pdc->TextOut(ix, iy, CString(_T(#strmessage)));\
 		}
 
 #define COUTTS(str) {\
@@ -138,7 +123,7 @@
 		int iy=position.y;\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		pdc->TextOutW(ix, iy,strmessage);\
+		pdc->TextOut(ix, iy,strmessage);\
 		}
 
 #define COUTCS(dc,strmessage) {\
@@ -146,7 +131,7 @@
 		int iy=position.y;\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		dc.TextOutW(ix, iy,strmessage);\
+		dc.TextOut(ix, iy,strmessage);\
 		}
 
 #define SFOUT(dc,ftstr,value) {\
@@ -156,7 +141,7 @@
 		strmessage.Format(_T(#ftstr),value);\
 		this->ShowWindow(SW_SHOW);\
 		this->UpdateWindow();\
-		dc.TextOutW(ix, iy, strmessage);\
+		dc.TextOut(ix, iy, strmessage);\
 		}
 
 

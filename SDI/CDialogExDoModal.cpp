@@ -69,7 +69,7 @@ void CDialogExDoModal::OnBnClickedOk()
 					AfxMessageBox(strage);}
 #define wwindowst(n)	{CAtlString strage;\
 						strage.Format(_T("ok:%ld"), n);\
-						this->SetWindowTextW(strage);}
+						this->SetWindowText(strage);}
 
 void CDialogExDoModal::OnEnChangeEditAgeDiaone()
 {
@@ -79,7 +79,7 @@ void CDialogExDoModal::OnEnChangeEditAgeDiaone()
 	this->UpdateData(true);
 	CAtlString strage; 
 	strage.Format(_T("ok %ld"), m_age_edit);
-	this->SetWindowTextW(strage);
+	this->SetWindowText(strage);
 	this->m_age_edit;
 	//this->UpdateData(true);
 

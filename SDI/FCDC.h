@@ -32,7 +32,7 @@ public:
 	FCDC& operator<<(const char& c);
 	FCDC& operator<<(const char* s);
 	FCDC& operator<<(const std::string& s);
-	FCDC& operator<<(LPCTSTR s);
+	//FCDC& operator<<(LPCTSTR s);
 	FCDC& operator<<(const CString& s);
 	FCDC& operator<<(const CAtlString& s);
 	FCDC& operator<<(const bool b);
@@ -60,7 +60,7 @@ FCDC& FCDC::operator <<(T* n) {
 	CString s;
 	CSize size;
 	s.Format(_T("%p"), n);
-	m_cdc->TextOutW(p.x, p.y, s);
+	m_cdc->TextOut(p.x, p.y, s);
 	size = m_cdc->GetOutputTextExtent(s);
 	p.x += size.cx;
 	return *this;
@@ -76,7 +76,7 @@ FCDC& FCDC::operator <<(const T& s) {
 	CString css;
 	css = cs.c_str();
 	CSize size;
-	m_cdc->TextOutW(p.x, p.y, css);
+	m_cdc->TextOut(p.x, p.y, css);
 	size = m_cdc->GetOutputTextExtent(css);
 	p.x += size.cx;
 	return *this;

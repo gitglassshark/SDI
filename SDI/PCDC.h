@@ -18,10 +18,6 @@
 class PCDC;
 extern class CColor dccr;
 
-typedef struct _tag_iosset {
-	byte set;
-	byte flag;
-}ioset;
 
 PCDC& cl(PCDC& dc);
 PCDC& cut(PCDC& dc);
@@ -81,16 +77,22 @@ public:
 
 public:
 	PCDC& operator<<(const char c);
-	PCDC& operator<<(char const cs[]);
+	PCDC& operator<<(signed char c) { return (*this) << (const char)c; };
+	PCDC& operator<<(unsigned char c) { return (*this) << (const char)c; };
 	PCDC& operator<<(char cs[]);
-	PCDC& operator<<(LPCTSTR s);
+	PCDC& operator<<(char const cs[]);
+	PCDC& operator<<(signed char const cs[]) { return *this << (const char*)cs; };
+	PCDC& operator<<(unsigned char const cs[]) { return *this << (const char*)cs; };
+	//PCDC& operator<<(LPCTSTR s);
 	PCDC& operator<<(const std::string& s);
 	PCDC& operator<<(const std::wstring& s);
 	PCDC& operator<<(const CString& s);
 	PCDC& operator<<(const CAtlString& s);
 	PCDC& operator<<(const bool b);
 	PCDC& operator<<(const int n);
+	PCDC& operator<<(const unsigned int n) { (*this) << (const int)n; return *this; };
 	PCDC& operator<<(const long int n);
+	PCDC& operator<<(const unsigned long int n) { return *this << (const long int)n; };
 	PCDC& operator<<(const long long n);
 	PCDC& operator<<(const float n);
 	PCDC& operator<<(const double n);
@@ -117,22 +119,8 @@ public:
 	template<typename T>
 	using init = initializer_list<T>;
 	template<typename T> PCDC& operator <<(T* p);
-	template<typename T >
-	PCDC& operator ()(initializer_list<T> c)
-	{
-		T ibegin = *c.begin() - *c.begin();
-		forprintv(c);
-		return *this;
-	}
-	template<typename T >
-	PCDC& operator<<(initializer_list<T> c)
-	{
-		T ibegin = *c.begin() - *c.begin();
-		forprintv(c);
-		return *this;
-	}
-	
-	template<typename Tstring> PCDC& titleline(const Tstring& s);
+	template<typename T > PCDC& operator ()(initializer_list<T> c);
+	template<typename T > PCDC& operator<<(initializer_list<T> c);
 	template <typename X> PCDC& operator <<(const vector<X>& v);
 	template <typename T> PCDC& operator <<(const list<T>& l);
 	template <typename T, typename X> PCDC& operator <<(const multimap<T, X>& m);
@@ -143,11 +131,16 @@ public:
 	template <typename T> PCDC& operator <<(const multiset<T>& s);
 	template <typename T> PCDC& operator <<(const deque<T>& d);
 	template <typename T, size_t len> PCDC& operator <<(const array<T, len>& a);
+	template <typename X> PCDC& operator <<(const unique_ptr<X>& unptr);
 	template<typename T> PCDC& forprintr(const T* b, const T* e);
 	template<typename T> PCDC& forprintv(const T& v);
 	template<typename T> PCDC& forprintm(const T& m);
+	template<typename Tstring> PCDC& titleline(const Tstring& s);
 	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
-	template <typename X> PCDC& operator <<(const unique_ptr<X>& unptr);
+	template <typename X> PCDC& adress(X a);
+	template <typename T, typename ...X> PCDC& adress(T a, X...args);
+	PCDC& type() { return *this; };
+	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
 
 	template <typename X> PCDC& pt(X a);
 	template <typename T, typename ...X> PCDC& pt(T a, X...args);
@@ -157,10 +150,6 @@ public:
 	template <typename T, typename ...X> PCDC& pb(T a, X...args);
 	PCDC& pl() { return *this; }
 	template <typename T, typename ...X> PCDC& pl(T a, X...args);
-	template <typename X> PCDC& adress(X a);
-	template <typename T, typename ...X> PCDC& adress(T a, X...args);
-	PCDC& type() { return *this; };
-	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
 	template <typename A, typename B> bool comp(A a, B b)
 	{
 		return a > b;
@@ -196,8 +185,38 @@ public:
 		args((X&&)Args...);
 		return *this;
 	}
+	template <typename A>
+	auto getnext(A a)
+	{
+		if (std::is_same<A,tuple<>>::value)
+		{
+			return *this;
+		}
+		else
+		{
+			*this << a._myFirst<< el;
+			return getnext(a._Get_rest());
+		}
+	};
 
 };
+
+template<typename T >
+PCDC& PCDC::operator ()(initializer_list<T> c)
+{
+	T ibegin = *c.begin() - *c.begin();
+	forprintv(c);
+	return *this;
+}
+
+
+template<typename T >
+PCDC& PCDC::operator<<(initializer_list<T> c)
+{
+	T ibegin = *c.begin() - *c.begin();
+	forprintv(c);
+	return *this;
+}
 
 
 template <typename  int N>
@@ -594,23 +613,3 @@ auto sum(initializer_list<T> c)
 
 
 
-//template<typename...Args, int N,int SIZE>
-	//PCDC& disptuple(tuple<Args...> tu)
-	//{
-	//	if(N<=SIZE)
-	//		*this<<std::get<N>(tu);
-	//	else
-	//		disptupe<tuple<Args...>,N+1,SIZE>(tu);
-	//	return *this;
-	//}
-
-	//template<typename...Args>
-	//PCDC& operator<<(tuple<Args...> tu)
-	//{
-	//	constexpr size_t length = sizeof...(Args);
-	//	if (sizeof...(Args) == 0)
-	//		return *this;
-	//	*this << "{ " << std::get<0>(tu);
-	//	disptuple<tuple < Args...>, 1,length>(tu);
-	//	return *this;
-	//}

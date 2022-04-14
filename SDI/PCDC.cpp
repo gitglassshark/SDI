@@ -167,7 +167,7 @@ const CSize& PCDC::imresizeout(const CString& cs)
 			p.y = mrect.top + initalpos + wbar;
 		}
 		//need recalc ned***
-		TextOutW(p.x, p.y, cs);
+		TextOut(p.x, p.y, cs);
 		p.x += msize.cx;
 	}
 	return msize;
@@ -255,15 +255,15 @@ PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
 }
 
 
-PCDC& PCDC::operator <<(LPCTSTR cs)
-{
-	if ((cs != nullptr) && (*cs != '\0'))
-	{
-		ms = cs;
-		imresizeout(ms);
-	}
-	return *this;
-}
+//PCDC& PCDC::operator <<(LPCTSTR cs)
+//{
+//	if ((cs != nullptr) && (*cs != '\0'))
+//	{
+//		ms = cs;
+//		imresizeout(ms);
+//	}
+//	return *this;
+//}
 
 
 PCDC& PCDC::operator <<(char cs[])
