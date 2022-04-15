@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SDI/mfc/wingdi.cpp
+/SDI/mfc/filecore.cpp
+/SDI/mfc/arccore.cpp

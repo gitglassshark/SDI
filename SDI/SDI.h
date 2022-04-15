@@ -185,13 +185,14 @@
 class CColor {
 public:
 	COLORREF red = RGB(255, 0, 0);
+	COLORREF red4 = RGB(139, 0, 0);
 	COLORREF green = RGB(34, 139, 34);
 	COLORREF blue = RGB(0, 0, 255);
 	COLORREF white = RGB(255, 255, 255);
 	COLORREF chocolate = RGB(238, 118, 33);
 	COLORREF black = RGB(0, 0, 0);
-	COLORREF steelblue = RGB(70, 130, 180);
-	COLORREF darkgreen = RGB(0, 100, 0);
+	COLORREF dodgerblue = RGB(16,78,139);
+	COLORREF forestgreen = RGB(34,139,34);
 	COLORREF darkgray= RGB(128, 128, 139);
 	COLORREF darkslateblue= RGB(72, 61, 128);
 	COLORREF slategray= RGB(112, 128, 144);
@@ -203,6 +204,7 @@ public:
 	COLORREF whitesmoke= RGB(245, 245,245);
 	COLORREF silver= RGB(192, 192,192);
 	COLORREF darkcyan= RGB(0, 139,139);
+	COLORREF darkred= RGB(139, 0,0);
 	COLORREF teal= RGB(0, 128,128);
 };
 

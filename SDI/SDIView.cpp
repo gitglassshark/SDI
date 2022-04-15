@@ -74,8 +74,7 @@
 #define RUNTEST(message)		/*cout.clearscreen();\
 								cout.titleline(wstring(st(message)));*/
 
-#define TITLE(message)      /*cout.clearscreen();\
-							cout.titleline(wstring(st(message)));*/
+#define TITLE(message)      cout.title(CString(st(message)));
 
 
 template <typename T>
@@ -1190,7 +1189,7 @@ void CSDIView::OnStlStackEqueueTest()
 {
 	SimulationStdCout;
 	RUNTEST(STACK EQUEUE TEST);
-	cout.setcolor(dccr.darkslateblue, dccr.darkgreen, cout.m_bk, cout.m_tk);
+	cout.setcolor(dccr.darkslateblue, dccr.green, cout.m_bk, cout.m_tk);
 	cout << cl;
 	stack<int>ist;
 	for (size_t i = 0; i < 20; i++)
@@ -1378,21 +1377,21 @@ void CSDIView::OnStlSetTest()
 	{
 		iset1.insert(i * rand() % mod);
 	}
-	cout<<iset1<<el;
+	cout << iset1 << el;
 	iset1.insert(25);
-	cout<<iset1<<el;
+	cout << iset1 << el;
 
-	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; cout<<iset1;);
+	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; cout << iset1;);
 
-	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; cout<<iset1<<el;);
+	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; cout << iset1 << el;);
 	auto it = iset1.find(8);
 	if (it == iset1.end())
 		cout << "is end" << el;
 	lcode(iset1.insert(100););
 	lcode(iset1.insert(200););
 	lcode(iset1.insert(300););
-	lcode(cout << "find" << tab << *iset1.upper_bound(20) << el; cout<<iset1<<el;);
-	lcode(cout << "find" << tab << *iset1.lower_bound(10) << el; cout<<iset1;);
+	lcode(cout << "find" << tab << *iset1.upper_bound(20) << el; cout << iset1 << el;);
+	lcode(cout << "find" << tab << *iset1.lower_bound(10) << el; cout << iset1;);
 
 	class icompset {
 	public:
@@ -1475,7 +1474,7 @@ void CSDIView::OnStlSetTest()
 	{
 		ilt.push_back((rand() * i * rand()) % 100);
 	}
-	cout<<ilt<<el;
+	cout << ilt << el;
 
 	vector<int>intvec(20), empty;
 	int i = 0;
@@ -1487,19 +1486,19 @@ void CSDIView::OnStlSetTest()
 	}
 
 	ilt.sort(a);
-	cout<<ilt<<el;
+	cout << ilt << el;
 	a.sortset(true); ilt.sort(a);
-	cout<<ilt<<el;
+	cout << ilt << el;
 	a.sortset(false); ilt.sort(a.sortset(false));
-	cout<<ilt<<el;
+	cout << ilt << el;
 	sort(intvec.begin(), intvec.end(), compare);
-	cout<<ilt<<el;
-	sort(intvec.begin(), intvec.end(), a.sortset(true)); 
-	cout<<ilt<<el;
+	cout << ilt << el;
+	sort(intvec.begin(), intvec.end(), a.sortset(true));
+	cout << ilt << el;
 	a.sortset(false); sort(intvec.begin(), intvec.end(), a);
-	cout<<ilt<<el;
-	ilt.reverse(); 
-	cout<<ilt<<el;
+	cout << ilt << el;
+	ilt.reverse();
+	cout << ilt << el;
 
 
 
@@ -1671,43 +1670,6 @@ int igi = 88;
 typedef int (*PFU)(int);
 using PTRFUN = int (*)(int);
 
-void CSDIView::OnLamdbaFuncTest()
-{
-	// TODO 测试lamdba表达式
-	SimulationStdCout
-		auto funl = [](int val1, int val2)mutable ->bool {
-		return val1 > val2;
-	};
-	int x = 1, y = 2;
-	cout << x << el;
-	function<bool(int, int)> p = funl;
-	cout << p(100, 200);
-	cout << el;
-	showtype(p);
-	showtype(funl);
-	showtype(PTRFUN);
-	auto funl1 = [&](int val)mutable ->int {
-		int z = 210;
-		showtype(z);
-		return igi + val;
-	};
-	function<int(int)> p1 = funl1;
-	showtype(funl1);
-	showtype(p1);
-	cout << cut;
-
-	vector<int> iset1;
-	int mod = 30;
-	for (size_t i = 0; i < 30; i++)
-	{
-		iset1.insert(iset1.end(), i * rand() % mod);
-	}
-	cout << iset1 << el << cut;
-	sort(iset1.begin(), iset1.end(), std::function<bool(int, int)>([](int a, int b) ->bool { return a < b; }));
-	cout << iset1 << el << cut;
-	sort(iset1.begin(), iset1.end(), funl);
-	cout << iset1;
-}
 
 void CSDIView::OnStlTupleTest()
 {
@@ -2094,6 +2056,8 @@ void CSDIView::OnPaintDcTest()
 	ofile.Write(str.c_str(), str.length());
 	ofile.SeekToBegin();
 	);
+
+	//文件测试
 	lscode(
 		char strr[256]{};
 	size_t len = ofile.Read(strr, 256);
@@ -2102,7 +2066,6 @@ void CSDIView::OnPaintDcTest()
 		<< el;
 	string strt(strr);
 	cout << strt << el;
-	);
 	cout.type(cout);
 	cout.address(cout) << el;
 	cout << showv(ofile.GetFileName()) << el;
@@ -2110,7 +2073,7 @@ void CSDIView::OnPaintDcTest()
 	cout << showv(ofile.GetLength()) << el;
 	cout << showv(ofile.GetFileTitle()) << el;
 	cout << showv(ofile.GetPosition()) << el;
-
+	);
 
 
 }
@@ -2120,8 +2083,6 @@ void CSDIView::OnPCDCFunctionTest()
 	SimulationStdCout;
 
 	static size_t imod = 0;
-
-	cout << cl;
 	char ca = 'a';
 	int ia = 10;
 	float fa = 31.1;
@@ -2147,18 +2108,25 @@ void CSDIView::OnPCDCFunctionTest()
 	int&& rra = 10;
 	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 	int i = 500;
-	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
-
 	initializer_list<int> v = { 3,4,5,6 };
 	vector<int>vecta{ 3, 4, 5, 6,1 };
 	vector<int>va = { 12,234,56,78,892,8,235,86 };
 	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
+
+	auto d{ tuplea._Get_rest() };
+	cout << cl;
+	cout.disptup(tuplea) << el;
+	cout << cut;
+
 	int length = tuple_size<decltype(tuplea)>::value;
 
 
-	cout << cut;
-	cout%tuplea;
-	cout<<cut;
+
+	//cout << cl;
+	//cout << cut;
+	//cout% tuplea;
+	//cout << cut;
 	goto end;
 
 	if (imod % iitem == 0)
@@ -2258,8 +2226,76 @@ end:
 		imod = 0;
 }
 
+void CSDIView::OnLamdbaFuncTest()
+{
+	// TODO 测试lamdba表达式
+	SimulationStdCout;
+	cout.settcolor(RGB(139,0,0));
+	cout.title("begin lambda experss test...");
+	cout.resettcolor();
+	auto funl = [](int val1, int val2)mutable ->bool {
+		return val1 > val2;
+	};
+	int x = 1, y = 2;
+	cout << x << el;
+	function<bool(int, int)> p = funl;
+	cout << p(100, 200);
+	cout << el;
+	showtype(p);
+	showtype(funl);
+	showtype(PTRFUN);
+	auto funl1 = [&](int val)mutable ->int {
+		int z = 210;
+		showtype(z);
+		return igi + val;
+	};
+	function<int(int)> p1 = funl1;
+	showtype(funl1);
+	showtype(p1);
+	cout << cut;
 
+	vector<int> iset1;
+	int mod = 30;
+	for (size_t i = 0; i < 30; i++)
+	{
+		iset1.insert(iset1.end(), i * rand() % mod);
+	}
+	cout << iset1 << el << cut;
+	sort(iset1.begin(), iset1.end(), std::function<bool(int, int)>([](int a, int b) ->bool { return a < b; }));
+	cout << iset1 << el << cut;
+	sort(iset1.begin(), iset1.end(), funl);
+	cout << iset1<<el;
 
+	//lambda experssion
+	lscode(cout << []() {return 5; }() << el;);
+	lscode(
+		struct lam {
+		int i = 10;
+		int operator()()const
+		{
+			return [] { int i = 6;
+			i++; return i; }();
+		};
+	};
+	int i = 2;
+	auto l = [=]()mutable {
+		struct B {
+			void set(int a)
+			{
+				i = a;
+			}
+			int i = 20;
+			int b = 30;
+		};
+		B a{};
+		i++;
+		a.set(i);
+		return i + a.i;
+	};
 
+	cout << lam()() << el;
+	);
 
+	lscode(cout << "Hello world!" << el;)
+}
 

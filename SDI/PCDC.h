@@ -119,21 +119,22 @@ public:
 
 
 public:
+	const CSize& imresizeout(const CString& cs);
 	PCDC& resettcolor();
 	PCDC& settcolor(COLORREF tk);
 	PCDC& setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk);
 	PCDC& setimod(int imod);
+	template <typename T = CString>
+	PCDC& title(T t);
 	const char setlinechar(const char& c = '=');
 	const void clearscreen(const CRect* r = nullptr, const COLORREF* cr = nullptr);
-	const CSize& imresizeout(const CString& cs);
 
 
 public:
 	template <typename A>
 	PCDC& operator%(const tuple<A>& tup)
 	{
-		//*this << "tuple<AB>";// << sizeof(tuple<>) << tab << sizeof(tup) << tab << tuple_size<decltype(tup)>::value << el;
-		return *this <<"  :"<< get<0>(tup) << "  ;";
+		return *this << "  :" << get<0>(tup) << "  ;";
 	}
 	template <typename A, typename... Args>
 	PCDC& operator%(const tuple<A, Args...>& tup)
@@ -172,10 +173,34 @@ public:
 
 
 public:
+	template<typename T, size_t N = std::tuple_size<T>::value>
+	PCDC& disptup(T t)
+	{
+		constexpr size_t M=std::tuple_size<T>::value;
+		constexpr size_t I=M-N;
+		if constexpr (N == 1)
+		{
+			*this << "{" << std::get<I>(t)<<" }";
+			return *this;
+		}
+		else
+		{
+			*this <<" {"<< std::get<I>(t)<<" },";
+			disptup<T, N-1>(t);
+		}
+		return *this;
+	};
+	/*template<typename...T>
+	PCDC& dispp(tuple<T...> t)
+	{
+		{ *this << std::get<index_sequence_for<T...>()>(t)...};
+		return *this;
+	};*/
+
+
 	template<typename T> PCDC& forprintr(const T* b, const T* e);
 	template<typename T> PCDC& forprintv(const T& v);
 	template<typename T> PCDC& forprintm(const T& m);
-	template<typename Tstring> PCDC& titleline(const Tstring& s);
 	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
 	template <typename X> PCDC& address(X&& a);
 	template <typename X> PCDC& address(X& a);
@@ -547,11 +572,10 @@ PCDC& PCDC::operator <<(const list<T>& l)
 		return forprintv(l);
 }
 
-template<typename Tstring>
-PCDC& PCDC::titleline(const Tstring& s)
+template <typename T>
+PCDC& PCDC::title(T t)
 {
-	CString ts;
-	ts = s.c_str();
+	CString ts(t);
 	if (!ts.IsEmpty())
 	{
 		ts.MakeUpper();
@@ -567,7 +591,7 @@ PCDC& PCDC::titleline(const Tstring& s)
 	CSize size = dc.GetOutputTextExtent(cs);
 	dc.m_pwnd->GetClientRect(&dc.mrect);
 	auto w = dc.mrect.right - (dc.mrect.left + dc.initalpos * 2);
-	size_t icount = w / size.cx - ts.GetLength();
+	size_t icount = w / size.cx - ts.GetLength() - 2;
 	icount /= 2;
 	for (size_t i = 0; i < icount; ++i)
 	{
@@ -580,7 +604,7 @@ PCDC& PCDC::titleline(const Tstring& s)
 	}
 	cs += '>';
 	imresizeout(cs);
-	return dc;
+	return *this << el;
 }
 
 template <typename T>

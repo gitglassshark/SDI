@@ -102,8 +102,6 @@ PCDC& PCDC::Create(CWnd* pwnd)
 	}
 	*this << cl;
 	icreate = true;
-	//*this << id << "#  " << st(Similation screen DC is be ready...) << " count is " << icount << el;
-	*this << starline;
 	return *this;
 }
 
