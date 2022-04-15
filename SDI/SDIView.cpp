@@ -67,8 +67,8 @@
 
 #define sst(code,...)  #code##","#__VA_ARGS__
 #define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
-#define showv(name) st(name)<<_T(" is: ")<<name<<tab
-#define showtype(...)  cout<<"NAME: "<<#__VA_ARGS__<<tab<<"TYPE:  "<<typeid(##__VA_ARGS__).name()<<tab <<"SIZE:  "<<sizeof(##__VA_ARGS__)<<"  HASHCODE:"<<typeid(##__VA_ARGS__).hash_code()<<el;
+#define showv(name) st(name)<<_T(" value is: ")<<name<<tab
+#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el;
 
 
 #define RUNTEST(message)		/*cout.clearscreen();\
@@ -1019,138 +1019,6 @@ public:
 	}
 };
 
-void CSDIView::OnPCDCFunctionTest()
-{
-	SimulationStdCout;
-
-	static size_t imod = 0;
-
-	cout << cl;
-	char ca = 'a';
-	int ia = 10;
-	float fa = 31.1;
-	bool iba = true;
-	long la = 500000;
-	long long lla = 256 * 256 * 25650;
-	double da = 62.444;
-	long double lda = 262.844;
-	size_t icount = 50;
-	int* ip = &ia;
-	char* cp = &ca;
-	long* lp = &la;
-	long long* llp = &lla;
-	double* dp = &da;
-	const char* chp = "const char []";
-	const char chpa[] = "char []";
-	CAtlString catlstr = st(Smilate termial console mfc DC test, CAtlString...);
-	CString cstr = st(Smilate termial console mfc DC test, CString...);
-	std::string cs = "This is a string...   ";
-	std::wstring wcs = L"This is a Wstring...   ";
-	int iitem = 5;
-	int& ria = ia;
-	int&& rra = 10;
-	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
-	int i = 500;
-	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
-
-	initializer_list<int> v = { 3,4,5,6 };
-	vector<int>vecta{ 3, 4, 5, 6,1 };
-	vector<int>va = { 12,234,56,78,892,8,235,86 };
-	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
-	int length = tuple_size<decltype(tuplea)>::value;
-
-	if (imod % iitem == 0)
-	{
-		lscode(
-		cout.type(ia);
-		cout.type(ria);
-		cout.type(rra);
-		cout.type((std::move(ia)));
-		cout.type((std::move(ria)));
-		cout.type((std::move(rra)));
-		cout <<length<<tab<<tuplea << el;
-		);
-	}
-
-	if (imod % iitem == 4)
-	{
-		argsvalue(1, 2, 3, 4, 5);
-		lscode(
-			{
-			cout << chp << tab; showtype(chp);
-			cout << chpa << tab;  showtype(chpa);
-			cout << catlstr << tab; showtype(catlstr);
-			cout << cstr << tab; showtype(cstr);
-			cout << cs << tab; showtype(cs);
-			cout << wcs << tab; showtype(wcs);
-			}
-		);
-	}
-
-	if (imod % iitem == 1)
-	{
-
-		{
-			cout << "beging test dc..." << tab << st(print value) << el;
-			cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
-		}
-
-		lscode(
-			{
-			cout << ip << tab << *cp << tab << lp << tab << llp << tab << dp << el << cut;
-			}
-		);
-
-	}
-	if (imod % iitem == 2)
-	{
-		lcode(
-			{
-			cout << va << el << mif << el;
-			}
-		);
-	};
-
-	if (imod % iitem == 3)
-	{
-		cout << cl;
-		cout << arrone << el;
-		cout.pl(icount, ca, ia, fa, iba, la, lla, da, cs, wcs);
-		cout.pb(icount, ca, ia, fa, iba, la, lla, da, cstr);
-		cout.pc(icount, ca, ia, fa, iba, la, lla, da, cstr);
-		cout.pt(icount, ca, ia, fa, iba, la, lla, da);
-		cout.address(icount, ca, ia, fa, iba, la, lla, da);
-		cout.pt(va, mif) << cut;
-		cout.pb(va, mif) << cut;
-		cout.pc(va, mif) << cut;
-		cout.type(cout, ca, ia);
-		lscode(
-			cout << cut;
-		cout.args();
-		cout << cut;
-		cout.args(1);
-		cout << cut;
-		cout.args(1, 2);
-		cout << cut;
-		cout.args(1, 2, 3);
-		cout.pl(3, i, ia, 6.0, "good");
-		cout.pt(3, i, ia, 6.0, "good");
-		cout.pb(3, i, ia, 6.0, "good");
-		cout.pc(3, i, ia, 6.0, "good");
-		cout << sum({ 3, 4, 5, 6 }) << el;
-		cout << set<int>{ 3, 4, 5, 6, 2} << el;
-		cout << (initializer_list<int>{ 2, 3, 4, 5, 6, 7, 9 });
-		cout << vecta << el;
-		cout << " " << tuple_size<decltype(tuplea)>::value << el;
-		cout << " " << typeid(decltype(tuplea)).name() << el;
-		);
-	}
-
-
-	++imod;
-	if (imod == 4)
-		imod = 0;
-}
 
 void CSDIView::OnSTLlStringTest()
 {
@@ -1510,20 +1378,21 @@ void CSDIView::OnStlSetTest()
 	{
 		iset1.insert(i * rand() % mod);
 	}
+	cout<<iset1<<el;
+	iset1.insert(25);
+	cout<<iset1<<el;
 
-	lcode(PrintEle(iset1, cout););
-	lcode(iset1.insert(25); PrintEle(iset1, cout););
-	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; PrintEle(iset1, cout););
+	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; cout<<iset1;);
 
-	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; PrintEle(iset1, cout););
+	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; cout<<iset1<<el;);
 	auto it = iset1.find(8);
 	if (it == iset1.end())
 		cout << "is end" << el;
 	lcode(iset1.insert(100););
 	lcode(iset1.insert(200););
 	lcode(iset1.insert(300););
-	lcode(cout << "find" << tab << *iset1.upper_bound(20) << el; PrintEle(iset1, cout););
-	lcode(cout << "find" << tab << *iset1.lower_bound(10) << el; PrintEle(iset1, cout););
+	lcode(cout << "find" << tab << *iset1.upper_bound(20) << el; cout<<iset1<<el;);
+	lcode(cout << "find" << tab << *iset1.lower_bound(10) << el; cout<<iset1;);
 
 	class icompset {
 	public:
@@ -1606,7 +1475,7 @@ void CSDIView::OnStlSetTest()
 	{
 		ilt.push_back((rand() * i * rand()) % 100);
 	}
-	lcode(PrintEle(ilt, cout));
+	cout<<ilt<<el;
 
 	vector<int>intvec(20), empty;
 	int i = 0;
@@ -1617,13 +1486,20 @@ void CSDIView::OnStlSetTest()
 		i = icount++ * icountb++;
 	}
 
-	ilt.sort(a); PrintEle(ilt, cout);
-	a.sortset(true); ilt.sort(a); PrintEle(ilt, cout);
-	a.sortset(false); ilt.sort(a.sortset(false)); PrintEle(ilt, cout);
-	sort(intvec.begin(), intvec.end(), compare); PrintEle(intvec, cout);
-	sort(intvec.begin(), intvec.end(), a.sortset(true)); PrintEle(intvec, cout);
-	a.sortset(false); sort(intvec.begin(), intvec.end(), a); PrintEle(intvec, cout);
-	ilt.reverse(); PrintEle(ilt, cout);
+	ilt.sort(a);
+	cout<<ilt<<el;
+	a.sortset(true); ilt.sort(a);
+	cout<<ilt<<el;
+	a.sortset(false); ilt.sort(a.sortset(false));
+	cout<<ilt<<el;
+	sort(intvec.begin(), intvec.end(), compare);
+	cout<<ilt<<el;
+	sort(intvec.begin(), intvec.end(), a.sortset(true)); 
+	cout<<ilt<<el;
+	a.sortset(false); sort(intvec.begin(), intvec.end(), a);
+	cout<<ilt<<el;
+	ilt.reverse(); 
+	cout<<ilt<<el;
 
 
 
@@ -1647,7 +1523,7 @@ void CSDIView::OnStlSetTest()
 	imap.insert(x);
 	map<int, float>::iterator iit = imap.begin();
 	lcode(cout << iit->first << tab << iit->second << el;);
-	lcode(iit = imap.end(); cout << p->first << tab << p->second << el;);
+	//lcode(iit = imap.end(); cout << p->first << tab << p->second << el;);
 	lcode(iit = imap.begin(); cout << p->first << tab << p->second << el;);
 
 }
@@ -2239,6 +2115,148 @@ void CSDIView::OnPaintDcTest()
 
 }
 
+void CSDIView::OnPCDCFunctionTest()
+{
+	SimulationStdCout;
+
+	static size_t imod = 0;
+
+	cout << cl;
+	char ca = 'a';
+	int ia = 10;
+	float fa = 31.1;
+	bool iba = true;
+	long la = 500000;
+	long long lla = 256 * 256 * 25650;
+	double da = 62.444;
+	long double lda = 262.844;
+	size_t icount = 50;
+	int* ip = &ia;
+	char* cp = &ca;
+	long* lp = &la;
+	long long* llp = &lla;
+	double* dp = &da;
+	const char* chp = "const char []";
+	const char chpa[] = "char []";
+	CAtlString catlstr = st(Smilate termial console mfc DC test, CAtlString...);
+	CString cstr = st(Smilate termial console mfc DC test, CString...);
+	std::string cs = "This is a string...   ";
+	std::wstring wcs = L"This is a Wstring...   ";
+	int iitem = 5;
+	int& ria = ia;
+	int&& rra = 10;
+	array<int, 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+	int i = 500;
+	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
+
+	initializer_list<int> v = { 3,4,5,6 };
+	vector<int>vecta{ 3, 4, 5, 6,1 };
+	vector<int>va = { 12,234,56,78,892,8,235,86 };
+	map<int, float>mif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	int length = tuple_size<decltype(tuplea)>::value;
+
+
+	cout << cut;
+	cout%tuplea;
+	cout<<cut;
+	goto end;
+
+	if (imod % iitem == 0)
+	{
+		lscode(
+			cout.type(ia);
+		cout.type(ria);
+		cout.type(rra);
+		cout.type((std::move(ia)));
+		cout.type((std::move(ria)));
+		cout.type((std::move(rra)));
+		cout << showv(tuplea) << showv(length) << el;
+		cout.type(tuplea);
+		cout << cut;
+		cout[tuplea];
+		//cout <<length<<tab<<tuplea << el;
+		);
+	}
+
+	if (imod % iitem == 4)
+	{
+		argsvalue(1, 2, 3, 4, 5);
+		lscode(
+			{
+			cout << chp << tab; showtype(chp);
+			cout << chpa << tab;  showtype(chpa);
+			cout << catlstr << tab; showtype(catlstr);
+			cout << cstr << tab; showtype(cstr);
+			cout << cs << tab; showtype(cs);
+			cout << wcs << tab; showtype(wcs);
+			}
+		);
+	}
+
+	if (imod % iitem == 1)
+	{
+
+		{
+			cout << "beging test dc..." << tab << st(print value) << el;
+			cout << icount << tab << ca << tab << ia << tab << fa << tab << iba << tab << la << tab << lla << tab << da << el << cut;
+		}
+
+		lscode(
+			{
+			cout << ip << tab << *cp << tab << lp << tab << llp << tab << dp << el << cut;
+			}
+		);
+
+	}
+	if (imod % iitem == 2)
+	{
+		lcode(
+			{
+			cout << va << el << mif << el;
+			}
+		);
+	};
+
+	if (imod % iitem == 3)
+	{
+		cout << cl;
+		cout << arrone << el;
+		cout.pl(icount, ca, ia, fa, iba, la, lla, da, cs, wcs);
+		cout.pb(icount, ca, ia, fa, iba, la, lla, da, cstr);
+		cout.pc(icount, ca, ia, fa, iba, la, lla, da, cstr);
+		cout.pt(icount, ca, ia, fa, iba, la, lla, da);
+		cout.address(icount, ca, ia, fa, iba, la, lla, da);
+		cout.pt(va, mif) << cut;
+		cout.pb(va, mif) << cut;
+		cout.pc(va, mif) << cut;
+		cout.type(cout, ca, ia);
+		lscode(
+			cout << cut;
+		cout.args();
+		cout << cut;
+		cout.args(1);
+		cout << cut;
+		cout.args(1, 2);
+		cout << cut;
+		cout.args(1, 2, 3);
+		cout.pl(3, i, ia, 6.0, "good");
+		cout.pt(3, i, ia, 6.0, "good");
+		cout.pb(3, i, ia, 6.0, "good");
+		cout.pc(3, i, ia, 6.0, "good");
+		cout << sum({ 3, 4, 5, 6 }) << el;
+		cout << set<int>{ 3, 4, 5, 6, 2} << el;
+		cout << (initializer_list<int>{ 2, 3, 4, 5, 6, 7, 9 });
+		cout << vecta << el;
+		cout << " " << tuple_size<decltype(tuplea)>::value << el;
+		cout << " " << typeid(decltype(tuplea)).name() << el;
+		);
+	}
+
+end:
+	++imod;
+	if (imod == 4)
+		imod = 0;
+}
 
 
 

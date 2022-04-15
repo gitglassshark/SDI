@@ -24,13 +24,11 @@ PCDC& starline(PCDC& dc)
 	return dc;
 }
 
-
 PCDC& tab(PCDC& dc)
 {
-	dc << ('\t');
+	dc << '\t';
 	return dc;
 }
-
 
 PCDC& cut(PCDC& dc)
 {
@@ -38,20 +36,17 @@ PCDC& cut(PCDC& dc)
 	return dc;
 }
 
-
 PCDC& cl(PCDC& dc)
 {
 	dc.clearscreen();
 	return dc;
 }
 
-
 PCDC& el(PCDC& dc)
 {
-	dc << ('\n');
+	dc <<'\n';
 	return dc;
 }
-
 
 PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {
@@ -62,13 +57,11 @@ PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 	}
 }
 
-
 PCDC::~PCDC()
 {
 	--icount;
 	this->Release();
 }
-
 
 PCDC& PCDC::Create(CWnd* pwnd)
 {
@@ -109,11 +102,10 @@ PCDC& PCDC::Create(CWnd* pwnd)
 	}
 	*this << cl;
 	icreate = true;
-	*this << id << "#  " << st(Similation screen DC is be ready...) << " count is " << icount << el;
+	//*this << id << "#  " << st(Similation screen DC is be ready...) << " count is " << icount << el;
 	*this << starline;
 	return *this;
 }
-
 
 PCDC& PCDC::Release()
 {
@@ -128,7 +120,6 @@ PCDC& PCDC::Release()
 	icreate = false;
 	return *this;
 }
-
 
 const CSize& PCDC::imresizeout(const CString& cs)
 {
@@ -174,20 +165,17 @@ const CSize& PCDC::imresizeout(const CString& cs)
 
 }
 
-
 PCDC& PCDC::resettcolor()
 {
 	this->SetTextColor(m_tk);
 	return *this;
 }
 
-
 PCDC& PCDC::settcolor(COLORREF tk)
 {
 	this->SetTextColor(tk);
 	return *this;
 }
-
 
 PCDC& PCDC::setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk)
 {
@@ -198,13 +186,11 @@ PCDC& PCDC::setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk)
 	return *this;
 }
 
-
 PCDC& PCDC::setimod(int imod)
 {
 	this->ilinemod = imod;
 	return *this;
 }
-
 
 const char PCDC::setlinechar(const char& c)
 {
@@ -212,7 +198,6 @@ const char PCDC::setlinechar(const char& c)
 	this->mlinechar = c;
 	return rc;
 }
-
 
 const void PCDC::clearscreen(const CRect* r, const COLORREF* cr)
 {
@@ -248,12 +233,10 @@ const void PCDC::clearscreen(const CRect* r, const COLORREF* cr)
 
 }
 
-
 PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
 {
 	return (*op) (*this);
 }
-
 
 PCDC& PCDC::operator <<(LPCTSTR cs)
 {
@@ -265,7 +248,6 @@ PCDC& PCDC::operator <<(LPCTSTR cs)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(char cs[])
 {
 	if ((cs != nullptr) && (strlen(cs)))
@@ -275,7 +257,6 @@ PCDC& PCDC::operator <<(char cs[])
 	}
 	return *this;
 }
-
 
 PCDC& PCDC::operator <<(char const cs[])
 {
@@ -287,7 +268,6 @@ PCDC& PCDC::operator <<(char const cs[])
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const CAtlString& s)
 {
 	if (!s.IsEmpty()) {
@@ -295,7 +275,6 @@ PCDC& PCDC::operator <<(const CAtlString& s)
 	}
 	return *this;
 }
-
 
 PCDC& PCDC::operator <<(const std::wstring& s)
 {
@@ -306,7 +285,6 @@ PCDC& PCDC::operator <<(const std::wstring& s)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const std::string& s)
 {
 	if ((s.length()) && (s.at(0) != '\0')) {
@@ -316,7 +294,6 @@ PCDC& PCDC::operator <<(const std::string& s)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const CString& s)
 {
 	if (!s.IsEmpty()) {
@@ -325,14 +302,12 @@ PCDC& PCDC::operator <<(const CString& s)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const int n)
 {
 	ms.Format(_T("%ld"), n);
 	imresizeout(ms);
 	return *this;
 }
-
 
 PCDC& PCDC::operator<<(const char c)
 {
@@ -350,14 +325,12 @@ PCDC& PCDC::operator<<(const char c)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const float n)
 {
 	ms.Format(_T("%4.2f"), n);
 	imresizeout(ms);
 	return *this;
 }
-
 
 PCDC& PCDC::operator <<(const double n)
 {
@@ -366,14 +339,12 @@ PCDC& PCDC::operator <<(const double n)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const long double n)
 {
 	ms.Format(_T("%lf"), n);
 	imresizeout(ms);
 	return *this;
 }
-
 
 PCDC& PCDC::operator <<(const long int n)
 {
@@ -382,7 +353,6 @@ PCDC& PCDC::operator <<(const long int n)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const long long n)
 {
 	ms.Format(_T("%lld"), n);
@@ -390,14 +360,12 @@ PCDC& PCDC::operator <<(const long long n)
 	return *this;
 }
 
-
 PCDC& PCDC::operator <<(const size_t n)
 {
 	ms.Format(_T("%zd"), n);
 	imresizeout(ms);
 	return *this;
 }
-
 
 PCDC& PCDC::operator <<(const bool b)
 {
