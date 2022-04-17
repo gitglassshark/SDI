@@ -17,7 +17,6 @@
 #include <iostream>
 #include "SDIDoc.h"
 #include "SDIView.h"
-#include "FCDC.h"
 #include "PCDC.h"
 #include "CDialogExDoModal.h"
 #include "resource.h"
@@ -40,55 +39,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define addmenu(name) addmenuitem(#name,name);
-
-#define gett(name)  decltype(name)
-#define getI(name)  gett(name.begin())
-#define getCI(name)  gett(name)::const_iterator
-#define ALL(V)  V.begin(),V.end()
-#define NTIME(N)  for(size_t ix=0;ix<(N);++ix)
-#define FORALL(V,iterator)  for(getCI(V) iterator = V.begin(); iterator != V.end();++iterator)
-#define FORALLW(V,iterator)  for(getCI(V) V##iterator = V.begin(); V##iterator != V.end();++V##iterator)
-#define FORN(N,icountn)  for(size_t icountn=0;icountn<(N);++icountn)
-#define FORV(ielement,V)  for(const auto &ielement:V)
-#define FORW(ielement,V)  for(auto &ielement:V)
-
-#define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>(this); PCDC & cout=*me_unique_dc;
-
-#define makemedc(DC)  unique_ptr<PCDC> pdc(new PCDC(this));PCDC& DC = *pdc;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>(this);auto& cout= *cout_me_ptr;
-
-
-#define lcode(...)	cout.settcolor(dccr.red)<<L"source code is:"<<el;cout.settcolor(dccr.berry)<<"{ "#__VA_ARGS__<<L" }"<<el;cout.settcolor(dccr.green)<<L"run result is: "<<el<<starline;cout.resettcolor();__VA_ARGS__;
-
-#define showcode(...)	lcode(__VA_ARGS__)
-#define showcodes(...)	lcode(__VA_ARGS__)
-#define lscode(...)  lcode(__VA_ARGS__)
-
-#define sst(code,...)  #code##","#__VA_ARGS__
-#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
-#define showv(name) st(name)<<_T(" value is: ")<<name<<tab
-#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el;
-
-
-#define RUNTEST(message)		/*cout.clearscreen();\
-								cout.titleline(wstring(st(message)));*/
-
-#define TITLE(message)      cout.title(CString(st(message)));
-
-
-template <typename T>
-bool showinfo(PCDC* the, const T& c)
-{
-	PCDC& cout = *the;
-	cout << "sizeof is:" << tab << sizeof(c) << tab << "typename is :" << tab << typeid(c).name() << el;
-	return true;
-};
-
-
 class CColor dccr;
-
-
 
 COLORREF crcolorred = RGB(255, 0, 0);
 COLORREF crcolorgreen = RGB(34, 139, 34);
@@ -483,7 +434,6 @@ void CSDIView::OnObjectSize()
 	{
 		cout << cl;
 		showtype(CObject);
-		showtype(FCDC);
 		showtype(PCDC);
 		showtype(CDC);
 		showtype(CPaintDC);
@@ -1383,7 +1333,7 @@ void CSDIView::OnStlSetTest()
 
 	lcode(cout << iset1.size() << tab << iset1.count(15) << tab << iset1.max_size() << el; cout << iset1;);
 
-	lcode(cout << *iset1.begin() << tab << *iset1.end() << tab << iset1.empty() << tab << iset1.erase(5) << el; cout << iset1 << el;);
+	lcode(cout << *iset1.begin() << tab << tab << iset1.empty() << tab << iset1.erase(5) << el; cout << iset1 << el;);
 	auto it = iset1.find(8);
 	if (it == iset1.end())
 		cout << "is end" << el;
@@ -1515,15 +1465,15 @@ void CSDIView::OnStlSetTest()
 
 
 	pair<int, float>x = make_pair(10, 2.3);
-	cout << x.first << tab << x.second << el;
+	cout << x << el;
 	auto* p = &x;
 	map<int, float>imap;
 	imap.insert(make_pair(10, 2.2));
 	imap.insert(x);
 	map<int, float>::iterator iit = imap.begin();
-	lcode(cout << iit->first << tab << iit->second << el;);
-	//lcode(iit = imap.end(); cout << p->first << tab << p->second << el;);
-	lcode(iit = imap.begin(); cout << p->first << tab << p->second << el;);
+	lcode(cout << *iit << el;);
+	lcode(iit = imap.end(); iit--; cout << *p << el;);
+	lcode(iit = imap.begin(); cout << *iit << el;);
 
 }
 
@@ -2050,11 +2000,9 @@ void CSDIView::OnPaintDcTest()
 	);
 	lscode(
 		CFile ofile(_T("D:/VS2022/MFC/SDI/SDI/test.txt"), CFile::modeCreate | CFile::modeReadWrite);
-	string str = "This is a text.txt test string\n";
-	ofile.Write(str.c_str(), str.length());
-	ofile.Write(str.c_str(), str.length());
-	ofile.Write(str.c_str(), str.length());
-	ofile.SeekToBegin();
+	string str = "If you wish to succeed, you should use persistence as your good friend, experience as your reference, prudence as your brother and hope as your sentry.\n";
+	NTIME(100)
+		ofile.Write(str.c_str(), str.length());
 	);
 
 	//文件测试
@@ -2115,19 +2063,21 @@ void CSDIView::OnPCDCFunctionTest()
 	auto tuplea = tuple<int, float, string, string, string>(10, 10.24, "good", "bad", "normal");
 
 	auto d{ tuplea._Get_rest() };
-	cout << cl;
 	cout.disptup(tuplea) << el;
 	cout << cut;
 
 	int length = tuple_size<decltype(tuplea)>::value;
+	cout << std::is_integral<decltype(length)>::value << el;
+	struct A {};
+	A emptyA;
 
-
+	cout << is_empty<tuple<>>::value << el;
 
 	//cout << cl;
 	//cout << cut;
 	//cout% tuplea;
 	//cout << cut;
-	goto end;
+	//goto end;
 
 	if (imod % iitem == 0)
 	{
@@ -2142,7 +2092,6 @@ void CSDIView::OnPCDCFunctionTest()
 		cout.type(tuplea);
 		cout << cut;
 		cout[tuplea];
-		//cout <<length<<tab<<tuplea << el;
 		);
 	}
 
@@ -2230,7 +2179,7 @@ void CSDIView::OnLamdbaFuncTest()
 {
 	// TODO 测试lamdba表达式
 	SimulationStdCout;
-	cout.settcolor(RGB(139,0,0));
+	cout.settcolor(RGB(139, 0, 0));
 	cout.title("begin lambda experss test...");
 	cout.resettcolor();
 	auto funl = [](int val1, int val2)mutable ->bool {
@@ -2264,7 +2213,7 @@ void CSDIView::OnLamdbaFuncTest()
 	sort(iset1.begin(), iset1.end(), std::function<bool(int, int)>([](int a, int b) ->bool { return a < b; }));
 	cout << iset1 << el << cut;
 	sort(iset1.begin(), iset1.end(), funl);
-	cout << iset1<<el;
+	cout << iset1 << el;
 
 	//lambda experssion
 	lscode(cout << []() {return 5; }() << el;);

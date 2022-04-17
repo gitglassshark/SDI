@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "framework.h"
+#include "PCDC.h"
 #include "SDI.h"
 #include <typeinfo>
 #include "MainFrm.h"

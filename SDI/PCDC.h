@@ -12,19 +12,227 @@
 #include <string>
 #include <initializer_list>
 #include "SDI.h"
-#define vec(T) vector<T> 
 
-#define nonull(v) (((v )!=nullptr )&&(&(v )!=nullptr ) )
+
+class CColor {
+public:
+	COLORREF red = RGB(255, 0, 0);
+	COLORREF red4 = RGB(139, 0, 0);
+	COLORREF green = RGB(34, 139, 34);
+	COLORREF blue = RGB(0, 0, 255);
+	COLORREF white = RGB(255, 255, 255);
+	COLORREF chocolate = RGB(238, 118, 33);
+	COLORREF black = RGB(0, 0, 0);
+	COLORREF dodgerblue = RGB(16, 78, 139);
+	COLORREF forestgreen = RGB(34, 139, 34);
+	COLORREF darkgray = RGB(128, 128, 139);
+	COLORREF darkslateblue = RGB(72, 61, 128);
+	COLORREF slategray = RGB(112, 128, 144);
+	COLORREF gray = RGB(128, 128, 128);
+	COLORREF berry = RGB(135, 38, 87);
+	COLORREF brown = RGB(128, 42, 42);
+	COLORREF azure = RGB(131, 139, 139);
+	COLORREF grey = RGB(28, 28, 28);
+	COLORREF whitesmoke = RGB(245, 245, 245);
+	COLORREF silver = RGB(192, 192, 192);
+	COLORREF darkcyan = RGB(0, 139, 139);
+	COLORREF darkred = RGB(139, 0, 0);
+	COLORREF teal = RGB(0, 128, 128);
+};
+
 
 class PCDC;
 extern class CColor dccr;
-
 
 PCDC& cl(PCDC& dc);
 PCDC& cut(PCDC& dc);
 PCDC& tab(PCDC& dc);
 PCDC& el(PCDC& dc);
 PCDC& starline(PCDC& dc);
+
+#define LOG(objectname)  {\
+		CString strmessage;\
+		static unsigned long icount = 0;\
+		++icount;\
+		strmessage.Format(_T("Run Path in %ldth times,The Class:$"), icount);\
+		strmessage += " @";\
+		strmessage += __func__;\
+		strmessage += "()";\
+		strmessage += " file: *";\
+		strmessage += __FILE__;\
+		objectname##.messagelog.push_back(strmessage);\
+		}
+#define LOGMESSAGE(objectname)  {\
+		CString strmessage;\
+		static unsigned long icount = 0;\
+		++icount;\
+		strmessage.Format(_T("Run Path in %ldth times,The Class:$"), icount);\
+		strmessage += typeid(*this).name();\
+		strmessage += " @";\
+		strmessage += __func__;\
+		strmessage += "()";\
+		strmessage += " file: *";\
+		strmessage += __FILE__;\
+		objectname##.messagelog.push_back(strmessage);\
+		}
+
+#define SHOWSPLITLWINDOW(objectname)  {\
+		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
+		RECT rect;\
+		rect.left = 0;\
+		rect.top = 0;\
+		rect.right = 1932;\
+		rect.bottom = 2112;\
+		objectname.m_pMainWnd->SetWindowPos(&CWnd::wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);\
+		objectname.m_pMainWnd->UpdateWindow();\
+		}
+#define SHOWSPLITRWINDOW(objectname)  {\
+		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
+		RECT rect;\
+		rect.left = 1932;\
+		rect.top = 0;\
+		rect.right = 1932;\
+		rect.bottom = 2112;\
+		objectname.m_pMainWnd->SetWindowPos(&CWnd::wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);\
+		objectname.m_pMainWnd->UpdateWindow();\
+		}
+
+#define TEXTOUTDC(pdc,x,y,strmessage,text) {\
+		CDC* pdc= this->GetWindowDC();\
+		CDC& dc = *pdc;\
+		int ix=x;\
+		int iy=y;\
+		CAtlString strmessage;\
+		strmessage.Format(_T(#text));\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		dc.TextOut(ix, iy, strmessage);\
+		}
+#define TEXTFORMATOUTDC(dc,x,y,ftstr,value) {\
+		int ix=x;\
+		int iy=y;\
+		CAtlString strmessage;\
+		strmessage.Format(_T(#ftstr),value);\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		dc.TextOut(ix, iy, strmessage);\
+		}
+#define TEXTOUTCSTR(pdc,x,y,Cstrmessage) {\
+		CDC* pdc= this->GetWindowDC();\
+		CDC& dc = *pdc;\
+		int ix=x;\
+		int iy=y;\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		dc.TextOut(ix, iy, Cstrmessage);\
+		}
+#define PRINTSCREEN(x,y,strmessage) {\
+		CDC* pdc= this->GetWindowDC();\
+		int ix=x;\
+		int iy=y;\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		pdc->TextOut(ix, iy, CString(_T(#strmessage)));\
+		}
+#define COUTTS(str) {\
+		CDC* pdc= this->GetWindowDC();\
+		CAtlString strmessage;\
+		strmessage=_T(str);\
+		int ix=position.x;\
+		int iy=position.y;\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		pdc->TextOut(ix, iy,strmessage);\
+		}
+#define COUTCS(dc,strmessage) {\
+		int ix=position.x;\
+		int iy=position.y;\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		dc.TextOut(ix, iy,strmessage);\
+		}
+#define SFOUT(dc,ftstr,value) {\
+		int ix=position.x;\
+		int iy=position.y;\
+		CAtlString strmessage;\
+		strmessage.Format(_T(#ftstr),value);\
+		this->ShowWindow(SW_SHOW);\
+		this->UpdateWindow();\
+		dc.TextOut(ix, iy, strmessage);\
+		}
+
+
+//²âÊÔ×Ö·û´®ÊÇ·ñÎª¿ÕµÄºê
+#ifndef isempty
+#define isempty(astr) ((astr) == (_T("")))
+#endif // !empty
+
+//²¼¶û²âÊÔºê
+
+#ifndef isok
+#define isok(a) ((a)==true)
+#endif	
+
+#define errmessage(err)  {\
+		CAtlString strmessage=_T("#err:");\
+		strmessage +=_T(#err"in ");\
+		strmessage += __func__;\
+		strmessage += _T("()");\
+		AfxMessageBox(strmessage);\
+		}
+
+#ifndef st
+
+#define st(...) (_T(###__VA_ARGS__))
+
+
+#endif	
+
+#ifndef strbox
+
+#define strbox(OK) AfxMessageBox(_T(#OK))
+
+#endif	
+
+#define OBSIZEBEGIN(vectorname,stringname) vector<CAtlString> vectorname;CAtlString stringname;
+
+#define  OBSIZE(obname,message,v) 	{message.Format(_T("The "#obname" size of is %d"), sizeof(obname));v.push_back(message);}
+
+#define vec(T) vector<T> 
+
+#define nonull(v) (((v )!=nullptr )&&(&(v )!=nullptr ) )
+
+#define addmenu(name) addmenuitem(#name,name);
+
+#define gett(name)  decltype(name)
+#define getI(name)  gett(name.begin())
+#define getCI(name)  gett(name)::const_iterator
+#define ALL(V)  V.begin(),V.end()
+#define NTIME(N)  for(size_t ix=0;ix<(N);++ix)
+#define FORALL(V,iterator)  for(getCI(V) iterator = V.begin(); iterator != V.end();++iterator)
+#define FORALLW(V,iterator)  for(getCI(V) V##iterator = V.begin(); V##iterator != V.end();++V##iterator)
+#define FORN(N,icountn)  for(size_t icountn=0;icountn<(N);++icountn)
+#define FORV(ielement,V)  for(const auto &ielement:V)
+#define FORW(ielement,V)  for(auto &ielement:V)
+
+#define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>(this); PCDC & cout=*me_unique_dc;
+#define makemedc(DC)  unique_ptr<PCDC> pdc(new PCDC(this));PCDC& DC = *pdc;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>(this);auto& cout= *cout_me_ptr;
+
+#define sst(code,...)  #code##","#__VA_ARGS__
+#define lcode(...)	cout.settcolor(dccr.red)<<L"source code is:"<<el;cout.settcolor(dccr.berry)<<"{ "#__VA_ARGS__<<L" }"<<el;cout.settcolor(dccr.green)<<L"run result is: "<<el<<starline;cout.resettcolor();__VA_ARGS__;
+#define showcode(...)	lcode(__VA_ARGS__)
+#define showcodes(...)	lcode(__VA_ARGS__)
+#define lscode(...)  lcode(__VA_ARGS__)
+
+#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
+#define showv(name) st(name)<<_T(" value is: ")<<name<<tab
+#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el;
+
+#define RUNTEST(message)		/*cout.clearscreen();\
+								cout.titleline(wstring(st(message)));*/
+
+#define TITLE(message)      cout.title(CString(st(message)));
 
 
 class PCDC : public CDC
@@ -170,33 +378,48 @@ public:
 	template <typename T> PCDC& operator <<(const deque<T>& d);
 	template <typename T, size_t len> PCDC& operator <<(const array<T, len>& a);
 	template <typename X> PCDC& operator <<(const unique_ptr<X>& unptr);
-
+	template <typename A, typename B> PCDC& operator <<(const pair<A, B>& i);
 
 public:
 	template<typename T, size_t N = std::tuple_size<T>::value>
 	PCDC& disptup(T t)
 	{
-		constexpr size_t M=std::tuple_size<T>::value;
-		constexpr size_t I=M-N;
+		constexpr size_t M = std::tuple_size<T>::value;
+		constexpr size_t I = M - N;
 		if constexpr (N == 1)
 		{
-			*this << "{" << std::get<I>(t)<<" }";
+			*this << "{" << std::get<I>(t) << " }";
 			return *this;
 		}
 		else
 		{
-			*this <<" {"<< std::get<I>(t)<<" },";
-			disptup<T, N-1>(t);
+			*this << " {" << std::get<I>(t) << " },";
+			disptup<T, N - 1>(t);
 		}
 		return *this;
 	};
-	/*template<typename...T>
-	PCDC& dispp(tuple<T...> t)
-	{
-		{ *this << std::get<index_sequence_for<T...>()>(t)...};
-		return *this;
-	};*/
+	//template<typename isstr>
+	//using isstr = is_one_of<T, CString, string>;
+	//template<typename isstr>
+	//PCDC& test(typename isstr a)
+	//{
+	//	*this << "is string oper" << el;
+	//	return *this;
+	//}
+	//template<typename T >
+	//PCDC& dispp(T t)
+	//{
+	//	if ( is_same<decltype(t),std::tuple<> >::value) {
+	//		*this << "empty" << el;
+	//	}
+	//	else
+	//	{
+	//		*this << std::get<0>(t) << tab;
+	//		dispp(t._Get_rest());
+	//	}
+	//	return *this;
 
+	//};
 
 	template<typename T> PCDC& forprintr(const T* b, const T* e);
 	template<typename T> PCDC& forprintv(const T& v);
@@ -497,6 +720,13 @@ PCDC& PCDC::forprintm(const T& m)
 		*this << "{" << i.first << "," << i.second << "}   ";
 		linemod(il, ilinemod);
 	}
+	return *this;
+}
+
+template <typename A, typename B>
+PCDC& PCDC::operator <<(const pair<A, B>& i)
+{
+	*this << "{" << i.first << "," << i.second << "}   ";
 	return *this;
 }
 

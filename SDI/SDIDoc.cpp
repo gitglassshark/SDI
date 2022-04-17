@@ -8,6 +8,7 @@
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
 #ifndef SHARED_HANDLERS
 #include "SDI.h"
+#include "PCDC.h"
 #endif
 
 #include "SDIDoc.h"
@@ -137,4 +138,4 @@ void CSDIDoc::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CSDIDoc 命令
+// CSDIDoc 命令 

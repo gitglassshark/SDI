@@ -276,7 +276,6 @@
     <None Include="C:\Users\bbc\_vsvimrc" />
     <None Include="res\SDI.rc2" />
     <None Include="vimrc" />
-    <None Include="_vsvimrc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\SDI.ico" />

@@ -5,6 +5,35 @@
 #include "mylib.hpp"
 #include <iostream>
 
+ScrOut& tab(ScrOut& dc)
+{
+	dc << '\t';
+	return dc;
+}
+
+ScrOut& cut(ScrOut& dc)
+{
+	dc << starline;
+	return dc;
+}
+
+ScrOut& cl(ScrOut& dc)
+{
+	dc.clearscreen();
+	return dc;
+}
+
+ScrOut& el(ScrOut& dc)
+{
+	dc <<'\n';
+	return dc;
+}
+
+
+ScrOut& PCDC::operator << (ScrOut& (*op) (ScrOut&))
+{
+	return (*op) (*this);
+}
 
 template <typename T>
 T* arrayset(T *const ar,const size_t size,const T x)
