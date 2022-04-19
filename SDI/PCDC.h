@@ -12,43 +12,49 @@
 #include <string>
 #include <initializer_list>
 #include "SDI.h"
-
+#include <complex>
 
 class CColor {
 public:
-	COLORREF red = RGB(255, 0, 0);
-	COLORREF red4 = RGB(139, 0, 0);
-	COLORREF green = RGB(34, 139, 34);
-	COLORREF blue = RGB(0, 0, 255);
-	COLORREF white = RGB(255, 255, 255);
-	COLORREF chocolate = RGB(238, 118, 33);
-	COLORREF black = RGB(0, 0, 0);
-	COLORREF dodgerblue = RGB(16, 78, 139);
-	COLORREF forestgreen = RGB(34, 139, 34);
-	COLORREF darkgray = RGB(128, 128, 139);
-	COLORREF darkslateblue = RGB(72, 61, 128);
-	COLORREF slategray = RGB(112, 128, 144);
-	COLORREF gray = RGB(128, 128, 128);
-	COLORREF berry = RGB(135, 38, 87);
-	COLORREF brown = RGB(128, 42, 42);
-	COLORREF azure = RGB(131, 139, 139);
-	COLORREF grey = RGB(28, 28, 28);
-	COLORREF whitesmoke = RGB(245, 245, 245);
-	COLORREF silver = RGB(192, 192, 192);
-	COLORREF darkcyan = RGB(0, 139, 139);
-	COLORREF darkred = RGB(139, 0, 0);
-	COLORREF teal = RGB(0, 128, 128);
+	COLORREF red = RGB( 255 , 0 , 0 );
+	COLORREF red4 = RGB( 139 , 0 , 0 );
+	COLORREF green = RGB( 34 , 139 , 34 );
+	COLORREF blue = RGB( 0 , 0 , 255 );
+	COLORREF white = RGB( 255 , 255 , 255 );
+	COLORREF chocolate = RGB( 238 , 118 , 33 );
+	COLORREF black = RGB( 0 , 0 , 0 );
+	COLORREF dodgerblue = RGB( 16 , 78 , 139 );
+	COLORREF forestgreen = RGB( 34 , 139 , 34 );
+	COLORREF darkgray = RGB( 128 , 128 , 139 );
+	COLORREF darkslateblue = RGB( 72 , 61 , 128 );
+	COLORREF slategray = RGB( 112 , 128 , 144 );
+	COLORREF gray = RGB( 128 , 128 , 128 );
+	COLORREF berry = RGB( 135 , 38 , 87 );
+	COLORREF brown = RGB( 128 , 42 , 42 );
+	COLORREF azure = RGB( 131 , 139 , 139 );
+	COLORREF grey = RGB( 28 , 28 , 28 );
+	COLORREF whitesmoke = RGB( 245 , 245 , 245 );
+	COLORREF silver = RGB( 192 , 192 , 192 );
+	COLORREF darkcyan = RGB( 0 , 139 , 139 );
+	COLORREF darkred = RGB( 139 , 0 , 0 );
+	COLORREF teal = RGB( 0 , 128 , 128 );
 };
 
 
 class PCDC;
 extern class CColor dccr;
 
-PCDC& cl(PCDC& dc);
-PCDC& cut(PCDC& dc);
-PCDC& tab(PCDC& dc);
-PCDC& el(PCDC& dc);
-PCDC& starline(PCDC& dc);
+PCDC& cl( PCDC& dc );
+PCDC& com( PCDC& dc );
+PCDC& semi( PCDC& dc );
+PCDC& dash( PCDC& dc );
+PCDC& star( PCDC& dc );
+PCDC& cut( PCDC& dc );
+PCDC& tab( PCDC& dc );
+PCDC& el( PCDC& dc );
+PCDC& sp( PCDC& dc );
+PCDC& endl( PCDC& dc );
+PCDC& starline( PCDC& dc );
 
 #define LOG(objectname)  {\
 		CString strmessage;\
@@ -218,6 +224,8 @@ PCDC& starline(PCDC& dc);
 #define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>(this); PCDC & cout=*me_unique_dc;
 #define makemedc(DC)  unique_ptr<PCDC> pdc(new PCDC(this));PCDC& DC = *pdc;
 #define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>(this);auto& cout= *cout_me_ptr;
+#define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
+#define getcout PCDC &cout=*pcout;
 
 #define sst(code,...)  #code##","#__VA_ARGS__
 #define lcode(...)	cout.settcolor(dccr.red)<<L"source code is:"<<el;cout.settcolor(dccr.berry)<<"{ "#__VA_ARGS__<<L" }"<<el;cout.settcolor(dccr.green)<<L"run result is: "<<el<<starline;cout.resettcolor();__VA_ARGS__;
@@ -227,12 +235,21 @@ PCDC& starline(PCDC& dc);
 
 #define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
 #define showv(name) st(name)<<_T(" value is: ")<<name<<tab
-#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el;
+#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el
 
 #define RUNTEST(message)		/*cout.clearscreen();\
 								cout.titleline(wstring(st(message)));*/
 
 #define TITLE(message)      cout.title(CString(st(message)));
+
+#define mkut(va,tp) unique_ptr<tp>va=make_unique<tp>();
+#define mkst(va,tp) shared_ptr<tp>va=make_shared<tp>();
+#define mmkut(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
+#define mmkst(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
+	//printsource(—__FILE__,__LINE__);
+	//#define comment printsource(__FILE__,__LINE__);
+	//#define comments(nline) printsource(—__FILE__,__LINE__,nline);
+	//#define endcomment printsourceend((__FILE__,__LINE__);
 
 
 class PCDC : public CDC
@@ -255,146 +272,188 @@ public:
 	int ilinemod = 26;
 	bool icutline = false;
 
-
 public:
 	COLORREF m_bk = dccr.grey;
 	COLORREF m_tk = dccr.chocolate;
 	COLORREF m_bark = dccr.berry;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 120;
-	CFont font, * pfont;
-
+	CFont font , * pfont;
 
 public:
 	CDC* m_cdc = nullptr;
 	CWnd* m_pwnd = nullptr;
 
-
 public:
-	char mlinechar = _T('-');
+	char mlinechar = _T( '-' );
 	CString ms;
 	CString opstr;
 
-
 public:
-	PCDC(CWnd* pwnd = nullptr);
-	PCDC& Create(CWnd* pwnd);
-	PCDC& Release();
-	~PCDC();
-
+	PCDC( CWnd* pwnd = nullptr );
+	PCDC& Create( CWnd* pwnd );
+	PCDC& Release( );
+	~PCDC( );
 
 	//explicit operator char *() const;
 
 public:
-	PCDC& operator<<(const char c);
-	PCDC& operator<<(signed char c) { return (*this) << (const char)c; };
-	PCDC& operator<<(unsigned char c) { return (*this) << (const char)c; };
-	PCDC& operator<<(char cs[]);
-	PCDC& operator<<(char const cs[]);
-	PCDC& operator<<(signed char const cs[]) { return *this << (const char*)cs; };
-	PCDC& operator<<(unsigned char const cs[]) { return *this << (const char*)cs; };
-	PCDC& operator<<(LPCTSTR s);
-	PCDC& operator<<(const std::string& s);
-	PCDC& operator<<(const std::wstring& s);
-	PCDC& operator<<(const CString& s);
-	PCDC& operator<<(const CAtlString& s);
-	PCDC& operator<<(const bool b);
-	PCDC& operator<<(const int n);
-	PCDC& operator<<(const unsigned int n) { (*this) << (const int)n; return *this; };
-	PCDC& operator<<(const long int n);
-	PCDC& operator<<(const unsigned long int n) { return *this << (const long int)n; };
-	PCDC& operator<<(const long long n);
-	PCDC& operator<<(const float n);
-	PCDC& operator<<(const double n);
-	PCDC& operator<<(const long double n);
-	PCDC& operator<<(const size_t n);
-	PCDC& operator<<(const PCDC& me) {
-		if (this != &me)
+	PCDC& operator<<( const char c );
+	PCDC& operator<<( signed char c ) { return ( *this ) << (const char)c; };
+	PCDC& operator<<( unsigned char c ) { return ( *this ) << (const char)c; };
+	PCDC& operator<<( char cs[ ] );
+	PCDC& operator<<( char const cs[ ] );
+	PCDC& operator<<( signed char const cs[ ] ) { return *this << (const char*)cs; };
+	PCDC& operator<<( unsigned char const cs[ ] ) { return *this << (const char*)cs; };
+	PCDC& operator<<( LPCTSTR s );
+	PCDC& operator<<( const std::string& s );
+	PCDC& operator<<( const std::wstring& s );
+	PCDC& operator<<( const CString& s );
+	PCDC& operator<<( const CAtlString& s );
+	PCDC& operator<<( const bool b );
+	PCDC& operator<<( const int n );
+	PCDC& operator<<( const unsigned int n ) { ( *this ) << (const int)n; return *this; };
+	PCDC& operator<<( const long int n );
+	PCDC& operator<<( const unsigned long int n ) { return *this << (const long int)n; };
+	PCDC& operator<<( const long long n );
+	PCDC& operator<<( const float n );
+	PCDC& operator<<( const double n );
+	PCDC& operator<<( const long double n );
+	PCDC& operator<<( const size_t n );
+	PCDC& operator<<( const PCDC& me ) {
+		if ( this != &me )
 		{
-			if (!me.ms.IsEmpty())
+			if ( !me.ms.IsEmpty( ) )
 			{
 				*this << me.ms << tab;
 			}
-			this->address(me);
-			*this->type(me);
+			this->address( me );
+			*this->type( me );
 		}
 		return *this;
 	};
 
+public:
+	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
-	PCDC& operator<< (PCDC& (*op) (PCDC& dc));
+	inline const CSize& imresizeout( const CString& cs )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		msize = GetOutputTextExtent( cs );
 
+		CString news( 'x' );
+		auto size = GetOutputTextExtent( news );
 
-public:
-	const CSize& imresizeout(const CString& cs);
-	PCDC& resettcolor();
-	PCDC& settcolor(COLORREF tk);
-	PCDC& setcolor(COLORREF line, COLORREF bar, COLORREF bk, COLORREF tk);
-	PCDC& setimod(int imod);
+		LONG linelen = mrect.right - mrect.left - initalpos * 2;
+		LONG strlen = msize.cx;
+		int cslen = cs.GetLength( );
+		news = cs;
+		CString heads;
+		CString tails;
+		int tkpos = cslen * linelen / strlen - 1;
+		if ( strlen > ( linelen - size.cx ) ) {
+			for ( int i = cslen; i >= 0; i -= tkpos )
+			{
+				heads = news.Mid( 0 , tkpos );
+				tails = news.Mid( tkpos , news.GetLength( ) );
+				imresizeout( heads );
+				news = tails;
+			}
+		}
+		else {
+			if ( p.x + msize.cx >= mrect.right - mrect.left - initalpos )
+			{
+				p.x = mrect.left + initalpos;
+				p.y += step;
+			}
+			if ( p.y >= mrect.bottom - mrect.top - initalpos )
+			{
+				this->FillSolidRect( mrect , m_bk );
+				this->clearscreen( );
+				p.y = mrect.top + initalpos + wbar;
+			}
+			//need recalc ned***
+			TextOut( p.x , p.y , cs );
+			p.x += msize.cx;
+		}
+		return msize;
+	}
+	PCDC& resettcolor( );
+	PCDC& settcolor( COLORREF tk );
+	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
+	PCDC& setimod( int imod );
 	template <typename T = CString>
-	PCDC& title(T t);
-	const char setlinechar(const char& c = '=');
-	const void clearscreen(const CRect* r = nullptr, const COLORREF* cr = nullptr);
-
+	PCDC& title( T t );
+	const char setlinechar( const char& c = '=' );
+	const void clearscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
+	PCDC& location( )
+	{
+		return *this << __FILE__ << sp << __LINE__ << sp << __func__ << endl;
+	};
 
 public:
 	template <typename A>
-	PCDC& operator%(const tuple<A>& tup)
+	PCDC& operator%( const tuple<A>& tup )
 	{
-		return *this << "  :" << get<0>(tup) << "  ;";
+		return *this << "  :" << get<0>( tup ) << "  ;";
 	}
-	template <typename A, typename... Args>
-	PCDC& operator%(const tuple<A, Args...>& tup)
+	template <typename A , typename... Args>
+	PCDC& operator%( const tuple<A , Args...>& tup )
 	{
-		*this << "  :" << get<0>(tup);
-		return *this % (tup._Get_rest());
+		*this << "  :" << get<0>( tup );
+		return *this % ( tup._Get_rest( ) );
 	}
 
-	template <typename A, typename B> PCDC& operator||(const tuple<A, B>& tup);
-	template <typename... Args> PCDC& operator||(const tuple<Args...>& tup);
+	template <typename A , typename B> PCDC& operator||( const tuple<A , B>& tup );
+	template <typename... Args> PCDC& operator||( const tuple<Args...>& tup );
 
-	template <typename A, typename B> PCDC& operator|(const tuple<A, B>& tup);
-	template <typename A, typename... Args> PCDC& operator|(const tuple<A, Args...>& tup);
+	template <typename A , typename B> PCDC& operator|( const tuple<A , B>& tup );
+	template <typename A , typename... Args> PCDC& operator|( const tuple<A , Args...>& tup );
 
-	template<typename T> PCDC& operator [] (const tuple<T>& tupa);
-	template <typename... Args> PCDC& operator [] (const tuple<Args...>& tupa);
+	template<typename T> PCDC& operator [] ( const tuple<T>& tupa );
+	template <typename... Args> PCDC& operator [] ( const tuple<Args...>& tupa );
 
-	template <typename... Args> PCDC& operator<<(tuple<Args...> tup);
+	template <typename... Args> PCDC& operator<<( tuple<Args...> tup );
 	template<>
-	PCDC& operator<<(tuple<> tup) { ibegin = true; return *this << " }"; }
+	PCDC& operator<<( tuple<> tup ) { ibegin = true; return *this << " }"; }
 
-	template<typename T> PCDC& operator <<(T* p);
-	template<typename T > PCDC& operator ()(initializer_list<T> c);
-	template<typename T > PCDC& operator<<(initializer_list<T> c);
-	template <typename X> PCDC& operator <<(const vector<X>& v);
-	template <typename T> PCDC& operator <<(const list<T>& l);
-	template <typename T, typename X> PCDC& operator <<(const multimap<T, X>& m);
-	template <typename T, typename X> PCDC& operator <<(const map<T, X>& m);
-	template <typename T> PCDC& operator <<(const set<T>& s);
-	template <typename  int N = 64> PCDC& operator <<(bitset<N>& bits);
-	template <typename  int N = 64> PCDC& operator <<(const bitset<N>& bits);
-	template <typename T> PCDC& operator <<(const multiset<T>& s);
-	template <typename T> PCDC& operator <<(const deque<T>& d);
-	template <typename T, size_t len> PCDC& operator <<(const array<T, len>& a);
-	template <typename X> PCDC& operator <<(const unique_ptr<X>& unptr);
-	template <typename A, typename B> PCDC& operator <<(const pair<A, B>& i);
+	template<typename T> PCDC& operator <<( T* p );
+	template<typename T > PCDC& operator ()( initializer_list<T> c );
+	template<typename T > PCDC& operator<<( initializer_list<T> c );
+	template <typename X> PCDC& operator <<( const vector<X>& v );
+	template <typename T> PCDC& operator <<( const list<T>& l );
+	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
+	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
+	template <typename T> PCDC& operator <<( const set<T>& s );
+	template <typename  int N = 64> PCDC& operator <<( bitset<N>& bits );
+	template <typename  int N = 64> PCDC& operator <<( const bitset<N>& bits );
+	template <typename T> PCDC& operator <<( const multiset<T>& s );
+	template <typename T> PCDC& operator <<( const deque<T>& d );
+	template <typename T , size_t len> PCDC& operator <<( const array<T , len>& a );
+	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
+	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
+	//template <typename T > PCDC& operator <<( const complex<A>& z );
+	template <typename T > PCDC& operator <<( const complex<T>& z )
+	{
+		return *this << z.real( ) << '+' << z.imag( ) << 'i';
+	};
 
 public:
-	template<typename T, size_t N = std::tuple_size<T>::value>
-	PCDC& disptup(T t)
+	template<typename T , size_t N = std::tuple_size<T>::value>
+	PCDC& disptup( T t )
 	{
 		constexpr size_t M = std::tuple_size<T>::value;
 		constexpr size_t I = M - N;
-		if constexpr (N == 1)
+		if constexpr ( N == 1 )
 		{
-			*this << "{" << std::get<I>(t) << " }";
+			*this << "{" << std::get<I>( t ) << " }";
 			return *this;
 		}
 		else
 		{
-			*this << " {" << std::get<I>(t) << " },";
-			disptup<T, N - 1>(t);
+			*this << " {" << std::get<I>( t ) << " },";
+			disptup<T , N - 1>( t );
 		}
 		return *this;
 	};
@@ -418,112 +477,182 @@ public:
 	//		dispp(t._Get_rest());
 	//	}
 	//	return *this;
-
 	//};
 
-	template<typename T> PCDC& forprintr(const T* b, const T* e);
-	template<typename T> PCDC& forprintv(const T& v);
-	template<typename T> PCDC& forprintm(const T& m);
-	template <typename S> void linemod(S l, S linemod, PCDC& (*op)(PCDC&) = el, char* stail = nullptr);
-	template <typename X> PCDC& address(X&& a);
-	template <typename X> PCDC& address(X& a);
-	template <typename T, typename ...X> PCDC& address(T a, X...args);
-	PCDC& type() { return *this; };
-	template <typename T, typename ...X> PCDC& type(T&& a, X&&...args);
-	template <typename T, typename ...X> PCDC& type(T& a, X&...args);
+	template<typename T> PCDC& forprintr( const T* b , const T* e );
+	template<typename T> PCDC& forprintv( const T& v );
+	template<typename T> PCDC& forprintm( const T& m );
+	template<typename T> PCDC& forprinta( const T* arr , size_t len );
+	template <typename S> void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
+	template <typename X> PCDC& address( X&& a );
+	template <typename X> PCDC& address( X& a );
+	template <typename T , typename ...X> PCDC& address( T a , X...args );
+	PCDC& type( ) { return *this; };
+	template <typename T , typename ...X> PCDC& type( T&& a , X&&...args );
+	template <typename T , typename ...X> PCDC& type( T& a , X&...args );
 
-	template <typename X> PCDC& pt(X a);
-	template <typename T, typename ...X> PCDC& pt(T a, X...args);
-	template <typename X> PCDC& pc(X a);
-	template <typename T, typename ...X> PCDC& pc(T a, X...args);
-	template <typename X> PCDC& pb(X a);
-	template <typename T, typename ...X> PCDC& pb(T a, X...args);
-	PCDC& pl() { return *this; }
-	template <typename T, typename ...X> PCDC& pl(T a, X...args);
-	template <typename A, typename B> bool comp(A a, B b)
+	template <typename X> PCDC& pt( X a );
+	template <typename T , typename ...X> PCDC& pt( T a , X...args );
+	template <typename X> PCDC& pc( X a );
+	template <typename T , typename ...X> PCDC& pc( T a , X...args );
+	template <typename X> PCDC& pb( X a );
+	template <typename T , typename ...X> PCDC& pb( T a , X...args );
+	PCDC& pl( ) { return *this; }
+	template <typename T , typename ...X> PCDC& pl( T a , X...args );
+	template <typename A , typename B> bool comp( A a , B b )
 	{
 		return a > b;
 	};
 
+public:
+	PCDC& displayfile( CString filename )
+	{
+		if ( filename.IsEmpty( ) )
+			return *this;
+
+		CFile cfile;
+		bool iresult = cfile.Open( filename , CFile::modeRead );
+		if ( !iresult )
+			return *this;
+		//准备读入缓冲区
+		const int imaxcount = 1024;
+		int iretcount = 1023;
+		char pbufRead[imaxcount] {};
+		memset( pbufRead , 0 , sizeof( pbufRead ) );
+		pbufRead[imaxcount - 1] = '\0';
+		ASSERT( sizeof( pbufRead ) == imaxcount );
+
+		cfile.SeekToBegin( );
+		string readline;
+
+		//开始读入数据，如果读入字节数小于设置读入字节（返回值），说明读到文件末尾，退出读取循环。
+		while ( iretcount == imaxcount - 1 )
+		{
+			iretcount = cfile.Read( pbufRead , imaxcount - 1 );
+			pbufRead[iretcount] = '\0';
+			readline.append( pbufRead , iretcount );
+			*this << readline;
+			readline = "";
+		}
+		//ASSERT(0 == memcmp(pbufWrite, pbufRead, sizeof(pbufWrite)));
+		cfile.Close( );
+		return *this;
+	}
 
 public:
-	PCDC& args()
+	PCDC& args( )
 	{
 		*this << __func__ << "  args4#" << iargs++ << el;
 		return *this;
 	}
 	template <typename X>
-	PCDC& args(X&& a)
+	PCDC& args( X&& a )
 	{
 		*this << __func__ << "  args3#" << iargs++ << el;
 		return *this;
 	}
 	template <typename... X>
-	PCDC& args(X&&...Args)
+	PCDC& args( X&&...Args )
 	{
-		*this << __func__ << "  args2#" << iargs++ << " sizeof is: " << sizeof...(Args) << el;
-		args((X&&)Args...);
+		*this << __func__ << "  args2#" << iargs++ << " sizeof is: " << sizeof...( Args ) << el;
+		args( (X&&)Args... );
 		return *this;
 	}
-	template <typename T, typename... X>
-	PCDC& args(T a, X&&...Args)
+	template <typename T , typename... X>
+	PCDC& args( T a , X&&...Args )
 	{
-		*this << __func__ << " args1# " << iargs++ << " sizeof is: " << sizeof...(Args) << el;
-		args((X&&)Args...);
+		*this << __func__ << " args1# " << iargs++ << " sizeof is: " << sizeof...( Args ) << el;
+		args( (X&&)Args... );
 		return *this;
 	}
+
 };
 
-template <typename A, typename B>
-PCDC& PCDC::operator||(const tuple<A, B>& tup)
+template <typename T>
+PCDC& PCDC::title( T t )
+{
+	CString ts( t );
+	if ( !ts.IsEmpty( ) )
+	{
+		ts.MakeUpper( );
+	}
+	else
+	{
+		ts = _T( "BEGIN TEST" );
+	}
+
+	CString cs;
+	cs = '<';
+	PCDC& dc = *this;
+	CSize size = dc.GetOutputTextExtent( cs );
+	dc.m_pwnd->GetClientRect( &dc.mrect );
+	auto w = dc.mrect.right - ( dc.mrect.left + dc.initalpos * 2 );
+	size_t icount = w / size.cx - ts.GetLength( ) - 2;
+	icount /= 2;
+	for ( size_t i = 0; i < icount; ++i )
+	{
+		cs += this->mlinechar;
+	}
+	cs += ts;
+	for ( size_t i = 0; i < icount - 1; ++i )
+	{
+		cs += this->mlinechar;
+	}
+	cs += '>';
+	imresizeout( cs );
+	return *this << el;
+}
+
+template <typename A , typename B>
+PCDC& PCDC::operator||( const tuple<A , B>& tup )
 {
 	//*this << "tuple<AB>";// << sizeof(tuple<>) << tab << sizeof(tup) << tab << tuple_size<decltype(tup)>::value << el;
-	return *this << get<0>(tup) << '|' << get<1>(tup) << '|';
+	return *this << get<0>( tup ) << '|' << get<1>( tup ) << '|';
 }
 
 template <typename... Args>
-PCDC& PCDC::operator||(const tuple<Args...>& tup)
+PCDC& PCDC::operator||( const tuple<Args...>& tup )
 {
-	*this << '|' << get<0>(tup);
-	return *this || (tup._Get_rest());
+	*this << '|' << get<0>( tup );
+	return *this || ( tup._Get_rest( ) );
 }
 
-template <typename A, typename B>
-PCDC& PCDC::operator|(const tuple<A, B>& tup)
+template <typename A , typename B>
+PCDC& PCDC::operator|( const tuple<A , B>& tup )
 {
 	//*this << "tuple<AB>";// << sizeof(tuple<>) << tab << sizeof(tup) << tab << tuple_size<decltype(tup)>::value << el;
-	return *this << "{" << get<0>(tup) << "}|{" << get<1>(tup) << "}";
+	return *this << "{" << get<0>( tup ) << "}|{" << get<1>( tup ) << "}";
 }
 
-template <typename A, typename... Args>
-PCDC& PCDC::operator|(const tuple<A, Args...>& tup)
+template <typename A , typename... Args>
+PCDC& PCDC::operator|( const tuple<A , Args...>& tup )
 {
-	*this << "{" << get<0>(tup) << "}|";
-	return *this | (tup._Get_rest());
+	*this << "{" << get<0>( tup ) << "}|";
+	return *this | ( tup._Get_rest( ) );
 }
 
 template<typename T>
-PCDC& PCDC::operator [] (const tuple<T>& tupa)
+PCDC& PCDC::operator [] ( const tuple<T>& tupa )
 {
 	return *this << "[" << tupa._Myfirst._Val << "]";
 }
 
 template <typename... Args>
-PCDC& PCDC::operator [] (const tuple<Args...>& tupa)
+PCDC& PCDC::operator [] ( const tuple<Args...>& tupa )
 {
 	*this << "[" << tupa._Myfirst._Val << "], ";
-	return (*this)[tupa._Get_rest()];
+	return ( *this )[tupa._Get_rest( )];
 };
 
 template <typename... Args>
-PCDC& PCDC::operator<<(tuple<Args...> tup)
+PCDC& PCDC::operator<<( tuple<Args...> tup )
 {
-	if (ibegin == true) {
+	if ( ibegin == true ) {
 		*this << "{ ";
 		ibegin = false;
 	}
 	*this << "{" << tup._Myfirst._Val;
-	if (tuple_size<decltype(tup)>::value == 1)
+	if ( tuple_size<decltype( tup )>::value == 1 )
 	{
 		*this << '}';
 	}
@@ -531,324 +660,296 @@ PCDC& PCDC::operator<<(tuple<Args...> tup)
 	{
 		*this << "}, ";
 	}
-	return *this << (tup._Get_rest());
+	return *this << ( tup._Get_rest( ) );
 }
 
 template<typename T >
-PCDC& PCDC::operator ()(initializer_list<T> c)
+PCDC& PCDC::operator ()( initializer_list<T> c )
 {
-	T ibegin = *c.begin() - *c.begin();
-	forprintv(c);
+	T ibegin = *c.begin( ) - *c.begin( );
+	forprintv( c );
 	return *this;
 }
 
 template<typename T >
-PCDC& PCDC::operator<<(initializer_list<T> c)
+PCDC& PCDC::operator<<( initializer_list<T> c )
 {
-	T ibegin = *c.begin() - *c.begin();
-	forprintv(c);
+	T ibegin = *c.begin( ) - *c.begin( );
+	forprintv( c );
 	return *this;
 }
 
 template <typename  int N>
-PCDC& PCDC::operator <<(bitset<N>& bits)
+PCDC& PCDC::operator <<( bitset<N>& bits )
 {
-	string str = bits.to_string();
-	ms = str.c_str();
-	imresizeout(ms);
+	string str = bits.to_string( );
+	ms = str.c_str( );
+	imresizeout( ms );
 	return *this;
 }
 
 template <typename  int N>
-PCDC& PCDC::operator <<(const bitset<N>& bits)
+PCDC& PCDC::operator <<( const bitset<N>& bits )
 {
-	string str = bits.to_string();
-	ms = str.c_str();
-	imresizeout(ms);
+	string str = bits.to_string( );
+	ms = str.c_str( );
+	imresizeout( ms );
 	return *this;
 };
 
-template <typename T, typename ...X>
-PCDC& PCDC::pl(T a, X...args)
+template <typename T , typename ...X>
+PCDC& PCDC::pl( T a , X...args )
 {
 	*this << a << '\n';
-	pl(args...);
+	pl( args... );
 	return *this;
 }
 
 template <typename X>
-PCDC& PCDC::pt(X a)
+PCDC& PCDC::pt( X a )
 {
 	*this << a << '\n';
 	return *this;
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::pt(T a, X...args)
+template <typename T , typename ...X>
+PCDC& PCDC::pt( T a , X...args )
 {
 	*this << a << '\t';
-	pt(args...);
+	pt( args... );
 	return *this;
 }
 
 template <typename X>
-PCDC& PCDC::pc(X a)
+PCDC& PCDC::pc( X a )
 {
 	*this << a << '\n';
 	return *this;
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::pc(T a, X...args)
+template <typename T , typename ...X>
+PCDC& PCDC::pc( T a , X...args )
 {
 	*this << a << ", ";
-	pc(args...);
+	pc( args... );
 	return *this;
 }
 
 template <typename X>
-PCDC& PCDC::pb(X a)
+PCDC& PCDC::pb( X a )
 {
 	*this << '{' << a << "}" << '\n';
 	return *this;
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::pb(T a, X...args)
+template <typename T , typename ...X>
+PCDC& PCDC::pb( T a , X...args )
 {
 	*this << '{' << a << "},";
-	return pb(args...);
+	return pb( args... );
 }
 
 template <typename X>
-PCDC& PCDC::address(X&& a)
+PCDC& PCDC::address( X&& a )
 {
-	ms.Format(_T("[0x%p]"), &a);
-	imresizeout(ms);
+	ms.Format( _T( "[0x%p]" ) , &a );
+	imresizeout( ms );
 	*this << '\t';
 	return *this;
 }
 
 template <typename X>
-PCDC& PCDC::address(X& a)
+PCDC& PCDC::address( X& a )
 {
-	ms.Format(_T("[0x%p]"), &a);
-	imresizeout(ms);
+	ms.Format( _T( "[0x%p]" ) , &a );
+	imresizeout( ms );
 	*this << '\t';
 	return *this;
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::address(T a, X...args)
+template <typename T , typename ...X>
+PCDC& PCDC::address( T a , X...args )
 {
-	ms.Format(_T("[0x%p],"), &a);
-	imresizeout(ms);
-	return address(args...);
+	ms.Format( _T( "[0x%p]," ) , &a );
+	imresizeout( ms );
+	return address( args... );
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::type(T& a, X&...args)
+template <typename T , typename ...X>
+PCDC& PCDC::type( T& a , X&...args )
 {
-	*this << "type:  " << typeid(a).name() << "  size:  " << sizeof(a) << "  HASH: " << typeid(a).hash_code() << el;
-	return type(args...);
+	*this << "type:  " << typeid( a ).name( ) << "  size:  " << sizeof( a ) << "  HASH: " << typeid( a ).hash_code( ) << el;
+	return type( args... );
 }
 
-template <typename T, typename ...X>
-PCDC& PCDC::type(T&& a, X&&...args)
+template <typename T , typename ...X>
+PCDC& PCDC::type( T&& a , X&&...args )
 {
-	*this << "TYPE:  " << typeid(a).name() << '\t' << "SIZE:  " << sizeof(a) << '\t' << "HASHCODE: " << typeid(a).hash_code() << el;
-	return type(args...);
-}
-
-template<typename T>
-PCDC& PCDC::operator <<(T* p)
-{
-	ms.Format(_T("%p"), p);
-	imresizeout(ms);
-	return *this;
-}
-
-template <typename X>
-PCDC& PCDC::operator <<(const unique_ptr<X>& unptr)
-{
-	ms.Format(_T("%p"), unptr.get());
-	imresizeout(ms);
-	return *this;
+	*this << "TYPE:  " << typeid( a ).name( ) << '\t' << "SIZE:  " << sizeof( a ) << '\t' << "HASHCODE: " << typeid( a ).hash_code( ) << el;
+	return type( args... );
 }
 
 template<typename S>
-void PCDC::linemod(S l, S linemod, PCDC& (*op)(PCDC&), char* stail)
+void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 {
-	if (++l % linemod == 0)
+	if ( ++l % linemod == 0 )
 	{
-		(*op)(*this);
-		if (stail)
+		( *op )( *this );
+		if ( stail )
 			*this << stail;
 	}
 }
 
 template<typename T>
-PCDC& PCDC::forprintr(const T* b, const T* e)
+PCDC& PCDC::forprintr( const T* b , const T* e )
 {
 	int il = 0;
-	for (auto* it = b; it != e; ++it)
+	for ( auto* it = b; it != e; ++it )
 	{
 		*this << *it << tab;
-		linemod(il, ilinemod);
+		linemod( il , ilinemod );
 	}
 	return *this;
 }
 
 template<typename T>
-PCDC& PCDC::forprintv(const T& v)
+PCDC& PCDC::forprintv( const T& v )
 {
 	int il = 0;
-	for (auto i : v)
+	for ( auto i : v )
 	{
 		*this << i << tab;
-		linemod(il, ilinemod);
+		linemod( il , ilinemod );
 	}
 	return *this;
 }
 
 template<typename T>
-PCDC& PCDC::forprintm(const T& m)
+PCDC& PCDC::forprintm( const T& m )
 {
 	int il = 0;
-	for (const auto& i : m)
+	for ( const auto& i : m )
 	{
 		*this << "{" << i.first << "," << i.second << "}   ";
-		linemod(il, ilinemod);
+		linemod( il , ilinemod );
 	}
 	return *this;
 }
 
-template <typename A, typename B>
-PCDC& PCDC::operator <<(const pair<A, B>& i)
+template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
+{
+	for ( size_t i = 0; i < len; ++i )
+		*this << *( arr + i ) << tab;
+	return *this;
+}
+
+template<typename T>
+PCDC& PCDC::operator <<( T* p )
+{
+	ms.Format( _T( "%p" ) , p );
+	imresizeout( ms );
+	return *this;
+}
+
+template <typename X>
+PCDC& PCDC::operator <<( const unique_ptr<X>& unptr )
+{
+	ms.Format( _T( "%p" ) , unptr.get( ) );
+	imresizeout( ms );
+	return *this;
+}
+
+template <typename A , typename B>
+PCDC& PCDC::operator <<( const pair<A , B>& i )
 {
 	*this << "{" << i.first << "," << i.second << "}   ";
 	return *this;
 }
 
-template <typename T, size_t len>
-PCDC& PCDC::operator <<(const array<T, len>& a)
+template <typename T , size_t len>
+PCDC& PCDC::operator <<( const array<T , len>& a )
 {
-	if (len == 0 || &a == nullptr)
+	if ( len == 0 || &a == nullptr )
 		return *this;
 	else
-		return forprintv(a);
+		return forprintv( a );
 }
 
 template <typename X>
-PCDC& PCDC::operator <<(const vector<X>& v)
+PCDC& PCDC::operator <<( const vector<X>& v )
 {
-	if (v.empty())
+	if ( v.empty( ) )
 		return *this;
 	else
-		return forprintv(v);
+		return forprintv( v );
 }
 
 template <typename T>
-PCDC& PCDC::operator <<(const deque<T>& d)
+PCDC& PCDC::operator <<( const deque<T>& d )
 {
-	if (d.empty())
+	if ( d.empty( ) )
 		return *this;
 	else
-		return forprintv(d);
+		return forprintv( d );
 }
 
-template <typename T, typename X>
-PCDC& PCDC::operator <<(const map<T, X>& m)
+template <typename T , typename X>
+PCDC& PCDC::operator <<( const map<T , X>& m )
 {
-	if (!m.size())
+	if ( !m.size( ) )
 		return *this;
 	else
-		return forprintm(m);
+		return forprintm( m );
 }
 
-template <typename T, typename X>
-PCDC& PCDC::operator <<(const multimap<T, X>& m)
+template <typename T , typename X>
+PCDC& PCDC::operator <<( const multimap<T , X>& m )
 {
-	if (!m.size())
+	if ( !m.size( ) )
 		return *this;
 	else
-		return forprintm(m);
+		return forprintm( m );
 }
 
 template <typename T>
-PCDC& PCDC::operator <<(const multiset<T>& s)
+PCDC& PCDC::operator <<( const multiset<T>& s )
 {
-	if (!s.size())
+	if ( !s.size( ) )
 		return *this;
 	else
-		return forprintv(s);
+		return forprintv( s );
 }
 
 template <typename T>
-PCDC& PCDC::operator <<(const set<T>& s)
+PCDC& PCDC::operator <<( const set<T>& s )
 {
-	if (!s.size())
+	if ( !s.size( ) )
 		return *this;
 	else
-		return forprintv(s);
+		return forprintv( s );
 }
 
 template <typename T>
-PCDC& PCDC::operator <<(const list<T>& l)
+PCDC& PCDC::operator <<( const list<T>& l )
 {
-	if (!l.size())
+	if ( !l.size( ) )
 		return *this;
 	else
-		return forprintv(l);
+		return forprintv( l );
 }
 
 template <typename T>
-PCDC& PCDC::title(T t)
-{
-	CString ts(t);
-	if (!ts.IsEmpty())
-	{
-		ts.MakeUpper();
-	}
-	else
-	{
-		ts = _T("BEGIN TEST");
-	}
-
-	CString cs;
-	cs = '<';
-	PCDC& dc = *this;
-	CSize size = dc.GetOutputTextExtent(cs);
-	dc.m_pwnd->GetClientRect(&dc.mrect);
-	auto w = dc.mrect.right - (dc.mrect.left + dc.initalpos * 2);
-	size_t icount = w / size.cx - ts.GetLength() - 2;
-	icount /= 2;
-	for (size_t i = 0; i < icount; ++i)
-	{
-		cs += this->mlinechar;
-	}
-	cs += ts;
-	for (size_t i = 0; i < icount - 1; ++i)
-	{
-		cs += this->mlinechar;
-	}
-	cs += '>';
-	imresizeout(cs);
-	return *this << el;
-}
-
-template <typename T>
-CString address(T& x)
+CString address( T& x )
 {
 	CString cs;
-	cs.Format(_T("%lp"), &x);
+	cs.Format( _T( "%lp" ) , &x );
 	return cs;
 }
 
 template <typename T>
-bool swap(T& a, T& b)
+bool swap( T& a , T& b )
 {
-	if ((a != nullptr) && (b != nullptr) && (&a != nullptr) && (&b != nullptr) && (&a != &b))
+	if ( ( a != nullptr ) && ( b != nullptr ) && ( &a != nullptr ) && ( &b != nullptr ) && ( &a != &b ) )
 	{
 		T c;
 		c = a;
@@ -859,65 +960,96 @@ bool swap(T& a, T& b)
 	return false;
 }
 
-template<typename V, typename T>
-T emax(V v)
+template<typename V , typename T>
+T emax( V v )
 {
-	T imax = *v.begin();
-	if (v.size()) {
-		for (const auto& i : v)
+	T imax = *v.begin( );
+	if ( v.size( ) ) {
+		for ( const auto& i : v )
 		{
-			imax = max(imax, i);
+			imax = max( imax , i );
 		}
 	}
 	return imax;
 }
 
-template<typename T = long double, typename ...X>
-T gmax(T a, X...args)
+template<typename T = long double , typename ...X>
+T gmax( T a , X...args )
 {
-	initializer_list<T>il{ (T)a,(T)(args)... };
-	return emax<initializer_list<T>, T>(il);
+	initializer_list<T>il { (T)a,(T)( args )... };
+	return emax<initializer_list<T> , T>( il );
 }
 
-template<typename T = int, typename ...X>
-T imax(X...args)
+template<typename T = int , typename ...X>
+T imax( X...args )
 {
-	initializer_list<T>il{ (T)(args)... };
-	return emax<initializer_list<T>, T>(il);
+	initializer_list<T>il { (T)( args )... };
+	return emax<initializer_list<T> , T>( il );
 }
 
 template<typename T = int>
-T lex(T a = T())
+bool itiszero( T a = T( ) )
 {
-	return a;
+	return a == T( );
 }
 
-template<typename int ic = 100, typename C>
-auto sum(C c)
+template<typename T>
+bool itisnull( T p )
+{
+	return ( ( nullptr == &p ) || ( p == T( ) ) );
+}
+
+template<typename T>
+bool itisnull( T* p )
+{
+	return ( ( nullptr == p ) || ( *p == T( ) ) );
+}
+
+template<typename T = int>
+bool itisempty( T a = T( ) )
+{
+	return a == T( );
+}
+
+template<typename T = int>
+T lex( T a = T( ) )
+{
+	using O = decltype( T( ) );
+	return O( a );
+}
+
+template<typename T = int>
+T lexzero( T a = T( ) )
+{
+	return T( );
+}
+
+template<typename int ic = 100 , typename C>
+auto sum( C c )
 {
 	C t;
-	auto a = (*c.begin() - *c.begin());
-	for (size_t icount = 0; icount < ic; ++icount)
-		t.insert(t.end(), *c.begin());
-	for (auto i : t)
+	auto a = ( *c.begin( ) - *c.begin( ) );
+	for ( size_t icount = 0; icount < ic; ++icount )
+		t.insert( t.end( ) , *c.begin( ) );
+	for ( auto i : t )
 		a += i;
 	return a;
 }
 
 template<typename T >
-auto sum(vector<T> c)
+auto sum( vector<T> c )
 {
-	T isum = *c.begin() - *c.begin();
-	for (auto i : c)
+	T isum = *c.begin( ) - *c.begin( );
+	for ( auto i : c )
 		isum += i;
 	return isum;
 }
 
 template<typename T >
-auto sum(initializer_list<T> c)
+auto sum( initializer_list<T> c )
 {
-	T isum = *c.begin() - *c.begin();
-	for (auto i : c)
+	T isum = *c.begin( ) - *c.begin( );
+	for ( auto i : c )
 		isum += i;
 	return isum;
 }

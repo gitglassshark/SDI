@@ -5,6 +5,36 @@
 #include "mylib.hpp"
 #include <iostream>
 
+class noname
+{
+public:
+
+
+public:
+    noname(){ }
+    noname(){ }
+    ~noname(){ }
+
+
+public:
+
+
+
+public:
+
+
+public:
+
+
+protected:
+
+
+private:
+
+};
+
+
+
 ScrOut& tab(ScrOut& dc)
 {
 	dc << '\t';

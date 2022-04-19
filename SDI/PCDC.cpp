@@ -20,33 +20,23 @@ PCDC& starline(PCDC& dc)
 		cs += dc.mlinechar;
 	}
 	dc << cs << el;
-
 	return dc;
 }
 
-PCDC& tab(PCDC& dc)
-{
-	dc << '\t';
-	return dc;
-}
+PCDC& sp(PCDC& dc) { return dc << "  "; }
+PCDC& star(PCDC& dc) { return dc << "*"; }
+PCDC& dash(PCDC& dc) { return dc << "-"; }
+PCDC& com(PCDC& dc) { return dc << ','; }
+PCDC& semi(PCDC& dc) { return dc << ';'; }
+PCDC& tab(PCDC& dc) { return dc << '\t'; }
 
-PCDC& cut(PCDC& dc)
-{
-	dc << starline;
-	return dc;
-}
+PCDC& cut(PCDC& dc) { return dc << starline; }
 
-PCDC& cl(PCDC& dc)
-{
-	dc.clearscreen();
-	return dc;
-}
+PCDC& cl( PCDC& dc ) { dc.clearscreen( ); return dc; }
 
-PCDC& el(PCDC& dc)
-{
-	dc <<'\n';
-	return dc;
-}
+PCDC& endl( PCDC& dc ) { return dc << '\n'; }
+
+PCDC& el(PCDC& dc) { return dc <<'\n'; }
 
 PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {
@@ -117,50 +107,6 @@ PCDC& PCDC::Release()
 	m_cdc = nullptr;
 	icreate = false;
 	return *this;
-}
-
-const CSize& PCDC::imresizeout(const CString& cs)
-{
-	m_pwnd->GetClientRect(&mrect);
-	msize = GetOutputTextExtent(cs);
-
-	CString news('x');
-	auto size = GetOutputTextExtent(news);
-
-	LONG linelen = mrect.right - mrect.left - initalpos * 2;
-	LONG strlen = msize.cx;
-	int cslen = cs.GetLength();
-	news = cs;
-	CString heads;
-	CString tails;
-	int tkpos = cslen * linelen / strlen - 1;
-	if (strlen > (linelen - size.cx)) {
-		for (int i = cslen; i >= 0; i -= tkpos)
-		{
-			heads = news.Mid(0, tkpos);
-			tails = news.Mid(tkpos, news.GetLength());
-			imresizeout(heads);
-			news = tails;
-		}
-	}
-	else {
-		if (p.x + msize.cx >= mrect.right - mrect.left - initalpos)
-		{
-			p.x = mrect.left + initalpos;
-			p.y += step;
-		}
-		if (p.y >= mrect.bottom - mrect.top - initalpos)
-		{
-			this->FillSolidRect(mrect, m_bk);
-			this->clearscreen();
-			p.y = mrect.top + initalpos + wbar;
-		}
-		//need recalc ned***
-		TextOut(p.x, p.y, cs);
-		p.x += msize.cx;
-	}
-	return msize;
-
 }
 
 PCDC& PCDC::resettcolor()
