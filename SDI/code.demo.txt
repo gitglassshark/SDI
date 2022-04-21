@@ -487,5 +487,12 @@ protected:
 private:
 
 };
-
-
+	template<typename T> void printe( T e )
+	{
+		*this <<e;
+	}
+	template<typename T> PCDC& foreach( T c )
+	{
+		std::for_each( c.begin( ) , c.end( ) , template<typename A> [ & ] ( A a ) { *this << a; } );
+		return *this;
+	};

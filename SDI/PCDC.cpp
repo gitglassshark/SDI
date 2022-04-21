@@ -24,10 +24,15 @@ PCDC& starline(PCDC& dc)
 }
 
 PCDC& sp(PCDC& dc) { return dc << "  "; }
+
 PCDC& star(PCDC& dc) { return dc << "*"; }
+
 PCDC& dash(PCDC& dc) { return dc << "-"; }
+
 PCDC& com(PCDC& dc) { return dc << ','; }
+
 PCDC& semi(PCDC& dc) { return dc << ';'; }
+
 PCDC& tab(PCDC& dc) { return dc << '\t'; }
 
 PCDC& cut(PCDC& dc) { return dc << starline; }
@@ -35,8 +40,8 @@ PCDC& cut(PCDC& dc) { return dc << starline; }
 PCDC& cl( PCDC& dc ) { dc.clearscreen( ); return dc; }
 
 PCDC& endl( PCDC& dc ) { return dc << '\n'; }
-
 PCDC& el(PCDC& dc) { return dc <<'\n'; }
+PCDC& nl(PCDC& dc) { return dc <<'\n'; }
 
 PCDC::PCDC(CWnd* pwnd) :m_pwnd(pwnd)
 {

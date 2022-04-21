@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 #include <bitset>
+#include <functional>
 #include <tuple>
 #include <list>
 #include <vector>
@@ -10,6 +11,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include <initializer_list>
 #include "SDI.h"
 #include <complex>
@@ -43,6 +45,7 @@ public:
 
 class PCDC;
 extern class CColor dccr;
+extern PCDC* pcout;
 
 PCDC& cl( PCDC& dc );
 PCDC& com( PCDC& dc );
@@ -51,8 +54,9 @@ PCDC& dash( PCDC& dc );
 PCDC& star( PCDC& dc );
 PCDC& cut( PCDC& dc );
 PCDC& tab( PCDC& dc );
-PCDC& el( PCDC& dc );
 PCDC& sp( PCDC& dc );
+PCDC& el( PCDC& dc );
+PCDC& nl( PCDC& dc );
 PCDC& endl( PCDC& dc );
 PCDC& starline( PCDC& dc );
 
@@ -200,15 +204,17 @@ PCDC& starline( PCDC& dc );
 
 #endif	
 
-#define OBSIZEBEGIN(vectorname,stringname) vector<CAtlString> vectorname;CAtlString stringname;
-
-#define  OBSIZE(obname,message,v) 	{message.Format(_T("The "#obname" size of is %d"), sizeof(obname));v.push_back(message);}
-
 #define vec(T) vector<T> 
 
-#define nonull(v) (((v )!=nullptr )&&(&(v )!=nullptr ) )
-
-#define addmenu(name) addmenuitem(#name,name);
+#define bigtosmall true
+#define smalltobig false
+#define UP 1
+#define DOWN -3
+#define RESET 0
+#define REVERSE -1
+#define KEEPSTATUS -2
+#define NOT !
+#define nonull(v) (( (v )!=nullptr )&&((&v)!=nullptr ) )
 
 #define gett(name)  decltype(name)
 #define getI(name)  gett(name.begin())
@@ -221,9 +227,9 @@ PCDC& starline( PCDC& dc );
 #define FORV(ielement,V)  for(const auto &ielement:V)
 #define FORW(ielement,V)  for(auto &ielement:V)
 
-#define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>(this); PCDC & cout=*me_unique_dc;
-#define makemedc(DC)  unique_ptr<PCDC> pdc(new PCDC(this));PCDC& DC = *pdc;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>(this);auto& cout= *cout_me_ptr;
+#define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>((CWnd*)this); PCDC & cout=*me_unique_dc;
+#define makemedc(DC)  unique_ptr<PCDC> pdcxxx(new PCDC(this));PCDC& DC = *pdcxxx;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;
 #define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
 #define getcout PCDC &cout=*pcout;
 
@@ -235,22 +241,30 @@ PCDC& starline( PCDC& dc );
 
 #define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
 #define showv(name) st(name)<<_T(" value is: ")<<name<<tab
-#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()<<"  size:  "<<sizeof(##__VA_ARGS__)<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el
+#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()\
+						<<"  size:  "<<sizeof(##__VA_ARGS__)\
+						<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el
 
-#define RUNTEST(message)		/*cout.clearscreen();\
-								cout.titleline(wstring(st(message)));*/
-
+#define RUNTEST(message)		cout.clearscreen();TITLE(message);
 #define TITLE(message)      cout.title(CString(st(message)));
 
 #define mkut(va,tp) unique_ptr<tp>va=make_unique<tp>();
 #define mkst(va,tp) shared_ptr<tp>va=make_shared<tp>();
 #define mmkut(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
 #define mmkst(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
-	//printsource(¡ª__FILE__,__LINE__);
+
+//printsource(¡ª__FILE__,__LINE__);
 	//#define comment printsource(__FILE__,__LINE__);
 	//#define comments(nline) printsource(¡ª__FILE__,__LINE__,nline);
 	//#define endcomment printsourceend((__FILE__,__LINE__);
 
+#define tplT template<typename T>
+#define tplAB template<typename A,typename B>
+#define tplABC template<typename A,typename B,typename C>
+
+#define tplArgs  template<typename ...Args>
+#define tplAArgs  template<typename A,typename ...Args>
+#define tplABArgs  template<typename A,typename B,typename ...Args>
 
 class PCDC : public CDC
 {
@@ -269,7 +283,7 @@ public:
 	POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
-	int ilinemod = 26;
+	int ilinemod = 20;
 	bool icutline = false;
 
 public:
@@ -286,6 +300,7 @@ public:
 
 public:
 	char mlinechar = _T( '-' );
+	CString spchar = _T( "  " );
 	CString ms;
 	CString opstr;
 
@@ -380,6 +395,7 @@ public:
 		return msize;
 	}
 	PCDC& resettcolor( );
+	PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& setimod( int imod );
@@ -420,17 +436,21 @@ public:
 
 	template<typename T> PCDC& operator <<( T* p );
 	template<typename T > PCDC& operator ()( initializer_list<T> c );
+	//template<typename T > PCDC& operator ()( T t );
+	template<typename T > PCDC& operator ()( T t ) {
+		return *this << t;
+	};
 	template<typename T > PCDC& operator<<( initializer_list<T> c );
-	template <typename X> PCDC& operator <<( const vector<X>& v );
+	template <typename... X> PCDC& operator <<( const vector<X...>& v );
 	template <typename T> PCDC& operator <<( const list<T>& l );
 	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
 	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
-	template <typename T> PCDC& operator <<( const set<T>& s );
+	template <typename ...T> PCDC& operator <<( const set<T...>& s );
 	template <typename  int N = 64> PCDC& operator <<( bitset<N>& bits );
 	template <typename  int N = 64> PCDC& operator <<( const bitset<N>& bits );
-	template <typename T> PCDC& operator <<( const multiset<T>& s );
-	template <typename T> PCDC& operator <<( const deque<T>& d );
-	template <typename T , size_t len> PCDC& operator <<( const array<T , len>& a );
+	template <typename... T> PCDC& operator <<( const multiset<T...>& s );
+	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
+	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
 	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
 	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
 	//template <typename T > PCDC& operator <<( const complex<A>& z );
@@ -478,6 +498,16 @@ public:
 	//	}
 	//	return *this;
 	//};
+	template<typename T>
+	T& MakeEleRandom( T& rc , const size_t elesize = 20 , const int mod = 10 )
+	{
+		srand( time( nullptr ) );
+		if ( rc.size( ) < elesize )
+			rc.resize( elesize );
+		for ( auto& i : rc )
+			i = rand( ) % mod;
+		return rc;
+	}
 
 	template<typename T> PCDC& forprintr( const T* b , const T* e );
 	template<typename T> PCDC& forprintv( const T& v );
@@ -486,6 +516,7 @@ public:
 	template <typename S> void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
 	template <typename X> PCDC& address( X&& a );
 	template <typename X> PCDC& address( X& a );
+	template<typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...> a );
 	template <typename T , typename ...X> PCDC& address( T a , X...args );
 	PCDC& type( ) { return *this; };
 	template <typename T , typename ...X> PCDC& type( T&& a , X&&...args );
@@ -567,6 +598,16 @@ public:
 	}
 
 };
+
+template<typename ...A , template<typename ...T> typename B>
+PCDC& PCDC::TypeCount( B<A...> a )
+{
+	*this << "type:  " << typeid( a ).name( );
+	*this << "  size:  " << sizeof( a );
+	*this << "  HASH: " << typeid( a ).hash_code( );
+	*this << " A<T...> T...count is :" << sizeof...( A );
+	return *this;
+}
 
 template <typename T>
 PCDC& PCDC::title( T t )
@@ -792,7 +833,7 @@ PCDC& PCDC::type( T&& a , X&&...args )
 template<typename S>
 void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 {
-	if ( ++l % linemod == 0 )
+	if ( l % linemod == 0 )
 	{
 		( *op )( *this );
 		if ( stail )
@@ -804,10 +845,10 @@ template<typename T>
 PCDC& PCDC::forprintr( const T* b , const T* e )
 {
 	int il = 0;
-	for ( auto* it = b; it != e; ++it )
+	for ( const auto* it = b; it != e; ++it )
 	{
-		*this << *it << tab;
-		linemod( il , ilinemod );
+		*this << *it << spchar;
+		linemod( ++il , ilinemod );
 	}
 	return *this;
 }
@@ -816,10 +857,10 @@ template<typename T>
 PCDC& PCDC::forprintv( const T& v )
 {
 	int il = 0;
-	for ( auto i : v )
+	for ( const auto& i : v )
 	{
-		*this << i << tab;
-		linemod( il , ilinemod );
+		*this << i << spchar;
+		linemod( ++il , ilinemod );
 	}
 	return *this;
 }
@@ -830,16 +871,21 @@ PCDC& PCDC::forprintm( const T& m )
 	int il = 0;
 	for ( const auto& i : m )
 	{
-		*this << "{" << i.first << "," << i.second << "}   ";
-		linemod( il , ilinemod );
+		*this << i;
+		//*this << "{" << i.first << "," << i.second << "}   ";
+		linemod( ++il , ilinemod );
 	}
 	return *this;
 }
 
 template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
+	int il = 0;
 	for ( size_t i = 0; i < len; ++i )
-		*this << *( arr + i ) << tab;
+	{
+		*this << *( arr + i ) << spchar;
+		linemod( ++il , ilinemod );
+	}
 	return *this;
 }
 
@@ -862,7 +908,7 @@ PCDC& PCDC::operator <<( const unique_ptr<X>& unptr )
 template <typename A , typename B>
 PCDC& PCDC::operator <<( const pair<A , B>& i )
 {
-	*this << "{" << i.first << "," << i.second << "}   ";
+	*this << "{ " << i.first << ", " << i.second << "}   ";
 	return *this;
 }
 
@@ -875,8 +921,8 @@ PCDC& PCDC::operator <<( const array<T , len>& a )
 		return forprintv( a );
 }
 
-template <typename X>
-PCDC& PCDC::operator <<( const vector<X>& v )
+template <typename... X>
+PCDC& PCDC::operator <<( const vector<X...>& v )
 {
 	if ( v.empty( ) )
 		return *this;
@@ -884,8 +930,8 @@ PCDC& PCDC::operator <<( const vector<X>& v )
 		return forprintv( v );
 }
 
-template <typename T>
-PCDC& PCDC::operator <<( const deque<T>& d )
+template <typename... T>
+PCDC& PCDC::operator <<( const deque<T...>& d )
 {
 	if ( d.empty( ) )
 		return *this;
@@ -911,8 +957,8 @@ PCDC& PCDC::operator <<( const multimap<T , X>& m )
 		return forprintm( m );
 }
 
-template <typename T>
-PCDC& PCDC::operator <<( const multiset<T>& s )
+template <typename...T>
+PCDC& PCDC::operator <<( const multiset<T...>& s )
 {
 	if ( !s.size( ) )
 		return *this;
@@ -920,8 +966,8 @@ PCDC& PCDC::operator <<( const multiset<T>& s )
 		return forprintv( s );
 }
 
-template <typename T>
-PCDC& PCDC::operator <<( const set<T>& s )
+template <typename ...T>
+PCDC& PCDC::operator <<( const set<T...>& s )
 {
 	if ( !s.size( ) )
 		return *this;
@@ -1053,7 +1099,123 @@ auto sum( initializer_list<T> c )
 		isum += i;
 	return isum;
 }
+//
+//template<typename...A>
+//size_t typecount(A... a )
+//{
+//	return sizeof...(a);
+//}
 
+template<typename ...A , template<typename ...T> typename B>
+size_t tpcount( B<A...> a )
+{
+	return  sizeof...( A );
+}
 
+tplT T& MakeSingleEleRandom( T& r , const int mod )
+{
+	return r = rand( ) % mod;
+}
 
+tplT bool MakeEleRandom( T& v , const int mod )
+{
+	srand( time( nullptr ) );
+	if ( v.empty( ) )
+		return false;
+	for ( auto& i : v )
+		MakeSingleEleRandom( i , mod );
+	return true;
+}
+typedef int ( *pfunc )( PCDC& , string );
+
+#define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
+					pfunc p=fname;\
+					menumap.insert(make_pair(str,p));}
+
+template <typename T , bool isup = true>
+bool compare( T a , T b )
+{
+	static bool iset = false;
+	if ( isup )
+	{
+		return a > b;
+	}
+	else
+	{
+		return a < b;
+	}
+}
+
+typedef int ( *PFU )( int );
+using PTRFUN = int ( * )( int );
+
+template <typename T = int , bool isort = bigtosmall>
+class icompset {
+public:
+	bool miset = true;
+	T ivalset = 0;
+	void* iptset = nullptr;
+	bool ichceknull = false;
+
+public:
+	icompset( ) :miset( isort ) {
+	};
+	icompset& revese( bool set = true , bool toset = true )
+	{
+		if ( set )
+			miset = !miset;
+		else
+			miset = toset;
+		return *this;
+	}
+	icompset& sortset( bool set , T valset = 0 )
+	{
+		miset = set;
+		ivalset = valset;
+		return *this;
+	}
+
+	bool operator()( T c )const
+	{
+		if ( miset )
+		{
+			return c > ivalset;
+		}
+		else
+		{
+			return c < ivalset;
+		}
+	}
+
+	bool operator()( T a , T b )const
+	{
+		if ( miset )
+		{
+			return a > b;
+		}
+		else
+		{
+			return a < b;
+		}
+	}
+
+	bool compare( T a , T b )const
+	{
+		if ( miset )
+		{
+			return a > b;
+		}
+		else
+		{
+			return a < b;
+		}
+	}
+
+	PCDC& operator()( CString name = _T( "noname" ) )
+	{
+		getcout;
+		cout << name << tab << miset;
+		return cout;
+	};
+};
 
