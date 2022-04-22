@@ -182,6 +182,40 @@ const void PCDC::clearscreen(const CRect* r, const COLORREF* cr)
 
 }
 
+PCDC& PCDC::displayfile( CString filename )
+{
+	if ( filename.IsEmpty( ) )
+		return *this;
+
+	CFile cfile;
+	bool iresult = cfile.Open( filename , CFile::modeRead );
+	if ( !iresult )
+		return *this;
+	//准备读入缓冲区
+	const int imaxcount = 1024;
+	int iretcount = 1023;
+	char pbufRead[imaxcount] {};
+	memset( pbufRead , 0 , sizeof( pbufRead ) );
+	pbufRead[imaxcount - 1] = '\0';
+	ASSERT( sizeof( pbufRead ) == imaxcount );
+
+	cfile.SeekToBegin( );
+	string readline;
+
+	//开始读入数据，如果读入字节数小于设置读入字节（返回值），说明读到文件末尾，退出读取循环。
+	while ( iretcount == imaxcount - 1 )
+	{
+		iretcount = cfile.Read( pbufRead , imaxcount - 1 );
+		pbufRead[iretcount] = '\0';
+		readline.append( pbufRead , iretcount );
+		*this << readline;
+		readline = "";
+	}
+	//ASSERT(0 == memcmp(pbufWrite, pbufRead, sizeof(pbufWrite)));
+	cfile.Close( );
+	return *this;
+}
+
 PCDC& PCDC::operator << (PCDC& (*op) (PCDC&))
 {
 	return (*op) (*this);

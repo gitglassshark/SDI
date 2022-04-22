@@ -239,32 +239,29 @@ PCDC& starline( PCDC& dc );
 #define showcodes(...)	lcode(__VA_ARGS__)
 #define lscode(...)  lcode(__VA_ARGS__)
 
-#define SHOW(name) cout<<st(name)<<_T(" is: ")<<name<<tab
-#define showv(name) st(name)<<_T(" value is: ")<<name<<tab
-#define showtype(...)  cout<<#__VA_ARGS__<<" type:  "<<typeid(##__VA_ARGS__).name()\
-						<<"  size:  "<<sizeof(##__VA_ARGS__)\
-						<<"  HASH: "<<typeid(##__VA_ARGS__).hash_code()<<el
+#define SHOW(name) cout<<st(name)<<_T("  is: ")<<name<<tab
+#define showv(name) st(name)<<_T("  value is: ")<<name<<tab
+#define showtype(...)  cout<<#__VA_ARGS__<<":  type: ";\
+						cout<< typeid( ##__VA_ARGS__ ).name( );\
+						cout<<"  size: ";\
+						cout.settcolor( dccr.red );\
+						cout<<sizeof(##__VA_ARGS__);\
+						cout.resettcolor();\
+						cout<<"  HASH :"<<typeid(##__VA_ARGS__).hash_code()<<el
 
 #define RUNTEST(message)		cout.clearscreen();TITLE(message);
 #define TITLE(message)      cout.title(CString(st(message)));
 
-#define mkut(va,tp) unique_ptr<tp>va=make_unique<tp>();
-#define mkst(va,tp) shared_ptr<tp>va=make_shared<tp>();
-#define mmkut(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
-#define mmkst(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
+#define Mptr(va,tp) unique_ptr<tp>va=make_unique<tp>();
+#define Msptr(va,tp) shared_ptr<tp>va=make_shared<tp>();
+#define Mptrs(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
+#define Msptrs(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
 
 //printsource(—__FILE__,__LINE__);
 	//#define comment printsource(__FILE__,__LINE__);
 	//#define comments(nline) printsource(—__FILE__,__LINE__,nline);
 	//#define endcomment printsourceend((__FILE__,__LINE__);
 
-#define tplT template<typename T>
-#define tplAB template<typename A,typename B>
-#define tplABC template<typename A,typename B,typename C>
-
-#define tplArgs  template<typename ...Args>
-#define tplAArgs  template<typename A,typename ...Args>
-#define tplABArgs  template<typename A,typename B,typename ...Args>
 
 class PCDC : public CDC
 {
@@ -335,15 +332,15 @@ public:
 	PCDC& operator<<( const double n );
 	PCDC& operator<<( const long double n );
 	PCDC& operator<<( const size_t n );
-	PCDC& operator<<( const PCDC& me ) {
-		if ( this != &me )
+	PCDC& operator<<( const PCDC& dc ) {
+		if ( this != &dc )
 		{
-			if ( !me.ms.IsEmpty( ) )
+			if ( !dc.ms.IsEmpty( ) )
 			{
-				*this << me.ms << tab;
+				*this << dc.ms << tab;
 			}
-			this->address( me );
-			*this->type( me );
+			this->address( dc );
+			*this->type( dc );
 		}
 		return *this;
 	};
@@ -427,100 +424,52 @@ public:
 	template <typename A , typename B> PCDC& operator|( const tuple<A , B>& tup );
 	template <typename A , typename... Args> PCDC& operator|( const tuple<A , Args...>& tup );
 
-	template<typename T> PCDC& operator [] ( const tuple<T>& tupa );
+	template <typename T> PCDC& operator [] ( const tuple<T>& tupa );
 	template <typename... Args> PCDC& operator [] ( const tuple<Args...>& tupa );
 
 	template <typename... Args> PCDC& operator<<( tuple<Args...> tup );
-	template<>
+	template <>
 	PCDC& operator<<( tuple<> tup ) { ibegin = true; return *this << " }"; }
 
-	template<typename T> PCDC& operator <<( T* p );
-	template<typename T > PCDC& operator ()( initializer_list<T> c );
-	//template<typename T > PCDC& operator ()( T t );
-	template<typename T > PCDC& operator ()( T t ) {
-		return *this << t;
-	};
-	template<typename T > PCDC& operator<<( initializer_list<T> c );
-	template <typename... X> PCDC& operator <<( const vector<X...>& v );
+	template <typename T> PCDC& operator ()( T t ) { return *this << t; };
+	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
+	template <typename T> PCDC& operator <<( const complex<T>& z );
+	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
+	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
+	template <typename T> PCDC& operator ()( initializer_list<T> c );
+	template <typename T> PCDC& operator <<( T* p );
+	template <typename T> PCDC& operator<<( initializer_list<T> c );
 	template <typename T> PCDC& operator <<( const list<T>& l );
-	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
+	template <typename... X> PCDC& operator <<( const vector<X...>& v );
+	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
 	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
+	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
 	template <typename ...T> PCDC& operator <<( const set<T...>& s );
+	template <typename... T> PCDC& operator <<( const multiset<T...>& s );
 	template <typename  int N = 64> PCDC& operator <<( bitset<N>& bits );
 	template <typename  int N = 64> PCDC& operator <<( const bitset<N>& bits );
-	template <typename... T> PCDC& operator <<( const multiset<T...>& s );
-	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
-	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
-	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
-	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
-	//template <typename T > PCDC& operator <<( const complex<A>& z );
-	template <typename T > PCDC& operator <<( const complex<T>& z )
-	{
-		return *this << z.real( ) << '+' << z.imag( ) << 'i';
-	};
 
 public:
-	template<typename T , size_t N = std::tuple_size<T>::value>
-	PCDC& disptup( T t )
-	{
-		constexpr size_t M = std::tuple_size<T>::value;
-		constexpr size_t I = M - N;
-		if constexpr ( N == 1 )
-		{
-			*this << "{" << std::get<I>( t ) << " }";
-			return *this;
-		}
-		else
-		{
-			*this << " {" << std::get<I>( t ) << " },";
-			disptup<T , N - 1>( t );
-		}
-		return *this;
-	};
-	//template<typename isstr>
-	//using isstr = is_one_of<T, CString, string>;
-	//template<typename isstr>
-	//PCDC& test(typename isstr a)
-	//{
-	//	*this << "is string oper" << el;
-	//	return *this;
-	//}
-	//template<typename T >
-	//PCDC& dispp(T t)
-	//{
-	//	if ( is_same<decltype(t),std::tuple<> >::value) {
-	//		*this << "empty" << el;
-	//	}
-	//	else
-	//	{
-	//		*this << std::get<0>(t) << tab;
-	//		dispp(t._Get_rest());
-	//	}
-	//	return *this;
-	//};
-	template<typename T>
-	T& MakeEleRandom( T& rc , const size_t elesize = 20 , const int mod = 10 )
-	{
-		srand( time( nullptr ) );
-		if ( rc.size( ) < elesize )
-			rc.resize( elesize );
-		for ( auto& i : rc )
-			i = rand( ) % mod;
-		return rc;
-	}
+	template <typename T> T& MakeEleRandom( T& rc , const size_t elesize = 20 , const int mod = 10 );
+	template <typename S = size_t> void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
+	template <typename T , size_t N = std::tuple_size<T>::value> PCDC& disptup( T t );
+	template <typename A , typename B> bool comp( A a , B b ) { return a > b; };
 
-	template<typename T> PCDC& forprintr( const T* b , const T* e );
-	template<typename T> PCDC& forprintv( const T& v );
-	template<typename T> PCDC& forprintm( const T& m );
-	template<typename T> PCDC& forprinta( const T* arr , size_t len );
-	template <typename S> void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
+	template <typename T> PCDC& forprintr( const T* b , const T* e );
+	template <typename T> PCDC& forprintv( const T& v );
+	template <typename T> PCDC& forprintm( const T& m );
+	template <typename T> PCDC& forprinta( const T* arr , size_t len );
+
 	template <typename X> PCDC& address( X&& a );
 	template <typename X> PCDC& address( X& a );
-	template<typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...> a );
 	template <typename T , typename ...X> PCDC& address( T a , X...args );
+
 	PCDC& type( ) { return *this; };
-	template <typename T , typename ...X> PCDC& type( T&& a , X&&...args );
+	template <typename T > PCDC& type( T& a );
+	template <typename T > PCDC& type( T&& a );
 	template <typename T , typename ...X> PCDC& type( T& a , X&...args );
+	template <typename T , typename ...X> PCDC& type( T&& a , X&&...args );
+	template<typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...> a );
 
 	template <typename X> PCDC& pt( X a );
 	template <typename T , typename ...X> PCDC& pt( T a , X...args );
@@ -530,45 +479,9 @@ public:
 	template <typename T , typename ...X> PCDC& pb( T a , X...args );
 	PCDC& pl( ) { return *this; }
 	template <typename T , typename ...X> PCDC& pl( T a , X...args );
-	template <typename A , typename B> bool comp( A a , B b )
-	{
-		return a > b;
-	};
 
 public:
-	PCDC& displayfile( CString filename )
-	{
-		if ( filename.IsEmpty( ) )
-			return *this;
-
-		CFile cfile;
-		bool iresult = cfile.Open( filename , CFile::modeRead );
-		if ( !iresult )
-			return *this;
-		//准备读入缓冲区
-		const int imaxcount = 1024;
-		int iretcount = 1023;
-		char pbufRead[imaxcount] {};
-		memset( pbufRead , 0 , sizeof( pbufRead ) );
-		pbufRead[imaxcount - 1] = '\0';
-		ASSERT( sizeof( pbufRead ) == imaxcount );
-
-		cfile.SeekToBegin( );
-		string readline;
-
-		//开始读入数据，如果读入字节数小于设置读入字节（返回值），说明读到文件末尾，退出读取循环。
-		while ( iretcount == imaxcount - 1 )
-		{
-			iretcount = cfile.Read( pbufRead , imaxcount - 1 );
-			pbufRead[iretcount] = '\0';
-			readline.append( pbufRead , iretcount );
-			*this << readline;
-			readline = "";
-		}
-		//ASSERT(0 == memcmp(pbufWrite, pbufRead, sizeof(pbufWrite)));
-		cfile.Close( );
-		return *this;
-	}
+	PCDC& displayfile( CString filename );
 
 public:
 	PCDC& args( )
@@ -597,6 +510,63 @@ public:
 		return *this;
 	}
 
+};
+
+template<typename T , size_t N>
+PCDC& PCDC::disptup( T t )
+{
+	constexpr size_t M = std::tuple_size<T>::value;
+	constexpr size_t I = M - N;
+	if constexpr ( N == 1 )
+	{
+		*this << "{" << std::get<I>( t ) << " }";
+		return *this;
+	}
+	else
+	{
+		*this << " {" << std::get<I>( t ) << " },";
+		disptup<T , N - 1>( t );
+	}
+	return *this;
+};
+
+template<typename T>
+T& PCDC::MakeEleRandom( T& rc , const size_t elesize , const int mod )
+{
+	srand( time( nullptr ) );
+	if ( rc.size( ) < elesize )
+		rc.resize( elesize );
+	for ( auto& i : rc )
+		i = rand( ) % mod;
+	return rc;
+}
+
+template <typename T >
+PCDC& PCDC::type( T& a )
+{
+	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
+	settcolor( dccr.red );
+	*this << sizeof( a );
+	resettcolor( );
+	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
+	return *this;
+};
+
+template <typename T >
+PCDC& PCDC::type( T&& a )
+{
+	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
+	settcolor( dccr.red );
+	*this << sizeof( (T&&)a );
+	resettcolor( );
+	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
+	return *this;
+};
+
+template <typename T >
+PCDC& PCDC::operator <<( const complex<T>& z )
+{
+	return *this << z.real( ) << '+' << z.imag( ) << 'i';
 };
 
 template<typename ...A , template<typename ...T> typename B>
@@ -819,18 +789,18 @@ PCDC& PCDC::address( T a , X...args )
 template <typename T , typename ...X>
 PCDC& PCDC::type( T& a , X&...args )
 {
-	*this << "type:  " << typeid( a ).name( ) << "  size:  " << sizeof( a ) << "  HASH: " << typeid( a ).hash_code( ) << el;
-	return type( args... );
+	type( (T&&)a );
+	return type( (X&&)args... );
 }
 
 template <typename T , typename ...X>
 PCDC& PCDC::type( T&& a , X&&...args )
 {
-	*this << "TYPE:  " << typeid( a ).name( ) << '\t' << "SIZE:  " << sizeof( a ) << '\t' << "HASHCODE: " << typeid( a ).hash_code( ) << el;
-	return type( args... );
+	type( (T&&)a );
+	return type( (X&&)args... );
 }
 
-template<typename S>
+template <typename S>
 void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 {
 	if ( l % linemod == 0 )
@@ -872,7 +842,6 @@ PCDC& PCDC::forprintm( const T& m )
 	for ( const auto& i : m )
 	{
 		*this << i;
-		//*this << "{" << i.first << "," << i.second << "}   ";
 		linemod( ++il , ilinemod );
 	}
 	return *this;
@@ -1099,12 +1068,6 @@ auto sum( initializer_list<T> c )
 		isum += i;
 	return isum;
 }
-//
-//template<typename...A>
-//size_t typecount(A... a )
-//{
-//	return sizeof...(a);
-//}
 
 template<typename ...A , template<typename ...T> typename B>
 size_t tpcount( B<A...> a )
@@ -1112,12 +1075,14 @@ size_t tpcount( B<A...> a )
 	return  sizeof...( A );
 }
 
-tplT T& MakeSingleEleRandom( T& r , const int mod )
+template<typename T>
+T& MakeSingleEleRandom( T& r , const int mod )
 {
 	return r = rand( ) % mod;
 }
 
-tplT bool MakeEleRandom( T& v , const int mod )
+template<typename T>
+bool MakeEleRandom( T& v , const int mod )
 {
 	srand( time( nullptr ) );
 	if ( v.empty( ) )

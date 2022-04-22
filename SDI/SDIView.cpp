@@ -324,12 +324,14 @@ template<typename T>
 class dbasef :public T
 {};
 
-tplT T xadd( T a , T b )
+template<typename T>
+T xadd( T a , T b )
 {
 	return a + b;
 }
 
-tplAB  bool comp( A a , B b )
+template<typename A , typename B>
+bool comp( A a , B b )
 {
 	getcout;
 	cout << "a > b is : ";
@@ -337,17 +339,20 @@ tplAB  bool comp( A a , B b )
 
 }
 
-tplArgs void print( Args... args )
+template<typename ...Args>
+void print( Args... args )
 {
 	getcout;
 	cout << " in print()" << endl;
 }
 
-tplAArgs void print( A a , Args...args ) {
+template<typename A , typename ...Args>
+void print( A a , Args...args ) {
 	getcout;
 	cout << a << sp;
 	print( args... );
 }
+
 template <typename T>
 T add( T a , T b )
 {
@@ -709,12 +714,17 @@ void CSDIView::OnUpperLower( )
 void CSDIView::OnObjectSize( )
 {
 	//切换输出列
-	makedc( cout );
+	SimulationStdCout;
 	static int ichoice = 0;
-	if ( ++ichoice > 2 )
+	if ( ++ichoice > 3 )
 		ichoice = 1;
-
 	if ( ichoice == 1 )
+	{
+		cout.type( nullptr , NULL , tuple<>( ) , int( ) );
+		cout.TypeCount( tuple<>( ) );
+	}
+
+	if ( ichoice == 3 )
 	{
 		cout << cl;
 		showtype( CObject );
@@ -806,6 +816,7 @@ void CSDIView::OnObjectSize( )
 		showtype( map<int , string> );
 		showtype( multimap<int , string> );
 		showtype( tuple<int , string , CString> );
+		showtype( tuple<> );
 	}
 
 }
@@ -1113,7 +1124,7 @@ void CSDIView::OnVectorTest( )
 	{
 		SimulationStdCout;
 		cout.title( st( beging test ) );
-		vector<int>intvect(10 );
+		vector<int>intvect( 10 );
 		vector<int> intvect2( intvect.begin( ) , intvect.begin( ) + 5 );
 		for ( size_t i = 0; i < 20;)
 		{
@@ -1151,15 +1162,15 @@ void CSDIView::OnVectorTest( )
 		cout << intvect2;
 		cout << intvect.empty( ) << el;
 		intvect2.resize( 15 , 5 );
-	
-		cout << intvect2<<el;
+
+		cout << intvect2 << el;
 		for ( size_t i = 0; i < 1024; i++ )
 		{
 			intvect2.push_back( ( 2 + i ) );
 		}
 		intvect2.resize( 15 );
-		SHOW( intvect2.size( ) )<<endl;
-		SHOW( intvect2.capacity( )) <<endl;
+		SHOW( intvect2.size( ) ) << endl;
+		SHOW( intvect2.capacity( ) ) << endl;
 		intvect2.shrink_to_fit( );
 		cout << intvect2 << endl;
 		SHOW( intvect2.back( ) ) << endl;
@@ -1181,7 +1192,7 @@ void CSDIView::OnVectorTest( )
 		vector<int>::iterator it = intvect2.begin( );
 		SHOW( *it ) << endl;
 		int x;
-		cout << addressof( *it ) <<tab<<&*it <<tab<< address( x ) << el;
+		cout << addressof( *it ) << tab << &*it << tab << address( x ) << el;
 
 	}
 	if ( imod == 5 )
@@ -2427,11 +2438,11 @@ void CSDIView::OnPtrUniqueTest( )
 	coutExtSetSimulation;
 
 	lscode(
-		mkut( iua , int );
-	mkut( pptrb , ptr );
+		Mptr( iua , int );
+	Mptr( pptrb , ptr );
 	int ibb = *iua;
-	mmkut( parrb , ptr , 3 );
-	mmkst( parrc , ptr , 2 );
+	Mptrs( parrb , ptr , 3 );
+	Msptrs( parrc , ptr , 2 );
 	cout << iua << tab << *iua << tab << el;
 	);
 	CString name = _T( "array unique_ptr#" );
@@ -2478,6 +2489,32 @@ void CSDIView::OnSTLFuncTest( )
 	cout << strout << el;
 	strout.Format( st( "fa is %lf ,ib is %lf ,div result  is %lf " ) , fa , fb , divv( fa , fb ) );
 
+	class dycA;
+	class dycA {
+	public:
+		string classid;
+	public:
+		dycA( ) {};
+		dycA(string name )
+		{
+			classid = name;
+			auto PtrCreate = &dycA::create;
+		}
+		static void say( ) {
+			getcout;
+			cout << "in static" << endl;
+		}
+		dycA* create( )
+		{
+			return new dycA;
+		}
+		void nameID( string name )
+		{
+
+		}
+	};
+
+	dycA classa;
 	cout.title( st( " beging template calss test " ) ) << el << cut;
 	base basea;
 	base<>baseb;
