@@ -191,6 +191,8 @@ PCDC& starline( PCDC& dc );
 		AfxMessageBox(strmessage);\
 		}
 
+#define locationmessage  cout<<st( file is:)<<__FILE__<<sp<<st( line# is :)<< __LINE__<<sp<<st(function is :) <<__func__<<endl;
+
 #ifndef st
 
 #define st(...) (_T(###__VA_ARGS__))
@@ -229,7 +231,7 @@ PCDC& starline( PCDC& dc );
 
 #define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>((CWnd*)this); PCDC & cout=*me_unique_dc;
 #define makemedc(DC)  unique_ptr<PCDC> pdcxxx(new PCDC(this));PCDC& DC = *pdcxxx;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;pcout=&*cout_me_ptr;
 #define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
 #define getcout PCDC &cout=*pcout;
 
@@ -324,9 +326,9 @@ public:
 	PCDC& operator<<( const CAtlString& s );
 	PCDC& operator<<( const bool b );
 	PCDC& operator<<( const int n );
-	PCDC& operator<<( const unsigned int n ) { ( *this ) << (const int)n; return *this; };
+	PCDC& operator<<( const unsigned int n );
 	PCDC& operator<<( const long int n );
-	PCDC& operator<<( const unsigned long int n ) { return *this << (const long int)n; };
+	PCDC& operator<<( const unsigned long int n );
 	PCDC& operator<<( const long long n );
 	PCDC& operator<<( const float n );
 	PCDC& operator<<( const double n );
@@ -426,7 +428,6 @@ public:
 
 	template <typename T> PCDC& operator [] ( const tuple<T>& tupa );
 	template <typename... Args> PCDC& operator [] ( const tuple<Args...>& tupa );
-
 	template <typename... Args> PCDC& operator<<( tuple<Args...> tup );
 	template <>
 	PCDC& operator<<( tuple<> tup ) { ibegin = true; return *this << " }"; }
@@ -434,12 +435,12 @@ public:
 	template <typename T> PCDC& operator ()( T t ) { return *this << t; };
 	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
 	template <typename T> PCDC& operator <<( const complex<T>& z );
-	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
-	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
 	template <typename T> PCDC& operator ()( initializer_list<T> c );
 	template <typename T> PCDC& operator <<( T* p );
 	template <typename T> PCDC& operator<<( initializer_list<T> c );
 	template <typename T> PCDC& operator <<( const list<T>& l );
+	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
+	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
 	template <typename... X> PCDC& operator <<( const vector<X...>& v );
 	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
 	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
@@ -465,6 +466,7 @@ public:
 	template <typename T , typename ...X> PCDC& address( T a , X...args );
 
 	PCDC& type( ) { return *this; };
+	PCDC& adress( ) { return *this; };
 	template <typename T > PCDC& type( T& a );
 	template <typename T > PCDC& type( T&& a );
 	template <typename T , typename ...X> PCDC& type( T& a , X&...args );
@@ -509,6 +511,10 @@ public:
 		args( (X&&)Args... );
 		return *this;
 	}
+
+public:
+
+
 
 };
 
@@ -861,7 +867,7 @@ template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
 template<typename T>
 PCDC& PCDC::operator <<( T* p )
 {
-	ms.Format( _T( "%p" ) , p );
+	ms.Format( _T( "[0x%p]" ) , p );
 	imresizeout( ms );
 	return *this;
 }

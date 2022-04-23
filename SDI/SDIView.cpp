@@ -98,6 +98,8 @@ BEGIN_MESSAGE_MAP( CSDIView , CView )
 	ON_COMMAND( ID_LVAL_RVAL_TEST , &CSDIView::OnLvalRvalTest )
 	ON_COMMAND( ID_STL_STD_FORWARD_TEST , &CSDIView::OnStlStdForwardTest )
 	ON_COMMAND( ID_PAINT_DC_TEST , &CSDIView::OnPaintDcTest )
+	ON_COMMAND( ID_STL_STACK_TEST , &CSDIView::OnStlStackTest )
+	ON_COMMAND( ID_STL_FUNCTOR_TYPERELOAD_TEST , &CSDIView::OnStlFunctorTypereloadTest )
 END_MESSAGE_MAP( )
 
 // CSDIView 构造/析构
@@ -226,6 +228,24 @@ public:
 };
 
 int ptr::iall = 0;
+
+int adfunc( const int a )
+{
+	return 1;
+}
+
+int  afunc( unsigned  long long int& a )
+{
+	return 3;
+}
+int  afunc( int a )
+{
+	return 2;
+}
+int  afunc( int& a )
+{
+	return 4;
+}
 
 void fun( int& a )
 {
@@ -462,7 +482,6 @@ public:
 		return *pdata = d;
 	}
 };// CSDIView 消息处理程序
-
 
 POINT CSDIView::SetPoint( int x , int y , POINT* p ) {
 	// 如果位置超出范围，进行回绕重置
@@ -1544,7 +1563,7 @@ void CSDIView::OnStlSetTest( )
 
 	static int imod = 0;
 	++imod;
-	if ( imod == 4 )
+	if ( imod == 5 )
 		imod = 0;
 
 	if ( imod == 1 )
@@ -1684,6 +1703,17 @@ void CSDIView::OnStlSetTest( )
 		);
 	}
 
+	if ( imod == 4 )
+	{
+		SimulationStdCout;
+		////	set<int>set1 { 1,2,3 };
+		////	set<int>set2{11,22,33,9,8,7,6 };
+		////	set<int>set3(30,0);
+		////	cout<<set1<<cut<<set2<<el;
+		/////*	std::insert_iterator<decltype(set3)> ii (set3,set3.begin());*/
+		/////*	std::set_union(set1.begin(),set1.end(),set2.begin(),set2.end(),ii,[](int a,int b){ return a>b; } );
+		//	cout<<set1<<cut<<set2<<cut<<set3<<el;*/
+	}
 
 
 	//typedef void ( *fun )( int , int );
@@ -1718,20 +1748,27 @@ void CSDIView::OnStlMapMenu( )
 	MAKEMENUITEM( ntest , menu );
 	string name = "map second";
 	map<string , pfunc>::iterator itt = menu.begin( );
-	itt->second( cout , itt->first );
+	lscode(
+
+		itt->second( cout , itt->first );
 	itt->second( cout , name );
-
-	void* p = nullptr;
+	);
+	cout << cut;
+	lscode(
+		cout << *itt << tab << &ntest << endl << cut;
+	cout << ( itt->second == &ntest ) << tab << st( itt->second == &ntest , is equal ) << nl;
+	);
+	lscode(
+		void* p = nullptr;
 	cout << p << el;
-
 	cout << ( int ) nullptr << tab << NULL << el;
-
 	cout << sizeof( nullptr ) << tab << sizeof( 0 ) << tab << sizeof( NULL ) << tab << sizeof( p ) << el;
-
-	cout << cl;
-	int* pint = new int[1024];
+	);
+	lscode(
+		const int size = 80;
+	int* pint = new int[size];
 	long long int sum = 0;
-	for ( size_t i = 0; i < 128; ++i )
+	for ( size_t i = 0; i < size; ++i )
 	{
 		pint[i] = 1 + i;
 		sum += pint[i];
@@ -1739,14 +1776,16 @@ void CSDIView::OnStlMapMenu( )
 	int* plint = new int;
 	*plint = sizeof( pint );
 	cout << "array size is : " << *plint << tab << "sum is " << sum << "  array elements is :" << el;
-	for ( size_t i = 0; i < 1024; i++ )
+	for ( size_t i = 0; i < size; i++ )
 	{
 		cout << pint[i] << ", ";
+		if ( ( 1 + i ) % 20 == 0 )
+			cout << cut;
 	}
 	cout << el;
 	delete[ ]pint;
 	delete[ ]plint;
-	CString ss = _T( "123456" );
+	)
 
 }
 
@@ -1878,78 +1917,6 @@ void CSDIView::OnStlTupleTest( )
 	cout << " " << std::get<0>( c0 );
 	cout << " " << v4;
 	)
-
-}
-
-void CSDIView::OnStlTypeTest( )
-{
-	SimulationStdCout;
-	lcode(
-		CString s;
-	string s2;
-	LONG x;
-	bool bcomp = std::is_same_v<decltype( x ) , LONG>;
-	cout << bcomp << el;
-	bcomp = std::is_same_v<decltype( s ) , decltype( s2 )>;
-	cout << bcomp << el;
-	cout << typeid( decay<decltype( x )>::type ).name( ) << el;
-	cout << &cout << tab << typeid( cout ).name( ) << tab << typeid( &cout ).name( ) << el;
-	cout << ( int* ) nullptr << tab << sizeof( nullptr ) << tab << typeid( nullptr ).name( ) << el;
-	cout << (int*)NULL << tab << sizeof( NULL ) << tab << typeid( NULL ).name( ) << el;
-	cout << (int*)NULL << tab << sizeof( void* ) << tab << typeid( int* ).name( ) << el;
-	);
-	lscode(
-		cout << &cout << tab << &cout << el;
-	showtype( cout );
-	showtype( cout );
-	cout << address( cout ) << el;
-	cout << address( std::cout ) << el;
-	cout << this << tab << &s << tab << &s2 << tab << &x << el;
-	showtype( std::cout );
-	showtype( this );
-	showtype( *this );
-	);
-	lcode(
-		LONG y;
-	if ( typeid( x ).name( ) == typeid( y ).name( ) )
-		cout << typeid( x ).name( ) << el;
-	);
-	lcode(
-		vector<int>va;
-	va.push_back( 1 );
-	va.push_back( 2 );
-	gett( va )::iterator it = va.begin( );
-	cout << *it << el;
-	getI( va ) iit = va.begin( );
-	cout << *iit << el;
-	cout << cut;
-	FORALL( va , itx )
-		cout << *itx << tab;
-	for ( auto i : va )
-		cout << i << tab;
-	FORN( va.size( ) , i )
-		cout << va.at( i ) << tab;
-	FORV( i , va )
-		cout << i << tab; cout << el;
-	showtype( va );
-	);
-	lcode(
-		typedef int fun( int , int );
-	typedef int ( *pfun )( int , int );
-	typedef fun* func;
-	func p = f;
-	cout << p( 10 , 20 ) << cut;
-	fun * pf = f;
-	cout << pf( 20 , 30 ) << cut;
-	pfun ppf;
-	fun w;
-	ppf = f;
-	cout << ppf( 100 , 200 ) << cut;
-	showtype( p );
-	showtype( pf );
-	showtype( ppf );
-	);
-
 
 }
 
@@ -2146,7 +2113,6 @@ void CSDIView::OnPCDCFunctionTest( )
 	if ( imod == 2 )
 	{
 		cout.clearscreen( );
-		lscode(
 			array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
@@ -2160,7 +2126,6 @@ void CSDIView::OnPCDCFunctionTest( )
 		complex <int>complexa( 2 , 5 );
 		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
 		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
-		);
 		//字符串打印测试
 		cout << st( 字符串打印测试 ) << el;
 		CAtlString catlstr = st( a CAtlString... );
@@ -2174,7 +2139,7 @@ void CSDIView::OnPCDCFunctionTest( )
 
 		cout << chpa << tab << cpa << tab << chp << tab;
 		cout << catlstr << tab << cstr << tab << "const string" << tab;
-		cout << cs << tab << wcs << el;
+		cout << cs << tab << wcs << cut;
 		);
 
 		//容器打印测试
@@ -2202,6 +2167,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		cout.clearscreen( );
 
 		//文件打印测试
+		cout << "文件打印功能测试" << endl;
 		lscode(
 			CString dfile;
 		dfile = _T( "D:\\demo.txt" );
@@ -2209,10 +2175,9 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 
 		//控制符打印测试
+		cout << "控制符打印测试" << endl;
 		lscode(
 			cout << cut << 'a' << tab << com << sp << semi << sp << dash << sp << sp << star << el;
-		cout << starline;
-
 		);
 
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
@@ -2237,6 +2202,9 @@ void CSDIView::OnPCDCFunctionTest( )
 	if ( imod == 4 )
 	{
 		cout.clearscreen( );
+
+		//变参、多参数打印功能测试
+		cout << "变参、多参数功能测试" << endl;
 		int ia = 10;
 		size_t icount = 100;
 		int& ria = ia;
@@ -2495,7 +2463,7 @@ void CSDIView::OnSTLFuncTest( )
 		string classid;
 	public:
 		dycA( ) {};
-		dycA(string name )
+		dycA( string name )
 		{
 			classid = name;
 			auto PtrCreate = &dycA::create;
@@ -2538,6 +2506,242 @@ void CSDIView::OnSTLFuncTest( )
 
 
 }
+
+void CSDIView::OnStlStackTest( )
+{
+	SimulationStdCout;
+
+	static int imod = 0;
+	++imod;
+	if ( imod >= 3 )
+	{
+		imod = 1;
+	}
+	stack<int> skt;
+	queue<int>qut;
+	if ( imod == 2 )
+	{
+		NTIME( 100 )
+			skt.push( ix * 8 );
+		cout << st( stack size is : ) << sp << skt.size( ) << tab << st( stack top elements is : ) << sp << "stack is empty? answer is : " << skt.empty( ) << cut;
+		if ( skt.empty( ) == false )
+			cout << skt.top( );
+		NTIME( 100 )
+		{
+			cout << 1 + ix << "# : " << skt.top( ) << tab;
+			skt.pop( );
+			if ( ix % 8 == 7 )
+				cout << cut;
+		}
+		cout << cut;
+		cout << st( stack size is : ) << sp << skt.size( ) << tab << st( stack top elements is : ) << sp << "stack is empty? answer is : " << skt.empty( );
+		if ( skt.empty( ) == false )
+			cout << skt.top( );
+	}
+	if ( imod == 3 )
+	{
+		NTIME( 100 )
+			qut.push( ix * 5 );
+		cout << st( queue size is : ) << qut.size( ) << sp << st( first element is : ) << qut.front( ) << sp << st( end element is : ) << qut.back( ) << sp << st( is empty ? : ) << qut.empty( ) << cut;
+		NTIME( 100 )
+		{
+			cout << 1 + ix << "# : " << qut.front( ) << sp;
+			qut.pop( );
+			if ( ix % 8 == 7 )
+				cout << cut;
+		}
+		cout << cut;
+		lscode(
+			cout << st( size if ) << sp << qut.size( ) << tab << st( queue is empty ? : ) << qut.empty( ) << cut;
+		);
+
+	}
+
+
+}
+
+void CSDIView::OnStlFunctorTypereloadTest( )
+{
+	coutExtSetSimulation;
+
+	static int imod = 0;
+	++imod;
+	if ( imod >= 2 )
+	{
+		imod = 1;
+	}
+	auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
+	if ( imod == 1 )
+	{
+		class fraction {
+		public:
+			int a;
+			bool operator()( int a , int b ) { return a > b; }
+			bool operator()( int a ) { return a > 0; }
+			double operator()( int s , int b , int c ) {
+				return double( s + b + c ) / double( a );
+			}
+			fraction( int n )
+			{
+				a = n;
+			}
+			operator double( )const {
+				getcout;
+				cout << st( in double( ) ) << a << tab;
+				return double( a / -1.0 );
+			}
+		};
+
+		//类型转换，仿函数
+		fraction a( 4 );
+		lscode(
+			cout << double( a ) << tab; cout << a.a << tab << a( 2 ) << tab << a( 2 , 4 ) << tab << a( 2 , 2 , 4 ) << tab << double( 2 ) / double( 4 ) << cut;
+		cout << a + 5 << cut;
+		);
+		lscode(
+			locationmessage;
+		);
+		lscode(
+			tuple<int , float , string , string , string>tupleb {};
+		);
+		/*	lscode(
+				cout << tpcount( tuplea ) << tab;
+		)
+			lscode(
+				cout << tpcount( tupleb ) << tab;
+		)
+			lscode(
+				cout << __cplusplus << endl;
+		)*/
+		lscode(
+		);
+
+
+	}
+
+}
+
+void CSDIView::OnStlTypeTest( )
+{
+	SimulationStdCout;
+	static int imod = 0;
+	++imod;
+	if ( imod >= 4 )
+	{
+		imod = 1;
+	}
+	CString s;
+	string s2;
+	LONG x;
+	bool bcomp = std::is_same_v<decltype( x ) , LONG>;
+	LONG y;
+	if ( imod == 3 )
+	{
+		lcode(
+			cout << bcomp << el;
+		bcomp = std::is_same_v<decltype( s ) , decltype( s2 )>;
+		cout << bcomp << el;
+		cout << typeid( decay<decltype( x )>::type ).name( ) << el;
+		cout << &cout << tab << typeid( cout ).name( ) << tab << typeid( &cout ).name( ) << el;
+		cout << ( int* ) nullptr << tab << sizeof( nullptr ) << tab << typeid( nullptr ).name( ) << el;
+		cout << (int*)NULL << tab << sizeof( NULL ) << tab << typeid( NULL ).name( ) << el;
+		cout << (int*)NULL << tab << sizeof( void* ) << tab << typeid( int* ).name( ) << el;
+		);
+		lscode(
+			cout << &cout << tab << &cout << el;
+		showtype( cout );
+		showtype( cout );
+		cout << address( cout ) << el;
+		cout << address( std::cout ) << el;
+		cout << this << tab << &s << tab << &s2 << tab << &x << el;
+		showtype( std::cout );
+		showtype( this );
+		showtype( *this );
+		);
+		lcode(
+			if ( typeid( x ).name( ) == typeid( y ).name( ) )
+				cout << typeid( x ).name( ) << el;
+		);
+	}
+	vector<int>va;
+	typedef int fun( int , int );
+	typedef int ( *pfun )( int , int );
+	typedef fun* func;
+	func p = f;
+	pfun ppf;
+	ppf = f;
+	fun w;
+	fun* pf = f;
+	if ( imod == 2 )
+	{
+		lcode(
+			va.push_back( 1 );
+		va.push_back( 2 );
+		gett( va )::iterator it = va.begin( );
+		cout << *it << el;
+		getI( va ) iit = va.begin( );
+		cout << *iit << el;
+		cout << cut;
+		FORALL( va , itx )
+			cout << *itx << tab;
+		for ( auto i : va )
+			cout << i << tab;
+		FORN( va.size( ) , i )
+			cout << va.at( i ) << tab;
+		FORV( i , va )
+			cout << i << tab; cout << el;
+		showtype( va );
+		);
+		lcode(
+			cout << p( 10 , 20 ) << cut;
+		cout << pf( 20 , 30 ) << cut;
+		cout << ppf( 100 , 200 ) << cut;
+		showtype( p );
+		showtype( pf );
+		showtype( ppf );
+		);
+	}
+	if ( imod == 1 )
+	{
+		using  ULINT = unsigned long long;
+		ULINT y = 2;
+		ULINT z = 100;
+		ULINT x = z;
+		ULINT& r = x;
+		ULINT pr_t = (ULINT)&r;
+		ULINT* pr = (ULINT*)pr_t;
+		ULINT& r2 = r;
+		ULINT* px = &x;
+		ULINT&& r3 = 0;
+		*pr = y;
+		y = 100;
+		lscode(
+			cout.type( x , r , r2 , r3 );
+		);
+		lscode(
+			cout.address( x , r , r2 , r3 );
+		cout << cut;
+		);
+		lscode(
+			cout << sizeof( int ) << tab << sizeof( px ) << endl;
+		cout << pr_t << tab << (unsigned int)&r << tab << &x << tab << pr << tab << *pr << tab << px << endl;
+		);
+		lscode(
+			const int c = 4;
+		int d = 5;
+		int& e = d;
+		const long long int ta = 100;
+		cout << afunc( y ) << tab;
+		cout << afunc( c ) << tab;
+		cout << afunc( (int)d ) << tab;
+		cout << afunc( (int&&)e ) << tab;
+		cout << afunc( 10 ) << endl;
+		cout << ( const long long int )ta << tab;
+		);
+	}
+
+}
+
 
 
 

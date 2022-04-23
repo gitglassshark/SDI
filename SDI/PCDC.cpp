@@ -310,14 +310,14 @@ PCDC& PCDC::operator<<(const char c)
 
 PCDC& PCDC::operator <<(const float n)
 {
-	ms.Format(_T("%4.2f"), n);
+	ms.Format(_T("%4.2lf"), n);
 	imresizeout(ms);
 	return *this;
 }
 
 PCDC& PCDC::operator <<(const double n)
 {
-	ms.Format(_T("%f"), n);
+	ms.Format(_T("%lf"), n);
 	imresizeout(ms);
 	return *this;
 }
@@ -345,7 +345,7 @@ PCDC& PCDC::operator <<(const long long n)
 
 PCDC& PCDC::operator <<(const size_t n)
 {
-	ms.Format(_T("%zd"), n);
+	ms.Format(_T("%zu"), n);
 	imresizeout(ms);
 	return *this;
 }
@@ -363,5 +363,19 @@ PCDC& PCDC::operator <<(const bool b)
 	return *this;
 }
 
+PCDC& PCDC::operator<<( const unsigned long int n )
+{
+	ms.Format( _T( "%lu" ) , n );
+	imresizeout( ms );
+	return *this;
+};
+
+PCDC& PCDC::operator<<( const unsigned int n )
+{
+	//( *this ) << (const int)n; return *this; 
+	ms.Format( _T( "%lu" ) , n );
+	imresizeout( ms );
+	return *this;
+};
 
 

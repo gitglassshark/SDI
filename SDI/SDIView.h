@@ -1,4 +1,5 @@
 ﻿
+
 // SDIView.h: CSDIView 类的接口
 //
 
@@ -7,8 +8,6 @@
 #include <string>
 #include "CDialogExDoModal.h"
 #include "PCDC.h"
-
-
 
 
 
@@ -110,6 +109,8 @@ public:
 	afx_msg void OnLvalRvalTest();
 	afx_msg void OnStlStdForwardTest();
 	afx_msg void OnPaintDcTest();
+	afx_msg void OnStlStackTest( );
+	afx_msg void OnStlFunctorTypereloadTest( );
 };
 
 #ifndef _DEBUG  // SDIView.cpp 中的调试版本
