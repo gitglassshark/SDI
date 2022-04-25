@@ -32,6 +32,8 @@
 #include <queue>
 #include <cstring>
 #include <cctype>
+#include "test.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,20 +41,8 @@
 
 class CColor dccr;
 PCDC* pcout = nullptr;
+extern int igi;
 
-COLORREF crcolorred = RGB( 255 , 0 , 0 );
-COLORREF crcolorgreen = RGB( 34 , 139 , 34 );
-COLORREF crcolorblue = RGB( 0 , 0 , 255 );
-COLORREF crcolorwhite = RGB( 255 , 255 , 255 );
-COLORREF crcolorchocolate = RGB( 238 , 118 , 33 );
-COLORREF crcolorblack = RGB( 0 , 0 , 0 );
-COLORREF crcolorstellblue = RGB( 70 , 130 , 180 );
-COLORREF crcolordarkgreen = RGB( 0 , 100 , 0 );
-COLORREF crcolorgray = RGB( 192 , 192 , 192 );
-COLORREF crcolorberry = RGB( 135 , 38 , 87 );
-COLORREF crcolorbrown = RGB( 128 , 42 , 42 );
-COLORREF crcolorazure = RGB( 131 , 139 , 139 );
-COLORREF crcolorgrey = RGB( 28 , 28 , 28 );
 bool is_show_logmessage = false;
 
 // CSDIView
@@ -100,6 +90,7 @@ BEGIN_MESSAGE_MAP( CSDIView , CView )
 	ON_COMMAND( ID_PAINT_DC_TEST , &CSDIView::OnPaintDcTest )
 	ON_COMMAND( ID_STL_STACK_TEST , &CSDIView::OnStlStackTest )
 	ON_COMMAND( ID_STL_FUNCTOR_TYPERELOAD_TEST , &CSDIView::OnStlFunctorTypereloadTest )
+	ON_COMMAND( ID_DC_TCOLOR_TEST , &CSDIView::OnDcTcolorTest )
 END_MESSAGE_MAP( )
 
 // CSDIView 构造/析构
@@ -151,337 +142,7 @@ CSDIDoc* CSDIView::GetDocument( ) const // 非调试版本是内联的
 #endif //_DEBUG
 
 
-int ntest( PCDC& dc , string p )
-{
-	dc << p << el;
-	return 0;
-}
 
-template <typename T = int , int N = 1>
-T returnt( )
-{
-	T ib = 2.2;
-	for ( size_t i = 0; i < N; i++ )
-	{
-		ib = i + ib + 1;
-	}
-	return 100.22 * ib;
-};
-int igi = 88;
-
-template<class T>
-struct typestruct {
-	typedef map<int , T> mytype;
-};
-int f( int a , int b )
-{
-	return a + b;
-}
-class ptr
-{
-public:
-	CString name = _T( "anonymous " );
-	//PCDC& cout = *pcout;
-	getcout;
-	bool isborn = true;
-	int mid = 0;
-	static int iall;
-public:
-	ptr( ) {
-		static int ianon = 0;
-		++ianon;
-		++iall;
-		mid = iall;
-		cout << name << " is  #" << ianon << " born , iall is  " << iall << " , mid is " << mid << endl;
-	}
-	ptr( int id ) {
-		++iall;
-		isborn = false;
-		CString s;
-		s.Format( _T( "#%ld" ) , id );
-		name += s;
-		cout << name << " is born in id,iall is  " << iall << ",  mid is " << mid << endl;
-	}
-	ptr( CString s ) : name( s )
-	{
-		static int icreate = 0;
-		++icreate;
-		++iall;
-		mid = iall;
-		isborn = false;
-		cout << name << " is create,iall is  " << iall << ",  mid is " << mid << endl;
-	}
-	bool set( int id , CString s = CString( "noname" ) )
-	{
-		mid = id;
-		name = s;
-		return true;
-	}
-	~ptr( )
-	{
-		static int ikill = 0;
-		++ikill;
-		--iall;
-		cout << name << " is destory,iall is  " << iall << ",  mid is " << mid;
-		cout << " boring is " << isborn << sp << " kill is " << ikill << el;
-	}
-};
-
-int ptr::iall = 0;
-
-int adfunc( const int a )
-{
-	return 1;
-}
-
-int  afunc( unsigned  long long int& a )
-{
-	return 3;
-}
-int  afunc( int a )
-{
-	return 2;
-}
-int  afunc( int& a )
-{
-	return 4;
-}
-
-void fun( int& a )
-{
-	getcout;
-	cout << "int a" << tab << a;
-}
-
-void fun( const int& a )
-{
-	getcout;
-	cout << "const int a" << tab << a;
-}
-
-void fun( int&& a )
-{
-	getcout;
-	cout << "int &&a " << tab << a;
-}
-
-void fun( const int&& a )
-{
-	getcout;
-	cout << "const int &&a " << tab << a;
-}
-
-void fun( int* a )
-{
-	getcout;
-	cout << "int* a " << tab << a;
-}
-
-template<typename T>
-void funt( T&& a )
-{
-	getcout;
-	cout << typeid( std::forward<T>( a ) ).name( ) << tab << a << tab << typeid( T&& ).name( );
-}
-
-template <typename T>
-void callf( T v )
-{
-	getcout;
-	fun( v );
-	fun( (T&&)( v ) );
-	fun( std::forward<T>( v ) );
-	cout << cut;
-}
-
-template<typename T , typename E , typename int ic = 1000 * 1000>
-auto cinsert( T t , E e )
-{
-	NTIME( ic )
-		t.insert( t.end( ) , e );
-	return e;
-}
-
-template<template <class> class C , typename t >
-auto con( C<t> v )
-{
-	t a = *v.begin( );
-	return *v.begin( );
-}
-
-namespace type {
-	typedef int INT;
-	typedef double DOUB;
-	using CHPtr = char*;
-}
-
-struct sType {
-	typedef int INT;
-	typedef double DOUB;
-#define LNT  INT
-	using CHPtr = char*;
-};
-
-template<typename A , typename ...T>
-auto makevector( A a , T...args )
-{
-	getcout;
-	vector<A>c { a,args... };
-	cout << c << el;
-	return c;
-}
-template<typename ...T>
-class base {};
-
-template<typename ...T>
-class bbase :public base<T...>
-{};
-
-template<typename ...T>
-class basef {};
-
-template<typename T>
-class dbasef :public T
-{};
-
-template<typename T>
-T xadd( T a , T b )
-{
-	return a + b;
-}
-
-template<typename A , typename B>
-bool comp( A a , B b )
-{
-	getcout;
-	cout << "a > b is : ";
-	return a > b;
-
-}
-
-template<typename ...Args>
-void print( Args... args )
-{
-	getcout;
-	cout << " in print()" << endl;
-}
-
-template<typename A , typename ...Args>
-void print( A a , Args...args ) {
-	getcout;
-	cout << a << sp;
-	print( args... );
-}
-
-template <typename T>
-T add( T a , T b )
-{
-	return a + b;
-}
-
-template <typename T>
-T sub( T a , T b )
-{
-	return a - b;
-}
-
-template <typename T>
-T mul( T a , T b )
-{
-	return a * b;
-}
-
-template <typename T>
-T divv( T a , T b )
-{
-	return a / b;
-}
-
-template <typename T>
-T( *pt )( T a , T b );
-
-void runexcept( int ia = 1 , float fa = 2.1 , char* ps = nullptr )throw( int , float , double , char* , char , CString )
-{
-	if ( ia == 1 ) { int e = ia; throw e; }
-	if ( ia == 2 ) { float e = fa; throw e; }
-	if ( ia == 3 ) { double e = 8.888; throw e; }
-	//if (ia == 4) { char* e = "is error"; throw e; }
-	if ( ia == 5 ) { char e = 'a'; throw e; }
-	if ( ia == 6 ) { CString e; e = _T( "somthing is error " ); e += __func__; throw e; }
-};
-
-template<typename X>
-X value( X a )
-{
-	return a;
-}
-
-template<typename ...X>
-int  argsvalue( X...args )
-{
-	int i = 0;
-	int ai[ ] = { ( value( args ),0 )... };
-	return i;
-}
-
-class A {
-public:
-	template<typename T >
-	auto operator<<( initializer_list<T> c )
-	{
-		T isum = *c.begin( ) - *c.begin( );
-		for ( auto i : c )
-			isum += i;
-		return isum;
-	}
-
-	template<typename T >
-	auto sum( initializer_list<T> c )
-	{
-		T isum = *c.begin( ) - *c.begin( );
-		for ( auto i : c )
-			isum += i;
-		return isum;
-	}
-};
-
-class clist;
-
-class clist {
-public:
-	clist* pnext = nullptr;
-	int* pdata = nullptr;
-public:
-	clist( int d = 0 )
-	{
-		pdata = new int;
-		*pdata = d;
-	}
-	~clist( )
-	{
-		delete pdata;
-		pnext = nullptr;
-	}
-	clist* getnextp( )
-	{
-		return pnext->pnext;
-	};
-	clist* setnextporaddnew( clist* p = nullptr )
-	{
-		if ( p == nullptr ) {
-			pnext = new clist( 0 );
-		}
-		else
-		{
-			pnext = p;
-		}
-		return pnext->pnext;
-	}
-	int setdata( int d )
-	{
-		return *pdata = d;
-	}
-};// CSDIView 消息处理程序
 
 POINT CSDIView::SetPoint( int x , int y , POINT* p ) {
 	// 如果位置超出范围，进行回绕重置
@@ -1028,36 +689,6 @@ void CSDIView::OnReadFile( )
 	RestoreDCFont( dc );
 }
 
-template <typename T , typename ...Args>
-auto build_vector( T first , Args... args )
-{
-	vector<T>v { first ,( args )... };
-	return v;
-}
-
-void test_build_vector( )
-{
-	getcout;
-	cout << build_vector( 2 , 3 , 4 , 8 , -1 , 0 );
-}
-
-template <template<typename A , typename ...B> typename Container , typename T , typename ...Args >
-auto build_container( T first , Args... args )
-{
-	Container<T>c { (T&&)first ,(Args&&)args ... };
-	return c;
-}
-
-void test_build_container( )
-{
-	getcout;
-	int a = 10;
-	cout << build_container<vector>( a , 3 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<deque>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<set>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<list>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
-}
-
 void CSDIView::OnVectorTest( )
 {
 	static int imod = 0;
@@ -1374,63 +1005,6 @@ void CSDIView::OnSTLlStringTest( )
 	cout << s1 << el;
 	s1.erase( );
 	cout << "erase after " << s1 << el;
-
-}
-
-void CSDIView::OnGroundTest( )
-{
-	SimulationStdCout;
-
-
-
-	TITLE( PRINT  deque TEST );
-	deque<int>d1;
-	for ( size_t i = 0; i < 20; i++ )
-	{
-		d1.push_back( i * 2 );
-	}
-	for ( auto& i : d1 )
-		cout << i << tab;
-	cout << el;
-	d1.pop_front( );
-	cout << starline;
-	d1.push_front( 1000 );
-	for ( int j = 0; j < 8; j++ ) {
-		cout << j << "#" << tab;
-		for ( auto& i : d1 ) {
-			cout << ( i = i + j ) << tab;
-		}
-		cout << el;
-	}
-	CRect rect = { 0,0,0,0 };
-	cout << starline;
-	for ( auto& i : d1 )
-		cout << i << tab;
-	cout << el;
-	d1.pop_back( );
-	d1.pop_front( );
-	for ( size_t i = 0; i < 5; i++ )
-	{
-		d1.pop_front( );
-	}
-	d1.emplace_back( 888 );
-	cout << d1.size( ) << el;
-	SHOW( d1.size( ) );
-	SHOW( d1.max_size( ) );
-	SHOW( d1.empty( ) );
-	SHOW( d1.at( 5 ) );
-	cout << el;
-	cout.setlinechar( '-' );
-	cout << starline;
-	for ( auto& i : d1 )
-		cout << i << tab;
-	cout << el;
-	d1.insert( d1.begin( ) , 222 );
-	cout << *d1.begin( ) << el;
-	this->GetWindowRect( &rect );
-
-	cout << rect.bottom << tab << rect.top << tab << rect.right << tab << rect.left << el;
-
 
 }
 
@@ -1999,30 +1573,7 @@ void CSDIView::OnPaintDcTest( )
 		<< cout.m_hAttribDC << tab << cout.m_bPrinting << el;
 	cout << "good" << tab << cout.ms.IsEmpty( ) << tab << cout.ms << el;
 	);
-	lscode(
-		CFile ofile( _T( "D:/VS2022/MFC/SDI/SDI/test.txt" ) , CFile::modeCreate | CFile::modeReadWrite );
-	string str = "If you wish to succeed, you should use persistence as your good friend, experience as your reference, prudence as your brother and hope as your sentry.\n";
-	NTIME( 100 )
-		ofile.Write( str.c_str( ) , str.length( ) );
-	);
 
-	//文件测试
-	lscode(
-		char strr[256] {};
-	size_t len = ofile.Read( strr , 256 );
-	cout << ofile.m_hFile << tab << ofile.GetFileName( ) << tab << ofile.GetFilePath( ) << tab
-		<< ofile.GetFileTitle( ) << tab << ofile.GetLength( ) << tab << ofile.GetPosition( )
-		<< el;
-	string strt( strr );
-	cout << strt << el;
-	cout.type( cout );
-	cout.address( cout ) << el;
-	cout << showv( ofile.GetFileName( ) ) << el;
-	cout << showv( ofile.GetFilePath( ) ) << el;
-	cout << showv( ofile.GetLength( ) ) << el;
-	cout << showv( ofile.GetFileTitle( ) ) << el;
-	cout << showv( ofile.GetPosition( ) ) << el;
-	);
 
 
 }
@@ -2113,7 +1664,7 @@ void CSDIView::OnPCDCFunctionTest( )
 	if ( imod == 2 )
 	{
 		cout.clearscreen( );
-			array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+		array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
 		deque<int>dqa { 13, 24, 25, 86,12,23,82,918,883,898,1 };
@@ -2172,6 +1723,30 @@ void CSDIView::OnPCDCFunctionTest( )
 			CString dfile;
 		dfile = _T( "D:\\demo.txt" );
 		cout.displayfile( dfile ) << el;
+		);
+		lscode(
+			CFile ofile( _T( "D:/VS2022/MFC/SDI/SDI/test.txt" ) , CFile::modeCreate | CFile::modeReadWrite );
+		string str = "If you wish to succeed, you should use persistence as your good friend, experience as your reference, prudence as your brother and hope as your sentry.\n";
+		NTIME( 100 )
+			ofile.Write( str.c_str( ) , str.length( ) );
+		);
+
+		//文件测试
+		lscode(
+			char strr[256] {};
+		size_t len = ofile.Read( strr , 256 );
+		cout << ofile.m_hFile << tab << ofile.GetFileName( ) << tab << ofile.GetFilePath( ) << tab
+			<< ofile.GetFileTitle( ) << tab << ofile.GetLength( ) << tab << ofile.GetPosition( )
+			<< el;
+		string strt( strr );
+		cout << strt << el;
+		cout.type( cout );
+		cout.address( cout ) << el;
+		cout << showv( ofile.GetFileName( ) ) << el;
+		cout << showv( ofile.GetFilePath( ) ) << el;
+		cout << showv( ofile.GetLength( ) ) << el;
+		cout << showv( ofile.GetFileTitle( ) ) << el;
+		cout << showv( ofile.GetPosition( ) ) << el;
 		);
 
 		//控制符打印测试
@@ -2503,6 +2078,54 @@ void CSDIView::OnSTLFuncTest( )
 	cout << comp( 1 , 2 ) << endl;
 	print( 1 , 2 , 3 , 4 , 5 );
 
+	TITLE( PRINT  deque TEST );
+	deque<int>d1;
+	for ( size_t i = 0; i < 20; i++ )
+	{
+		d1.push_back( i * 2 );
+	}
+	for ( auto& i : d1 )
+		cout << i << tab;
+	cout << el;
+	d1.pop_front( );
+	cout << starline;
+	d1.push_front( 1000 );
+	for ( int j = 0; j < 8; j++ ) {
+		cout << j << "#" << tab;
+		for ( auto& i : d1 ) {
+			cout << ( i = i + j ) << tab;
+		}
+		cout << el;
+	}
+	CRect rect = { 0,0,0,0 };
+	cout << starline;
+	for ( auto& i : d1 )
+		cout << i << tab;
+	cout << el;
+	d1.pop_back( );
+	d1.pop_front( );
+	for ( size_t i = 0; i < 5; i++ )
+	{
+		d1.pop_front( );
+	}
+	d1.emplace_back( 888 );
+	cout << d1.size( ) << el;
+	SHOW( d1.size( ) );
+	SHOW( d1.max_size( ) );
+	SHOW( d1.empty( ) );
+	SHOW( d1.at( 5 ) );
+	cout << el;
+	cout.setlinechar( '-' );
+	cout << starline;
+	for ( auto& i : d1 )
+		cout << i << tab;
+	cout << el;
+	d1.insert( d1.begin( ) , 222 );
+	cout << *d1.begin( ) << el;
+	this->GetWindowRect( &rect );
+
+	cout << rect.bottom << tab << rect.top << tab << rect.right << tab << rect.left << el;
+
 
 
 }
@@ -2704,9 +2327,9 @@ void CSDIView::OnStlTypeTest( )
 	if ( imod == 1 )
 	{
 		using  ULINT = unsigned long long;
-		ULINT y = 2;
+		ULINT y = 22;
 		ULINT z = 100;
-		ULINT x = z;
+		ULINT x = 200;
 		ULINT& r = x;
 		ULINT pr_t = (ULINT)&r;
 		ULINT* pr = (ULINT*)pr_t;
@@ -2717,10 +2340,6 @@ void CSDIView::OnStlTypeTest( )
 		y = 100;
 		lscode(
 			cout.type( x , r , r2 , r3 );
-		);
-		lscode(
-			cout.address( x , r , r2 , r3 );
-		cout << cut;
 		);
 		lscode(
 			cout << sizeof( int ) << tab << sizeof( px ) << endl;
@@ -2735,13 +2354,276 @@ void CSDIView::OnStlTypeTest( )
 		cout << afunc( c ) << tab;
 		cout << afunc( (int)d ) << tab;
 		cout << afunc( (int&&)e ) << tab;
-		cout << afunc( 10 ) << endl;
-		cout << ( const long long int )ta << tab;
+		cout << afunc( 10 ) << semi << tab;
+		cout << ( const long long int )ta << tab << nl;
 		);
+		lscode(
+			cout << cut;
+		cout.address( x , r , r2 , r3 ) << cut;
+		cout << address( x , r , r2 , r3 ) << cut;
+		cout << &x << com << &r << com << &r2 << com << &r3 << cut;
+		);
+		lscode(
+			x = 300;
+		cout.value( pr , px , &r3 , &r2 , &r , &x , &d , &e , &px , &z , &pr ) << cut;
+		cout << gmax( x , r , r2 , r3 , *px , *pr , d , e , z , 100 , 100.2 ) << cut;
+		);
+
+
 	}
 
 }
 
+void CSDIView::OnDcTcolorTest( )
+{
+	SimulationStdCout;
+	static int imod = 0;
+	++imod;
+	if ( imod >= 6 )
+	{
+		imod = 1;
+	}
+	if ( imod == 4 )
+	{
+
+		cout << cl;
+		lscode(
+			cout.settcolor( dccr.red );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.azure );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.blue );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.brown );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkcyan );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkgray );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkred );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkslateblue
+			);
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.dodgerblue );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+	}
+	if ( imod == 1 )
+	{
+		lscode(
+			cout.settcolor( dccr.green2 );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.green1 );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.mteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.lteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.hteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.gteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.xteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.tteal ); );
+		smn( this is a color , < $ , 5 > :: : );
+
+	}
+
+	if ( imod == 2 )
+	{
+
+		lscode( cout.settcolor( dccr.teal ); );
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.white );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.whitesmoke );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.slategray );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.green );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.bluered );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.greenblue );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.yellow );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.midblue );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.midgreen );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.midred );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.lightred ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.lightblue ); );
+		smn( this is a color , < $ , 5 > :: : );
+
+	}
+	if ( imod == 3 )
+	{
+		lscode(
+			cout.settcolor( dccr.midyellow );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.midgreenblue );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.midbluered );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkgreen );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.darkyellow );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.azure );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.smokered );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.smokeyellow );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.smokewhite );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.maingreen );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode(
+			cout.settcolor( dccr.mainred );
+		);
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode( cout.settcolor( dccr.mainwhite ); );
+		smn( this is a color , < $ , 5 > :: : );
+
+		lscode( cout.settcolor( dccr.lightgreen ); );
+		smn( this is a color , < $ , 5 > :: : );
+
+	}
+	if ( imod == 5 )
+	{
+		lscode( cout.settcolor( dccr.hlightred ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.hlightblue ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.hlightgreen ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.overlightgreen ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.mheavggreen ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.lbluered ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.mbluered ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.hbluered ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( cout.settcolor( dccr.bluehred ); );
+		smn( this is a color , < $ , 5 > :: : );
+		lscode( lscode( 0 ) );
+	}
+
+
+	cout.resettcolor( );
+
+}
+
+void CSDIView::OnGroundTest( )
+{
+	coutExtSetSimulation;
+
+	test00( cout );
+	test01( cout );
+	test02( cout );
+	test03( cout );
+	test04( cout );
+	test05( cout );
+
+}
 
 
 

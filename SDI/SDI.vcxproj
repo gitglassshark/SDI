@@ -254,6 +254,7 @@
     <ClInclude Include="SDIDoc.h" />
     <ClInclude Include="SDIView.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CDialogExDoModal.cpp" />
@@ -268,6 +269,7 @@
     <ClCompile Include="SDI.cpp" />
     <ClCompile Include="SDIDoc.cpp" />
     <ClCompile Include="SDIView.cpp" />
+    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDI.rc" />

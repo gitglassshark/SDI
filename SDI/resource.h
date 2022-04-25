@@ -68,6 +68,8 @@
 #define ID_STL_STACK_TEST               32842
 #define ID_STL32843                     32843
 #define ID_STL_FUNCTOR_TYPERELOAD_TEST  32844
+#define ID_32845                        32845
+#define ID_DC_TCOLOR_TEST               32846
 #define IDS_ERRMESSAGE                  61204
 
 // Next default values for new objects
@@ -75,7 +77,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32845
+#define _APS_NEXT_COMMAND_VALUE         32852
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
