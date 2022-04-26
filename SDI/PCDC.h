@@ -1,20 +1,6 @@
 #pragma once
-#include <afxwin.h>
-#include <iostream>
-#include <set>
-#include <bitset>
-#include <functional>
-#include <tuple>
-#include <list>
-#include <vector>
-#include <deque>
-#include <map>
-#include <sstream>
-#include <string>
-#include <algorithm>
-#include <initializer_list>
+#include "pch.h"
 #include "SDI.h"
-#include <complex>
 
 class CColor {
 public:
@@ -98,6 +84,8 @@ PCDC& el( PCDC& dc );
 PCDC& nl( PCDC& dc );
 PCDC& endl( PCDC& dc );
 PCDC& starline( PCDC& dc );
+void newl( );
+void cut( );
 
 CString hex( );
 CString HEX( );
@@ -292,22 +280,21 @@ CString address( );
 #define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
 #define getcout PCDC &cout=*pcout;
 
-#define sst(code,...)  #code##","#__VA_ARGS__
+#define sst(code,...)  #code##","#__VA_ARGS__;
+
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout.title(L"sourece codes",LOWER);\
 					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
 					cout.title(L"run result",LOWER);\
 					cout.resettcolor();\
-					__VA_ARGS__;\
-					//cout.settcolor(dccr.greenblue);\
-					//cout.settcolor(dccr.lightgreen);\
+					__VA_ARGS__;
 
 #define showcode(...)	lcode(__VA_ARGS__)
 #define showcodes(...)	lcode(__VA_ARGS__)
 #define lscode(...)  lcode(__VA_ARGS__)
 
 #define SHOW(name) cout<<st(name)<<_T("  is: ")<<name<<tab
-#define showv(name) st(name)<<_T("  value is: ")<<name<<tab
+#define showv(vname) cout<<st(vname)<<_T(" value: ")<<vname<<sp<<_T(" type: ")<<(typeid(vname).name())<<sp
 #define showtype(...)  cout<<#__VA_ARGS__<<":  type: ";\
 						cout<< typeid( ##__VA_ARGS__ ).name( );\
 						cout<<"  size: ";\
@@ -587,7 +574,6 @@ public:
 template <typename A , typename B>
 PCDC& PCDC::operator||( const tuple<A , B>& tup )
 {
-	//*this << "tuple<AB>";// << sizeof(tuple<>) << tab << sizeof(tup) << tab << tuple_size<decltype(tup)>::value << el;
 	return ( *this ) << get<0>( tup ) << '|' << get<1>( tup ) << '|';
 }
 
@@ -1029,7 +1015,7 @@ PCDC& PCDC::forprintm( const T& m )
 template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
 	int il = 0;
-	for( size_t i = 0; i < len; ++i )
+	for ( size_t i = 0; i < len; ++i )
 	{
 		*this << *( arr + i ) << spchar;
 		linemod( ++il , ilinemod );
@@ -1060,8 +1046,8 @@ CString address( T& a , X&...args )
 	{
 		cs += ',' + address( args... );
 	}
-	ms=cs;
-	cs.Empty();
+	ms = cs;
+	cs.Empty( );
 	return ms;
 }
 
@@ -1082,12 +1068,12 @@ CString udec( T& t , X&...args )
 	{
 		cs += ms;
 	}
-	if constexpr ((sizeof...( args ) ) != 0 )
+	if constexpr ( ( sizeof...( args ) ) != 0 )
 	{
 		cs += ' ' + udec( args... );
 	}
-	ms=cs;
-	cs.Empty();
+	ms = cs;
+	cs.Empty( );
 	return ms;
 };
 
@@ -1109,12 +1095,12 @@ CString oct( T& t , X&...args )
 	{
 		cs += ms;
 	}
-	if constexpr ((sizeof...( args ) ) != 0 )
+	if constexpr ( ( sizeof...( args ) ) != 0 )
 	{
 		cs += ' ' + oct( args... );
 	}
-	ms=cs;
-	cs.Empty();
+	ms = cs;
+	cs.Empty( );
 	return ms;
 };
 
@@ -1136,12 +1122,12 @@ CString HEX( T& t , X&...args )
 	{
 		cs += ms;
 	}
-	if constexpr ((sizeof...( args ) ) != 0 )
+	if constexpr ( ( sizeof...( args ) ) != 0 )
 	{
 		cs += ' ' + HEX( args... );
 	}
-	ms=cs;
-	cs.Empty();
+	ms = cs;
+	cs.Empty( );
 	return ms;
 };
 
@@ -1162,12 +1148,12 @@ CString hex( T& t , X&...args )
 	{
 		cs += ms;
 	}
-	if constexpr ((sizeof...( args ) ) != 0 )
+	if constexpr ( ( sizeof...( args ) ) != 0 )
 	{
 		cs += ' ' + hex( args... );
 	}
-	ms=cs;
-	cs.Empty();
+	ms = cs;
+	cs.Empty( );
 	return ms;
 };
 

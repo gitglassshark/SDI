@@ -2,48 +2,21 @@
 #include "PCDC.h"
 #include "SDI.h"
 
-CString hex( )
-{
-	return CString( );
-}
+CString hex( ) { return CString( ); }
 
-CString HEX( )
-{
-	return CString( );
-}
+CString HEX( ) { return CString( ); }
 
-CString oct( )
-{
-	xsms(in oct() );
-	return CString( );
-}
+CString oct( ) { return CString( ); }
 
-CString udec( )
-{
-	return CString( );
-}
+CString udec( ) { return CString( ); }
 
-CString address( )
-{
-	getcout;
-	cout << st( "()" ) << sp;
-	CString cs;
-	return cs;
-}
-
-size_t PCDC::icount = 0;
-extern class CColor dccr;
+CString address( ) { CString cs; return cs; }
 
 PCDC& sp( PCDC& dc ) { return  dc << "  "; }
-
 PCDC& star( PCDC& dc ) { return dc << "*"; }
-
 PCDC& dash( PCDC& dc ) { return dc << "-";; }
-
 PCDC& com( PCDC& dc ) { return dc << ','; }
-
 PCDC& tab( PCDC& dc ) { return dc << '\t'; }
-
 PCDC& semi( PCDC& dc ) { return dc << ';'; }
 
 PCDC& nl( PCDC& dc ) { return  dc << '\n'; }
@@ -51,6 +24,11 @@ PCDC& el( PCDC& dc ) { return  dc << '\n'; }
 PCDC& endl( PCDC& dc ) { return  dc << '\n'; }
 PCDC& cut( PCDC& dc ) { return dc << starline; }
 PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
+void newl( ) { getcout;  cout << endl; }
+void cut( ) { getcout; cout << cut; }
+
+size_t PCDC::icount = 0;
+extern class CColor dccr;
 
 PCDC& starline( PCDC& dc )
 {
@@ -142,13 +120,13 @@ PCDC& PCDC::Release( )
 
 PCDC& PCDC::resettcolor( )
 {
-	this->SetTextColor( m_tk );
+	SetTextColor( m_tk );
 	return *this;
 }
 
 PCDC& PCDC::settcolor( COLORREF tk )
 {
-	this->SetTextColor( tk );
+	SetTextColor( tk );
 	return *this;
 }
 
@@ -163,14 +141,14 @@ PCDC& PCDC::setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk )
 
 PCDC& PCDC::setimod( int imod )
 {
-	this->ilinemod = imod;
+	ilinemod = imod;
 	return *this;
 }
 
 char PCDC::setlinechar( const char& c )
 {
-	char rc = this->mlinechar;
-	this->mlinechar = c;
+	char rc = mlinechar;
+	mlinechar = c;
 	return rc;
 }
 
@@ -186,7 +164,7 @@ PCDC& PCDC::clearscreen( const CRect* r , const COLORREF* cr )
 	{
 		cr != nullptr ? m_bk = *cr : true;
 		p.x = mrect.left + initalpos;
-		p.y = mrect.top + initalpos-5;
+		p.y = mrect.top + initalpos - 5;
 
 		rect.left = 0;
 		rect.top = 0;
@@ -321,7 +299,6 @@ PCDC& PCDC::operator <<( const int n )
 
 PCDC& PCDC::operator<<( const char c )
 {
-	ms = c;
 	if ( c == '\n' ) {
 		p.y += step;
 		p.x = initalpos;
@@ -330,6 +307,9 @@ PCDC& PCDC::operator<<( const char c )
 	if ( c == '\t' )
 	{
 		ms = "    ";
+	}
+	if ( isprint( c ) ) {
+		ms = c;
 	}
 	imresizeout( ms );
 	return *this;

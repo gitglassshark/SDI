@@ -8,7 +8,6 @@
 #include "afxdialogex.h"
 #include "SDI.h"
 #include "MainFrm.h"
-#include <typeinfo>
 
 #include "SDIDoc.h"
 #include "SDIView.h"

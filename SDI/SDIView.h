@@ -4,8 +4,7 @@
 //
 
 #pragma once
-#include <vector>
-#include <string>
+#include "pch.h"
 #include "CDialogExDoModal.h"
 #include "PCDC.h"
 

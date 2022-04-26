@@ -12,7 +12,6 @@
 #endif
 
 #include "SDIDoc.h"
-#include <typeinfo>
 
 #include <propkey.h>
 

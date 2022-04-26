@@ -10,6 +10,22 @@ void test04( PCDC& dc );
 void test05( PCDC& dc );
 void test_build_container( );
 void test_build_vector( );
+
+int adfunc( const int a );
+int  afunc( unsigned  long long int& a );
+int  afunc( int a );
+int  afunc( int& a );
+void fun( int& a );
+void fun( const int& a );
+void fun( int&& a );
+void fun( const int&& a );
+void fun( int* a );
+int ntest( PCDC& dc , string p );
+int f( int a , int b );
+template <typename T>
+T( *pt )( T a , T b );
+void runexcept( int ia = 1 , float fa = 2.1 , char* ps = nullptr )throw( int , float , double , char* , char , CString );
+
 class ptr;
 
 template <typename T , typename ...Args>
@@ -26,26 +42,6 @@ auto build_container( T first , Args... args )
 	return c;
 }
 
-int adfunc( const int a );
-
-int  afunc( unsigned  long long int& a );
-
-int  afunc( int a );
-
-int  afunc( int& a );
-
-void fun( int& a );
-
-void fun( const int& a );
-
-void fun( int&& a );
-
-void fun( const int&& a );
-
-void fun( int* a );
-
-int ntest( PCDC& dc , string p );
-
 template<typename A , typename ...T>
 auto makevector( A a , T...args )
 {
@@ -54,25 +50,7 @@ auto makevector( A a , T...args )
 	cout << c << el;
 	return c;
 }
-template<typename ...T>
-class base {};
 
-template<typename ...T>
-class bbase :public base<T...>
-{};
-
-template<typename ...T>
-class basef {};
-
-template<typename T>
-class dbasef :public T
-{};
-
-template<typename T>
-T xadd( T a , T b )
-{
-	return a + b;
-}
 
 template<typename A , typename B>
 bool comp( A a , B b )
@@ -121,84 +99,15 @@ T divv( T a , T b )
 	return a / b;
 }
 
-template <typename T>
-T( *pt )( T a , T b );
-
-void runexcept( int ia = 1 , float fa = 2.1 , char* ps = nullptr )throw( int , float , double , char* , char , CString );
-
-
-template<typename X>
-X value( X a )
+template <typename X , typename T>
+X sub( X a , T b )
 {
-	return a;
+	cout << "temp x sub" << endl;
+	X c;
+	c = a - (X)b;
+	return c;
 }
 
-template<typename ...X>
-int  argsvalue( X...args )
-{
-	int i = 0;
-	int ai[ ] = { ( value( args ),0 )... };
-	return i;
-}
-
-class A {
-public:
-	template<typename T >
-	auto operator<<( initializer_list<T> c )
-	{
-		T isum = *c.begin( ) - *c.begin( );
-		for ( auto i : c )
-			isum += i;
-		return isum;
-	}
-
-	template<typename T >
-	auto sum( initializer_list<T> c )
-	{
-		T isum = *c.begin( ) - *c.begin( );
-		for ( auto i : c )
-			isum += i;
-		return isum;
-	}
-};
-
-class clist;
-
-class clist {
-public:
-	clist* pnext = nullptr;
-	int* pdata = nullptr;
-public:
-	clist( int d = 0 )
-	{
-		pdata = new int;
-		*pdata = d;
-	}
-	~clist( )
-	{
-		delete pdata;
-		pnext = nullptr;
-	}
-	clist* getnextp( )
-	{
-		return pnext->pnext;
-	};
-	clist* setnextporaddnew( clist* p = nullptr )
-	{
-		if ( p == nullptr ) {
-			pnext = new clist( 0 );
-		}
-		else
-		{
-			pnext = p;
-		}
-		return pnext->pnext;
-	}
-	int setdata( int d )
-	{
-		return *pdata = d;
-	}
-};// CSDIView 消息处理程序
 
 template<typename T>
 void funt( T&& a )
@@ -217,20 +126,16 @@ void callf( T v )
 	cout << cut;
 }
 
-template<typename T , typename E , typename int ic = 1000 * 1000>
-auto cinsert( T t , E e )
+template <typename T = int , int N = 1>
+T returnt( )
 {
-	NTIME( ic )
-		t.insert( t.end( ) , e );
-	return e;
-}
-
-template<template <class> class C , typename t >
-auto con( C<t> v )
-{
-	t a = *v.begin( );
-	return *v.begin( );
-}
+	T ib = 2.2;
+	for ( size_t i = 0; i < N; i++ )
+	{
+		ib = i + ib + 1;
+	}
+	return 100.22 * ib;
+};
 
 namespace type {
 	typedef int INT;
@@ -245,26 +150,24 @@ struct sType {
 	using CHPtr = char*;
 };
 
+template<typename ...T>
+class base {};
 
+template<typename ...T>
+class bbase :public base<T...>
+{};
 
-template <typename T = int , int N = 1>
-T returnt( )
-{
-	T ib = 2.2;
-	for ( size_t i = 0; i < N; i++ )
-	{
-		ib = i + ib + 1;
-	}
-	return 100.22 * ib;
-};
+template<typename ...T>
+class basef {};
+
+template<typename T>
+class dbasef :public T
+{};
 
 template<class T>
 struct typestruct {
 	typedef map<int , T> mytype;
 };
-
-int f( int a , int b );
-
 
 class ptr
 {
@@ -315,4 +218,5 @@ public:
 		cout << " boring is " << isborn << sp << " kill is " << ikill << el;
 	}
 };
+
 

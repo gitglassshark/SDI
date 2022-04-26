@@ -9,29 +9,12 @@
 #include "MainFrm.h"
 #endif
 
-#include <functional>
-#include <type_traits>
-#include <tuple>
-#include <iostream>
+
 #include "SDIDoc.h"
 #include "SDIView.h"
 #include "PCDC.h"
 #include "CDialogExDoModal.h"
 #include "resource.h"
-#include <typeinfo>
-#include <bitset>
-#include <string>
-#include <memory>
-#include <set>
-#include <map>
-#include <array>
-#include <vector>
-#include <list>
-#include <deque>
-#include <stack>
-#include <queue>
-#include <cstring>
-#include <cctype>
 #include "test.h"
 
 
@@ -1591,7 +1574,7 @@ void CSDIView::OnPCDCFunctionTest( )
 	{
 		cout.clearscreen( );
 		cout << "打印整型数据：" << el;
-		lscode(
+		lcode(
 			int ia = 10;
 		size_t icount = 100;
 		int& ria = ia;
@@ -1650,7 +1633,6 @@ void CSDIView::OnPCDCFunctionTest( )
 		long* lp = &la;
 		long long* llp = &lla;
 		double* dp = &da;
-
 		cout << ip << sp << *ip << semi;
 		cout << sp << *cp << *ccp << semi;
 		cout << lp << sp << *lp << semi;
@@ -1664,7 +1646,27 @@ void CSDIView::OnPCDCFunctionTest( )
 	if ( imod == 2 )
 	{
 		cout.clearscreen( );
-		array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+		//字符串打印测试
+		cout << st( 字符串打印测试 ) << el;
+		CAtlString catlstr = st( a CAtlString... );
+		lscode(
+			CString cstr = st( a CString... );
+		std::string cs = "a string...";
+		std::wstring wcs = L"a wstring...";
+		const char* chp = "a const char []";
+		const char chpa[ ] = "a const char []";
+		char cpa[ ] = "a char []";
+		); lscode(
+
+		cout << chpa << tab << cpa << tab << chp << tab;
+		cout << catlstr << tab << cstr << tab << "const string" << tab;
+		cout << cs << tab << wcs << cut;
+		);
+
+		//容器打印测试
+		cout << st( 容器打印测试 ) << el;
+		lscode(
+			array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
 		deque<int>dqa { 13, 24, 25, 86,12,23,82,918,883,898,1 };
@@ -1677,24 +1679,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		complex <int>complexa( 2 , 5 );
 		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
 		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
-		//字符串打印测试
-		cout << st( 字符串打印测试 ) << el;
-		CAtlString catlstr = st( a CAtlString... );
-		lscode(
-			CString cstr = st( a CString... );
-		std::string cs = "a string...";
-		std::wstring wcs = L"a wstring...";
-		const char* chp = "a const char []";
-		const char chpa[ ] = "a const char []";
-		char cpa[ ] = "a char []";
-
-		cout << chpa << tab << cpa << tab << chp << tab;
-		cout << catlstr << tab << cstr << tab << "const string" << tab;
-		cout << cs << tab << wcs << cut;
 		);
-
-		//容器打印测试
-		cout << st( 容器打印测试 ) << el;
 		cout << "数组(array)：" << tab << arrone << el;
 		cout << "初始化列表(initializer_list)：" << tab << v << el;
 		cout << "vector:" << tab << vecta << el;
@@ -2615,6 +2600,7 @@ void CSDIView::OnDcTcolorTest( )
 void CSDIView::OnGroundTest( )
 {
 	coutExtSetSimulation;
+	cout << cl;
 
 	test00( cout );
 	test01( cout );

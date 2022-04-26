@@ -270,6 +270,7 @@
     <ClCompile Include="SDIDoc.cpp" />
     <ClCompile Include="SDIView.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="repos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDI.rc" />
