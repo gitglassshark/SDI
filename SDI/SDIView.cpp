@@ -12,9 +12,9 @@
 
 #include "SDIDoc.h"
 #include "SDIView.h"
-#include "PCDC.h"
 #include "CDialogExDoModal.h"
 #include "resource.h"
+#include "PCDC.h"
 #include "test.h"
 
 
@@ -22,14 +22,12 @@
 #define new DEBUG_NEW
 #endif
 
+extern int igi;
 class CColor dccr;
 PCDC* pcout = nullptr;
-extern int igi;
-
 bool is_show_logmessage = false;
 
 // CSDIView
-
 IMPLEMENT_DYNCREATE( CSDIView , CView )
 
 BEGIN_MESSAGE_MAP( CSDIView , CView )
@@ -77,7 +75,6 @@ BEGIN_MESSAGE_MAP( CSDIView , CView )
 END_MESSAGE_MAP( )
 
 // CSDIView 构造/析构
-
 CSDIView::CSDIView( ) noexcept {
 
 	//append logmessagerecode macro
@@ -98,7 +95,6 @@ BOOL CSDIView::PreCreateWindow( CREATESTRUCT& cs ) {
 }
 
 // CSDIView 绘图
-
 void CSDIView::OnDraw( CDC* pDC ) {
 	{ LOGMESSAGE( theApp ); }
 	CSDIDoc* pDoc = GetDocument( );
@@ -111,7 +107,6 @@ void CSDIView::OnDraw( CDC* pDC ) {
 }
 
 // CSDIView 诊断
-
 #ifdef _DEBUG
 void CSDIView::AssertValid( ) const { CView::AssertValid( ); }
 
@@ -123,8 +118,6 @@ CSDIDoc* CSDIView::GetDocument( ) const // 非调试版本是内联的
 	return (CSDIDoc*)m_pDocument;
 }
 #endif //_DEBUG
-
-
 
 
 POINT CSDIView::SetPoint( int x , int y , POINT* p ) {
@@ -163,7 +156,6 @@ void CSDIView::OnPaint( ) {
 	//恢复用户字体DC
 	RestoreDCFont( dc );
 }
-//using namespace std;
 
 void CSDIView::OnSetFont( ) {
 
@@ -994,31 +986,7 @@ void CSDIView::OnSTLlStringTest( )
 void CSDIView::OnStlStackEqueueTest( )
 {
 	SimulationStdCout;
-	RUNTEST( STACK EQUEUE TEST );
-	cout.setcolor( dccr.darkslateblue , dccr.green , cout.m_bk , cout.m_tk );
-	cout << cl;
-	stack<int>ist;
-	for ( size_t i = 0; i < 20; i++ )
-	{
-		ist.push( i + 10 );
-	}
-	cout << ist.top( ) << el;
-	cout << ist.size( ) << tab << ist.top( ) << tab << ( ist.pop( ) , ist.top( ) ) << el;
-	cout << starline;
-	cout << ist.size( ) << tab << ist.top( ) << el;
-	cout << ist.top( ) << tab << ist.size( ) << tab << ( ist.pop( ) , ist.top( ) ) << tab << ist.size( ) << tab << ist.top( ) << el;
-	cout << ist.size( ) << tab << ist.top( ) << el;
-	cout << ist.empty( );
 
-	queue <int> ieq;
-	for ( size_t i = 0; i < 10; i++ )
-	{
-		ieq.push( i + 2 );
-	}
-	cout.setlinechar( '#' );
-	cout << starline;
-	cout << ieq.front( ) << el;
-	cout << ieq.back( ) << el;
 }
 
 void CSDIView::OnMacroTest( )
@@ -1658,7 +1626,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		char cpa[ ] = "a char []";
 		); lscode(
 
-		cout << chpa << tab << cpa << tab << chp << tab;
+			cout << chpa << tab << cpa << tab << chp << tab;
 		cout << catlstr << tab << cstr << tab << "const string" << tab;
 		cout << cs << tab << wcs << cut;
 		);
@@ -1725,13 +1693,11 @@ void CSDIView::OnPCDCFunctionTest( )
 			<< el;
 		string strt( strr );
 		cout << strt << el;
-		cout.type( cout );
-		cout.address( cout ) << el;
-		cout << showv( ofile.GetFileName( ) ) << el;
-		cout << showv( ofile.GetFilePath( ) ) << el;
-		cout << showv( ofile.GetLength( ) ) << el;
-		cout << showv( ofile.GetFileTitle( ) ) << el;
-		cout << showv( ofile.GetPosition( ) ) << el;
+		cout << showv( ofile.GetFileName( ) ) << semi;
+		cout << showv( ofile.GetFilePath( ) ) << semi;
+		cout << showv( ofile.GetLength( ) ) << semi;
+		cout << showv( ofile.GetFileTitle( ) ) << semi;
+		cout << showv( ofile.GetPosition( ) ) << semi<<cut;
 		);
 
 		//控制符打印测试
@@ -1773,71 +1739,41 @@ void CSDIView::OnPCDCFunctionTest( )
 		long la = 50;
 		const long cla = 50;
 		long long lla = 256;
-		int* ip = &ia;
-		char cba = 'a';
-		char* cp = &cba;
 		double da = 22.2;
 		float fa = 1222.32;
-		const char* ccp = &cba;
-		long* lp = &la;
-		long long* llp = &lla;
-		double* dp = &da;
-		CAtlString catlstr = st( a CAtlString... );
 		CString cstr = st( a CString... );
-		std::string cs = "a string...";
-		std::wstring wcs = L"a wstring...";
-		const char* chp = "a const char []";
-		const char chpa[ ] = "a const char []";
-		char cpa[ ] = "a char []";
 
-		array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
-		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
-		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
-		deque<int>dqa { 13, 24, 25, 86,12,23,82,918,883,898,1 };
-		list<int>lista { 123,456,789,000,444,213, 24, 25, 86,1 };
 		vector<int>va = { 12,234,56,78,892,8,235,86 ,18,998,888,999,928 };
 		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
-		multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
 		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
-		pair<int , string>paone { 100,"pair" };
-		complex <int>complexa( 2 , 5 );
-		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
-		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
-		auto d { tuplea._Get_rest( ) };
-		cout.disptup( tuplea ) << el;
-		int length = tuple_size<decltype( tuplea )>::value;
-		cout << std::is_integral<decltype( length )>::value << el;
-		cout << is_empty<tuple<>>::value << el;
 		struct A {};
 		A emptyA;
-		cout% tuplea;
+		int length = tuple_size<decltype( tuplea )>::value;
+
+		lscode( ;
+		cout << std::is_integral<decltype( length )>::value << sp;
+		cout << is_empty<tuple<>>::value << tab;
+		cout << " " << tuple_size<decltype( tuplea )>::value << el;
+		); lscode( ;
 		cout.type( ia );
-		cout.type( ria );
-		cout.type( rra );
-		cout.type( ( std::move( ia ) ) );
-		cout.type( ( std::move( ria ) ) );
-		cout.type( ( std::move( rra ) ) );
-		cout << showv( tuplea ) << showv( length ) << el;
-		cout.type( tuplea );
-		cout[tuplea];
-		cout.pl( icount , ca , ia , fa , la , lla , da , cs , wcs );
+		cout.type( ria , rra , cout , ca , ia , tuplea , rra );
+		cout.type( ( std::move( ia ) ) , ( std::move( ria ) ) , ( std::move( rra ) ) );
+		); lscode( ;
 		cout.pb( icount , ca , ia , fa , la , lla , da , cstr );
 		cout.pc( icount , ca , ia , fa , la , lla , da , cstr );
 		cout.pt( icount , ca , ia , fa , la , lla , da );
+		); lscode( ;
 		cout.address( icount , ca , ia , la , lla , da );
-		cout.pt( va , mif ) << cut;
-		cout.pb( va , mif ) << cut;
-		cout.pc( va , mif ) << cut;
-		cout.type( cout , ca , ia );
-		cout.pl( 3 , ia , 6.0 , "good" );
+		cout.pt( va , mif ) << semi;
+		cout.pb( va , mif ) << semi;
+		cout.pc( va , mif ) << semi;
+		); lscode( ;
 		cout.pt( 3 , ia , 6.0 , "good" );
 		cout.pb( 3 , ia , 6.0 , "good" );
 		cout.pc( 3 , ia , 6.0 , "good" );
-		cout << sum( { 3, 4, 5, 6 } ) << el;
-		cout << " " << tuple_size<decltype( tuplea )>::value << el;
-		cout << " " << typeid( decltype( tuplea ) ).name( ) << el;
+		cout << sum( { 3, 4, 5, 6 } ) << tab;
+		);
 	}
-
 
 }
 
@@ -1858,7 +1794,6 @@ void CSDIView::OnLamdbaFuncTest( )
 	cout << el;
 	showtype( p );
 	showtype( funl );
-	showtype( PTRFUN );
 	auto funl1 = [ & ] ( int val )mutable ->int {
 		int z = 210;
 		showtype( z );
@@ -2111,8 +2046,6 @@ void CSDIView::OnSTLFuncTest( )
 
 	cout << rect.bottom << tab << rect.top << tab << rect.right << tab << rect.left << el;
 
-
-
 }
 
 void CSDIView::OnStlStackTest( )
@@ -2121,12 +2054,40 @@ void CSDIView::OnStlStackTest( )
 
 	static int imod = 0;
 	++imod;
-	if ( imod >= 3 )
+	if ( imod >= 4 )
 	{
 		imod = 1;
 	}
 	stack<int> skt;
 	queue<int>qut;
+	if ( imod==1 )
+	{
+		RUNTEST( STACK EQUEUE TEST );
+
+		stack<int>ist;
+		for ( size_t i = 0; i < 20; i++ )
+		{
+			ist.push( i + 10 );
+		}
+		cout << ist.top( ) << el;
+		cout << ist.size( ) << tab << ist.top( ) << tab << ( ist.pop( ) , ist.top( ) ) << el;
+		cout << starline;
+		cout << ist.size( ) << tab << ist.top( ) << el;
+		cout << ist.top( ) << tab << ist.size( ) << tab << ( ist.pop( ) , ist.top( ) ) << tab << ist.size( ) << tab << ist.top( ) << el;
+		cout << ist.size( ) << tab << ist.top( ) << el;
+		cout << ist.empty( );
+
+		queue <int> ieq;
+		for ( size_t i = 0; i < 10; i++ )
+		{
+			ieq.push( i + 2 );
+		}
+		cout.setlinechar( '#' );
+		cout << starline;
+		cout << ieq.front( ) << el;
+		cout << ieq.back( ) << el;
+
+	}
 	if ( imod == 2 )
 	{
 		NTIME( 100 )
@@ -2212,15 +2173,6 @@ void CSDIView::OnStlFunctorTypereloadTest( )
 		lscode(
 			tuple<int , float , string , string , string>tupleb {};
 		);
-		/*	lscode(
-				cout << tpcount( tuplea ) << tab;
-		)
-			lscode(
-				cout << tpcount( tupleb ) << tab;
-		)
-			lscode(
-				cout << __cplusplus << endl;
-		)*/
 		lscode(
 		);
 
@@ -2370,8 +2322,6 @@ void CSDIView::OnDcTcolorTest( )
 	}
 	if ( imod == 4 )
 	{
-
-		cout << cl;
 		lscode(
 			cout.settcolor( dccr.red );
 		);
@@ -2417,6 +2367,7 @@ void CSDIView::OnDcTcolorTest( )
 			cout.settcolor( dccr.dodgerblue );
 		);
 		smn( this is a color , < $ , 5 > :: : );
+		cout.setcolor( dccr.green2 , dccr.hteal , cout.m_bk , cout.m_tk );
 	}
 	if ( imod == 1 )
 	{
@@ -2441,12 +2392,13 @@ void CSDIView::OnDcTcolorTest( )
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( cout.settcolor( dccr.tteal ); );
 		smn( this is a color , < $ , 5 > :: : );
+		cout.setcolor( dccr.whitesmoke, dccr.yellow , cout.m_bk , cout.m_tk );
+		smn( this is a color , < $ , 5 > :: : );
 
 	}
 
 	if ( imod == 2 )
 	{
-
 		lscode( cout.settcolor( dccr.teal ); );
 		smn( this is a color , < $ , 5 > :: : );
 
@@ -2502,6 +2454,8 @@ void CSDIView::OnDcTcolorTest( )
 		lscode( cout.settcolor( dccr.lightred ); );
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( cout.settcolor( dccr.lightblue ); );
+		smn( this is a color , < $ , 5 > :: : );
+		cout.setcolor( dccr.darkslateblue , dccr.brown , cout.m_bk , cout.m_tk );
 		smn( this is a color , < $ , 5 > :: : );
 
 	}
@@ -2567,6 +2521,8 @@ void CSDIView::OnDcTcolorTest( )
 
 		lscode( cout.settcolor( dccr.lightgreen ); );
 		smn( this is a color , < $ , 5 > :: : );
+		cout.setcolor( dccr.lightred , dccr.hlightgreen, cout.m_bk , cout.m_tk );
+		smn( this is a color , < $ , 5 > :: : );
 
 	}
 	if ( imod == 5 )
@@ -2590,11 +2546,10 @@ void CSDIView::OnDcTcolorTest( )
 		lscode( cout.settcolor( dccr.bluehred ); );
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( lscode( 0 ) );
+		smn( this is a color , < $ , 5 > :: : );
+		cout.setcolor( dccr.midyellow , dccr.smokered, cout.m_bk , cout.m_tk );
+		smn( this is a color , < $ , 5 > :: : );
 	}
-
-
-	cout.resettcolor( );
-
 }
 
 void CSDIView::OnGroundTest( )

@@ -203,7 +203,9 @@ CString address( );
 		this->UpdateWindow();\
 		dc.TextOut(ix, iy, strmessage);\
 		}
-
+#define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
+					pfunc p=fname;\
+					menumap.insert(make_pair(str,p));}
 
 //²âÊÔ×Ö·û´®ÊÇ·ñÎª¿ÕµÄºê
 #ifndef isempty
@@ -263,11 +265,21 @@ CString address( );
 #define NOT !
 #define nonull(v) (( (v )!=nullptr )&&((&v)!=nullptr ) )
 
+#define NTIME(N)  for(size_t ix=0;ix<(N);++ix)
+#define STEP(I,STEP,N)  for(size_t (ix)=I;(ix)<(N);ix+=(STEP))
+#define STEPTO(I,STEP,N)  for(size_t (ix)=I;(ix)<=(N);ix+=(STEP))
+#define UNTIL(N) for(size_t ix=0;ix++<(N);)
+#define FORTO(I,N) for(size_t ix=(I);ix<=(N);++ix)
+#define FORDOWNTO(N,I) for(size_t ix=(N);ix>=(I);--ix)
+#define pointer *
+#define NOTHING
+#define EMPTY(...) 
+#define ref &
+
 #define gett(name)  decltype(name)
 #define getI(name)  gett(name.begin())
 #define getCI(name)  gett(name)::const_iterator
 #define ALL(V)  V.begin(),V.end()
-#define NTIME(N)  for(size_t ix=0;ix<(N);++ix)
 #define FORALL(V,iterator)  for(getCI(V) iterator = V.begin(); iterator != V.end();++iterator)
 #define FORALLW(V,iterator)  for(getCI(V) V##iterator = V.begin(); V##iterator != V.end();++V##iterator)
 #define FORN(N,icountn)  for(size_t icountn=0;icountn<(N);++icountn)
@@ -276,7 +288,7 @@ CString address( );
 
 #define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>((CWnd*)this); PCDC & cout=*me_unique_dc;
 #define makemedc(DC)  unique_ptr<PCDC> pdcxxx(new PCDC(this));PCDC& DC = *pdcxxx;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;pcout=&*cout_me_ptr;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;pcout=&*cout_me_ptr;cout.resettcolor();
 #define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
 #define getcout PCDC &cout=*pcout;
 
@@ -352,6 +364,7 @@ public:
 
 public:
 	char mlinechar = _T( '-' );
+	char mmarkchar = '=';
 	CString spchar = _T( "  " );
 	CString ms;
 	CString opstr;
@@ -387,6 +400,13 @@ public:
 	PCDC& operator<<( const double n );
 	PCDC& operator<<( const long double n );
 	PCDC& operator<<( const size_t n );
+	PCDC& operator<<( std::nullptr_t p )
+	{
+		ms = "nullptr";
+		imresizeout(ms);
+		return *this;
+	}
+		
 	PCDC& operator<<( PCDC& dc ) {
 		if ( this == &dc )
 		{
@@ -614,7 +634,14 @@ PCDC& PCDC::operator [] ( const tuple<Args...>& tupa )
 template<typename T>
 PCDC& PCDC::operator <<( T* p )
 {
-	ms.Format( _T( "[0x%p]" ) , p );
+	if ( p == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , p );
+	}
 	imresizeout( ms );
 	return *this;
 }
@@ -842,7 +869,7 @@ PCDC& PCDC::title( T t , bool i )
 		ts.MakeLower( );
 	}
 	CString cs;
-	cs = '<';
+	cs = mmarkchar;
 	PCDC& dc = *this;
 	CSize size = dc.GetOutputTextExtent( cs );
 	dc.m_pwnd->GetClientRect( &dc.mrect );
@@ -858,7 +885,7 @@ PCDC& PCDC::title( T t , bool i )
 	{
 		cs += this->mlinechar;
 	}
-	cs += '>';
+	cs += mmarkchar;
 	imresizeout( cs );
 	( *this ) << el;
 	return *this;
@@ -936,7 +963,14 @@ template <typename X>
 PCDC& PCDC::address( X& a )
 {
 	//*this << st( T& ) << sp;
-	ms.Format( _T( "[0x%p]" ) , &a );
+	if ( &a == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , &a );
+	}
 	imresizeout( ms );
 	*this << '\t';
 	return *this;
@@ -946,7 +980,14 @@ template <typename T , typename ...X>
 PCDC& PCDC::address( T& a , X&...args )
 {
 	//*this << ( sizeof...( args ) ) << st( T... ) << sp;
-	ms.Format( _T( "[0x%p]," ) , &a );
+	if ( &a == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , &a );
+	}
 	imresizeout( ms );
 	return address( args... );
 }
@@ -1024,12 +1065,19 @@ template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
 }
 
 template <typename T>
-CString address( T* a )
+CString address( T* p )
 {
 	//getcout;
 	//cout << st( T* ) << sp;
 	CString cs;
-	cs.Format( _T( "[0x%p]" ) , a );
+	if (p == nullptr )
+	{
+		cs = "nullptr";
+	}
+	else
+	{
+		cs.Format( _T( "[0x%p]" ) , p );
+	}
 	return cs;
 }
 
@@ -1304,11 +1352,7 @@ bool compare( T a , T b )
 	}
 }
 
-#define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
-					pfunc p=fname;\
-					menumap.insert(make_pair(str,p));}
-typedef int ( *PFU )( int );
-using PTRFUN = int ( * )( int );
+
 
 template <typename T = int , bool isort = bigtosmall>
 class icompset {

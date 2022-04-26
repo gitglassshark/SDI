@@ -2,6 +2,9 @@
 #include "PCDC.h"
 #include "SDI.h"
 
+size_t PCDC::icount = 0;
+extern class CColor dccr;
+
 CString hex( ) { return CString( ); }
 
 CString HEX( ) { return CString( ); }
@@ -26,9 +29,6 @@ PCDC& cut( PCDC& dc ) { return dc << starline; }
 PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
 void newl( ) { getcout;  cout << endl; }
 void cut( ) { getcout; cout << cut; }
-
-size_t PCDC::icount = 0;
-extern class CColor dccr;
 
 PCDC& starline( PCDC& dc )
 {
@@ -231,8 +231,12 @@ PCDC& PCDC::operator <<( LPCTSTR cs )
 	if ( ( cs != nullptr ) && ( *cs != '\0' ) )
 	{
 		ms = cs;
-		imresizeout( ms );
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
@@ -243,6 +247,11 @@ PCDC& PCDC::operator <<( char cs[ ] )
 		ms = cs;
 		imresizeout( ms );
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
@@ -251,16 +260,25 @@ PCDC& PCDC::operator <<( char const cs[ ] )
 	if ( ( cs != nullptr ) && ( strlen( cs ) ) )
 	{
 		ms = cs;
-		imresizeout( ms );
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
 PCDC& PCDC::operator <<( const CAtlString& s )
 {
-	if ( !s.IsEmpty( ) ) {
-		imresizeout( s );
+	if ( s.IsEmpty( ) ) {
+		ms = "null(0)";
 	}
+	else
+	{
+		ms = s;
+	}
+	imresizeout( ms );
 	return *this;
 }
 
@@ -268,8 +286,12 @@ PCDC& PCDC::operator <<( const std::wstring& s )
 {
 	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
 		ms = s.c_str( );
-		imresizeout( ms );
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
@@ -277,16 +299,26 @@ PCDC& PCDC::operator <<( const std::string& s )
 {
 	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
 		ms = s.c_str( );
-		imresizeout( ms );
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
 PCDC& PCDC::operator <<( const CString& s )
 {
-	if ( !s.IsEmpty( ) ) {
-		imresizeout( s );
+	if ( !s.IsEmpty( ) )
+	{
+		ms = s;
 	}
+	else
+	{
+		ms = "null(0)";
+	}
+	imresizeout( ms );
 	return *this;
 }
 
@@ -299,6 +331,7 @@ PCDC& PCDC::operator <<( const int n )
 
 PCDC& PCDC::operator<<( const char c )
 {
+	if ( c == 0 ) { ms = "null(0)";}
 	if ( c == '\n' ) {
 		p.y += step;
 		p.x = initalpos;

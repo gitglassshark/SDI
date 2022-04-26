@@ -92,6 +92,7 @@ void runexcept( int ia , float fa , char* ps )throw( int , float , double , char
 	if ( ia == 6 ) { CString e; e = _T( "somthing is error " ); e += __func__; throw e; }
 };
 
+/*
 size_t linelen = 80;
 
 class clist;
@@ -624,3 +625,4 @@ void PrintContainer( const T& r )
     cout << endl;
 }
 
+*/

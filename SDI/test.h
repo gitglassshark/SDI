@@ -51,6 +51,35 @@ auto makevector( A a , T...args )
 	return c;
 }
 
+template<typename P>
+bool delptr( P*& p )
+{
+	//getcout; cout << "P*" << sp;
+	if ( p != nullptr ) {
+		delete p;
+		p = nullptr;
+		return true;
+	}
+	return false;
+}
+
+template<typename P , typename ...Args>
+bool delptr( P*& p , Args&...args )
+{
+	constexpr size_t N = sizeof...( Args );
+	//getcout; cout << "A*..." << N << sp;
+	delptr( p );
+	if constexpr ( N == 0 )
+	{
+		auto iret = delptr( p );
+		return iret;
+	}
+	else
+	{
+		delptr( args... );
+	}
+	return false;
+}
 
 template<typename A , typename B>
 bool comp( A a , B b )
@@ -107,7 +136,6 @@ X sub( X a , T b )
 	c = a - (X)b;
 	return c;
 }
-
 
 template<typename T>
 void funt( T&& a )
@@ -219,4 +247,6 @@ public:
 	}
 };
 
+/*
+*/
 
