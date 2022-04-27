@@ -373,20 +373,40 @@ void CSDIView::OnObjectSize( )
 	static int ichoice = 0;
 	if ( ++ichoice > 3 )
 		ichoice = 1;
-	if ( ichoice == 1 )
+	if ( ichoice == 3 )
 	{
+		showtype( XCout );
+		showtype( CColor );
+		showtype( dccr.berry );
+		showtype( &CSDIView::OnObjectSize );
+		showtype( nullptr );
+		showtype( NULL );
+		showtype( 'a' );
+		showtype( 0 );
+		showtype( 0L );
+		showtype( 8.0f );
+		showtype( "a string" );
+		showtype( _T( "a string" ) );
+		showtype( L"a string" );
+		showtype( std::cout );
+		showtype( std::cin );
+		showtype( std::cerr );
+		showtype( _afxThreadState );
+		showtype( tuple<> );
+		cout.TypeCount( tuple<>( ) ) << endl;
+		cout.TypeCount( string( ) ) << endl;
+		cout.TypeCount( wstring( ) ) << endl;
+		cout.TypeCount( CString( ) ) << endl;
+		cout.TypeCount( CAtlString( ) ) << endl;
 		cout.type( nullptr , NULL , tuple<>( ) , int( ) );
-		cout.TypeCount( tuple<>( ) );
 	}
 
-	if ( ichoice == 3 )
+	if ( ichoice == 1 )
 	{
 		cout << cl;
 		showtype( CObject );
-		showtype( PCDC );
 		showtype( CDC );
 		showtype( CPaintDC );
-		showtype( CColor );
 		showtype( LOGFONT );
 		showtype( CFont );
 		showtype( CFontDialog );
@@ -405,7 +425,6 @@ void CSDIView::OnObjectSize( )
 		showtype( CFileDialog );
 		showtype( CD2DSizeU );
 		showtype( CHwndRenderTarget );
-		showtype( &CSDIView::OnObjectSize );
 		showtype( FILE );
 		showtype( LRESULT );
 		showtype( HDC );
@@ -414,6 +433,7 @@ void CSDIView::OnObjectSize( )
 		showtype( RECT );
 		showtype( CRect );
 		showtype( CSize );
+		showtype( CFile );
 		showtype( NMHDR );
 		showtype( HMODULE );
 		showtype( _AFX_THREAD_STATE );
@@ -422,18 +442,16 @@ void CSDIView::OnObjectSize( )
 		showtype( AFX_MSGMAP_ENTRY );
 		showtype( LPARAM );
 		showtype( WPARAM );
-		showtype( string );
-		showtype( CAtlString );
-		showtype( CString );
+		showtype( BYTE );
+		showtype( BOOL );
+		showtype( LONG );
 		showtype( DWORD );
 		showtype( WORD );
-		showtype( dccr.berry );
 	}
 
 	if ( ichoice == 2 )
 	{
 		cout << cl;
-		showtype( BYTE );
 		showtype( char );
 		showtype( char& );
 		showtype( const char );
@@ -444,15 +462,12 @@ void CSDIView::OnObjectSize( )
 		showtype( const int& );
 		showtype( short );
 		showtype( long );
-		showtype( LONG );
-		showtype( long long );
+		showtype( long long int );
 		showtype( double );
 		showtype( float );
 		showtype( long double );
 		showtype( bool );
-		showtype( BOOL );
 		showtype( size_t );
-		showtype( NULL );
 		showtype( void* );
 		showtype( int* );
 		showtype( const int* );
@@ -462,16 +477,19 @@ void CSDIView::OnObjectSize( )
 		showtype( const char* );
 		showtype( char*& );
 		showtype( uintptr_t );
+		showtype( nullptr_t );
+		showtype( weak_ptr<int> );
 		showtype( intptr_t );
 		showtype( shared_ptr<int> );
 		showtype( unique_ptr<int> );
-		showtype( nullptr );
-		showtype( set<int> );
+		showtype( complex<int> );
+		showtype( pair<int , string> );
 		showtype( vector<int> );
+		showtype( set<int> );
+		showtype( multiset<int> );
 		showtype( map<int , string> );
 		showtype( multimap<int , string> );
 		showtype( tuple<int , string , CString> );
-		showtype( tuple<> );
 	}
 
 }
@@ -1534,15 +1552,15 @@ void CSDIView::OnPCDCFunctionTest( )
 	SimulationStdCout;
 	static size_t imod = 0;
 	++imod;
-	if ( imod == 5 )
+	if ( imod == 7 )
 		imod = 1;
 
 	//打印整型数据
-	if ( imod == 1 )
+	if ( imod == 7 )
 	{
 		cout.clearscreen( );
 		cout << "打印整型数据：" << el;
-		lcode(
+		code(
 			int ia = 10;
 		size_t icount = 100;
 		int& ria = ia;
@@ -1551,61 +1569,69 @@ void CSDIView::OnPCDCFunctionTest( )
 		long la = 50;
 		const long cla = 50;
 		long long lla = 256;
-		cout << icount << com << ia << sp << 999 << sp << -1 << sp << 0 << sp << cia << sp << ria << sp << rra << sp << INT_MIN << com << INT_MAX << semi << cla << sp << la << sp << LONG_MAX << com << LONG_MIN << semi << lla << sp << LONGLONG_MAX << com << LONGLONG_MIN << cut;
+		); lcode(
+			cout << icount << com << ia << sp << 999 << sp << -1 << sp << 0 << sp << cia << sp << ria << sp << rra << sp << INT_MIN << com << INT_MAX << semi << cla << sp << la << sp << LONG_MAX << com << LONG_MIN << semi << lla << sp << LONGLONG_MAX << com << LONGLONG_MIN << cut;
 		);
 
 		//打印布尔数据
 		cout << "打印布尔型数据：" << el;
-		lscode(
+		code(
 			bool it = true;
 		bool in = false;
 		bool& rin = in;
 		const bool inn = false;
 		const bool& rinn = it;
-		cout << it << tab << in << tab << inn << tab << rin << tab << rinn << tab << true << tab << false << tab << ( 2 > 1 ) << tab << ( 3 > 5 ) << cut;
+		); lcode(
+			cout << it << tab << in << tab << inn << tab << rin << tab << rinn << tab << true << tab << false << tab << ( 2 > 1 ) << tab << ( 3 > 5 ) << cut;
+		cout << bools( true , false , 2 < 3 , 3 > 5 , 0 , 100 ) << endl;
 		);
 
 		// "打印字符型数据：" 
 		cout << "打印字符型数据：" << el;
-		lscode(
+		code(
 			char c0 = '!';
 		char ca = 'A';
 		const char cca = 'A';
 		char cz = 'z';
 		char ce = '~';
-		for ( char i = c0; i <= ce; ++i )
-		{
-			cout << i << tab;
-			if ( ( i + 1 - c0 ) % 25 == 0 )
-				cout << el;
-		}
+		); lscode(
+			for ( char i = c0; i <= ce; ++i )
+			{
+				cout << i << tab;
+				if ( ( i + 1 - c0 ) % 25 == 0 )
+					cout << el;
+			}
 		cout << ca << tab << cca << sp << 'a' << sp << 'z' << endl;
 		);
 
 		// "打印浮点型数据：" 
 		cout << "打印浮点型数据：" << el;
-		lscode(
+		code(
 			float fa = 31.1;
 		double da = 62.444;
 		long double lda = 262.844;
 		const long double clda = 262.8;
-		cout << fa << sp << da << sp << lda << sp << clda << sp << 0.999 << sp << -100.01 << sp << 2 / 3.0 << sp << 100.88 << sp << -35.22 << endl;
+		); lscode(
+			cout << fa << sp << da << sp << lda << sp << clda << sp << 0.999 << sp << -100.01 << sp << 2 / 3.0 << sp << 100.88 << sp << -35.22 << endl;
 		);
 
 		// "打印指针型数据：" 
 		cout << "打印指针型数据：" << el;
-		lscode(
+		code(
 			int* ip = &ia;
 		char* cp = &ca;
 		const char* ccp = &ca;
 		long* lp = &la;
 		long long* llp = &lla;
 		double* dp = &da;
-		cout << ip << sp << *ip << semi;
+		); lscode(
+			cout << ip << sp << *ip << semi;
 		cout << sp << *cp << *ccp << semi;
 		cout << lp << sp << *lp << semi;
 		cout << llp << sp << *llp << semi;
-		cout << dp << sp << *dp << semi;
+		cout << dp << sp << *dp << endl;
+		); lscode(
+			cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << el;
 		);
 
 	};
@@ -1617,7 +1643,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		//字符串打印测试
 		cout << st( 字符串打印测试 ) << el;
 		CAtlString catlstr = st( a CAtlString... );
-		lscode(
+		code(
 			CString cstr = st( a CString... );
 		std::string cs = "a string...";
 		std::wstring wcs = L"a wstring...";
@@ -1625,15 +1651,29 @@ void CSDIView::OnPCDCFunctionTest( )
 		const char chpa[ ] = "a const char []";
 		char cpa[ ] = "a char []";
 		); lscode(
-
-			cout << chpa << tab << cpa << tab << chp << tab;
-		cout << catlstr << tab << cstr << tab << "const string" << tab;
-		cout << cs << tab << wcs << cut;
+			cout << chpa << endl;
+		); lscode(
+			cout << cpa << endl;
+		); lscode(
+			cout << chp << endl;
+		); lscode(
+			cout << catlstr << endl;
+		); lscode(
+			cout << cstr << endl;
+		); lscode(
+			cout << "const string" << endl;
+		); lscode(
+			cout << cs << endl;
+		); lscode(
+			cout << wcs << endl;
 		);
+	};
 
+	if ( imod == 3 )
+	{
 		//容器打印测试
-		cout << st( 容器打印测试 ) << el;
-		lscode(
+		cout << st( 容器打印测试 ) << cut;
+		code(
 			array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
 		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
@@ -1647,26 +1687,33 @@ void CSDIView::OnPCDCFunctionTest( )
 		complex <int>complexa( 2 , 5 );
 		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
 		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
+		); lscode(
+			cout << "对组（pair):" << tab( 2 ) << paone << tab( 4 );
+		); lscode(
+			cout << "复数（complex):" << tab( 2 ) << complexa << el;
+		); lscode(
+			cout << "数组(array)：" << tab( 3 ) << arrone << el;
+		cout << "vector:" << tab( 4 ) << vecta << el;
+		); lscode(
+			cout << "列表(list)：" << tab( 6 ) << lista << el;
+		cout << "双端列表(deque)：" << tab( 5 ) << dqa << el;
+		); lscode(
+			cout << "初始化列表(initializer_list)：" << tab << v << el;
+		); lscode(
+			cout << "图(map)：" << tab( 4 ) << mif << el;
+		); lscode(
+			cout << "图(multimap)：" << tab( 2 ) << mmif << el;
+		); lscode(
+			cout << "tuple:" << tab( 4 ) << tuplea << tab << tab;
+		); lscode(
+			cout << "集合 (set):" << tab( 4 ) << seta << el;
+		); lscode(
+			cout << "集合 (multiset):" << tab( 2 ) << mseta << el;
 		);
-		cout << "数组(array)：" << tab << arrone << el;
-		cout << "初始化列表(initializer_list)：" << tab << v << el;
-		cout << "vector:" << tab << vecta << el;
-		cout << "双端列表(deque)：" << tab << dqa << el;
-		cout << "列表(list)：" << tab << lista << el;
-		cout << "图(map)：" << tab << mif << el;
-		cout << "图(multimap)：" << tab << mmif << el;
-		cout << "tuple:" << tab << tuplea << tab << tab;
-		cout << "对组（pair):" << tab << paone << tab;
-		cout << "复数（complex):" << tab << complexa << el;
-		cout << "集合 (set):" << tab << seta << el;
-		cout << "集合 (multiset):" << tab << mseta << el;
-
-		//打印A<B...> sizeof...B...
-		cout.TypeCount( vecta ) << el << cout.TypeCount( dqa ) << el << cout.TypeCount( lista ) << el << cout.TypeCount( mmif ) << el << cout.TypeCount( seta ) << el << cout.TypeCount( CString( ) ) << el << cout.TypeCount( string( ) ) << el << cout.TypeCount( string( ) )/*tb( ).TypeCount( paone ).tb( ).TypeCount( tuplea ).tb( ).TypeCount( mseta ) */ << endl;
-	};
+	}
 
 	//功能性测试
-	if ( imod == 3 )
+	if ( imod == 4 )
 	{
 		cout.clearscreen( );
 
@@ -1697,7 +1744,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		cout << showv( ofile.GetFilePath( ) ) << semi;
 		cout << showv( ofile.GetLength( ) ) << semi;
 		cout << showv( ofile.GetFileTitle( ) ) << semi;
-		cout << showv( ofile.GetPosition( ) ) << semi<<cut;
+		cout << showv( ofile.GetPosition( ) ) << semi << cut;
 		);
 
 		//控制符打印测试
@@ -1705,15 +1752,16 @@ void CSDIView::OnPCDCFunctionTest( )
 		lscode(
 			cout << cut << 'a' << tab << com << sp << semi << sp << dash << sp << sp << star << el;
 		);
-
-		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
-		vector<int>va = { 12,234,56,78,892,8,235,86 ,18,998,888,999,928 };
-		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
 		//排序功能测试
 		cout << "排序功能测试" << endl;
+		code(
+			vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
+		vector<int>va = { 12,234,56,78,892,8,235,86 ,18,998,888,999,928 };
+		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
+		set<int , std::greater<> >setb { 3 , 4 , 5 , 6 , 2,6 , 2,980,222,888,1024,338,8999, };
+		);
 		lscode(
-			set<int , std::greater<> >setb { 3 , 4 , 5 , 6 , 2,6 , 2,980,222,888,1024,338,8999, };
-		cout << setb << el;
+			cout << setb << el;
 		std::sort( vecta.begin( ) , vecta.end( ) , compare<int , true> );
 		std::sort( vecta.begin( ) , vecta.end( ) , [ ] ( int a , int b ) {return a > b; } );
 		cout << vecta << el;
@@ -1722,13 +1770,11 @@ void CSDIView::OnPCDCFunctionTest( )
 		auto iit = std::find_if( vecta.begin( ) , vecta.end( ) , [ ] ( int a )->bool {return a == 6; } );
 		cout << vecta << tab << *iit << el;
 		);
-
 	}
 
-	if ( imod == 4 )
+	if ( imod == 5 )
 	{
 		cout.clearscreen( );
-
 		//变参、多参数打印功能测试
 		cout << "变参、多参数功能测试" << endl;
 		int ia = 10;
@@ -1742,7 +1788,6 @@ void CSDIView::OnPCDCFunctionTest( )
 		double da = 22.2;
 		float fa = 1222.32;
 		CString cstr = st( a CString... );
-
 		vector<int>va = { 12,234,56,78,892,8,235,86 ,18,998,888,999,928 };
 		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
 		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
@@ -1750,31 +1795,119 @@ void CSDIView::OnPCDCFunctionTest( )
 		A emptyA;
 		int length = tuple_size<decltype( tuplea )>::value;
 
-		lscode( ;
-		cout << std::is_integral<decltype( length )>::value << sp;
+		lscode(
+			cout << std::is_integral<decltype( length )>::value << sp;
 		cout << is_empty<tuple<>>::value << tab;
 		cout << " " << tuple_size<decltype( tuplea )>::value << el;
-		); lscode( ;
-		cout.type( ia );
+		); lscode(
+			cout.type( ia );
 		cout.type( ria , rra , cout , ca , ia , tuplea , rra );
 		cout.type( ( std::move( ia ) ) , ( std::move( ria ) ) , ( std::move( rra ) ) );
-		); lscode( ;
-		cout.pb( icount , ca , ia , fa , la , lla , da , cstr );
-		cout.pc( icount , ca , ia , fa , la , lla , da , cstr );
-		cout.pt( icount , ca , ia , fa , la , lla , da );
-		); lscode( ;
-		cout.address( icount , ca , ia , la , lla , da );
-		cout.pt( va , mif ) << semi;
-		cout.pb( va , mif ) << semi;
-		cout.pc( va , mif ) << semi;
-		); lscode( ;
-		cout.pt( 3 , ia , 6.0 , "good" );
-		cout.pb( 3 , ia , 6.0 , "good" );
-		cout.pc( 3 , ia , 6.0 , "good" );
-		cout << sum( { 3, 4, 5, 6 } ) << tab;
+		); lscode(
+			cout.pb( 3 , 6.0 , "good" , icount , ca , ia , fa , la , lla , da , cstr );
+		cout.pc( 3 , 6.0 , "good" , icount , ca , ia , fa , la , lla , da , cstr );
+		cout.pt( 3 , 6.0 , "good" , icount , ca , ia , fa , la , lla , da );
+		); lscode(
+			cout.address( icount , ca , ia , la , lla , da );
+		); lscode(
+			cout.pt( va , mif ) << sp;
+		cout.pb( va , mif ) << sp;
+		cout.pc( va , mif );
+		); lscode(
+			cout << gsum( 3 , 4 , 5 , 6 , 345.896 ) << tab;
+		cout << sum( { 3, 4, 5, 6,345 } ) << tab;
+		); lscode(
+			cout << gmax( 3 , 4 , 5 , 6 , 8.88 , 8908.99 , 345 ) << tab;
+		);
+	}
+	if ( imod == 6 )
+	{
+		cout.clearscreen( );
+		//复合类型类型数量打印功能测试
+		cout << "复合类型类型数量打印功能测" << cut;
+		code(
+			array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
+		vector<int>vecta { 908, 4,33,89,992,8192,8282,1 };
+		deque<int>dqa { 13, 24,12,23,82,918,883,898,1 };
+		list<int>lista { 123,456,000,444,213, 24, 25, 86,1 };
+		vector<int>va = { 12,234,78,892,8,235,86 ,18,928 };
+		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{238,8.9399} };
+		multimap<int , float>mmif = { {234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
+		pair<int , string>paone { 100,"pair" };
+		complex <int>complexa( 2 , 5 );
+		set<int>seta { 3 ,  6 , 2,980,222,888,1024,338,8999,0 };
+		multiset<int>mseta { 13 ,84 ,15 , 336 ,19880,2282,3838,88999,0 };
+
+		); lscode(
+			cout.TypeCount( vecta ) << el;
+		); lscode(
+			cout.TypeCount( dqa ) << el;
+		); lscode(
+			cout.TypeCount( lista ) << el;
+		); lscode(
+			cout.TypeCount( mmif ) << el;
+		); lscode(
+			cout.TypeCount( seta ) << el;
+		); lscode(
+			cout.TypeCount( CString( ) ) << el;
+		); lscode(
+			cout.TypeCount( string( ) ) << el;
+		); lscode(
+			cout.TypeCount( string( ) ) << endl;
 		);
 	}
 
+	if ( imod == 1 )
+	{
+		//成员函数地址打印功能测试
+		cout << "类类型、成员函数、指针址打印功能测试" << cut;
+		code(
+			class A
+		{
+		public:
+			A( int a ) :id( a ) {};
+			A( ) = default;
+			virtual int getid( ) { return id; }
+			int getid2( ) { return id; }
+			void operator =( A ) {};
+			~A( ) = default;
+		public:
+			int id = 0;
+			int a;
+			int c;
+		};
+		class B :public A
+		{
+		public:
+			B( ) :A( ) {};
+			~B( ) {};
+			void operator =( A ) {};
+			void getid( int a ) {  }
+			virtual int getid2( ) { return id * 2; }
+			int getid3( ) { return id * 2; }
+		};
+		A a;
+		B b;
+		);
+		lscode(
+			cout << address( a , b , a.id ) << endl;
+		); lscode(
+			cout.type( a , b );
+		); lscode(
+			cout << typeid( &A::getid ).name( ) << endl;
+		cout << typeid( &B::getid2 ).name( ) << endl;
+		); lscode(
+			cout << typeid( &B::getid ).name( ) << endl;
+		cout << typeid( &B::getid2 ).name( ) << endl;
+		); lscode(
+			cout << &A::getid << tab << &A::getid2 << tab << &A::operator= << tab << &B::getid << tab << &B::getid2 << tab << &B::getid3 << tab << test00 << tab << *( long long int** )( &b ) << endl;
+		); lscode(
+			cout.prints( "a address is :" , &a , tab( ) , " b address is " , address( b ) , tab( ) , " a sizeof is  " , sizeof( a ) , tab( ) , " b sizeof is " , sizeof( b ) , tab( ) , letters( '*' , 8 ) );
+		);
+
+	}
 }
 
 void CSDIView::OnLamdbaFuncTest( )
@@ -2060,7 +2193,7 @@ void CSDIView::OnStlStackTest( )
 	}
 	stack<int> skt;
 	queue<int>qut;
-	if ( imod==1 )
+	if ( imod == 1 )
 	{
 		RUNTEST( STACK EQUEUE TEST );
 
@@ -2377,7 +2510,7 @@ void CSDIView::OnDcTcolorTest( )
 		smn( this is a color , < $ , 5 > :: : );
 
 		lscode(
-			cout.settcolor( dccr.green1 );
+			cout.settcolor( dccr.red1 );
 		);
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( cout.settcolor( dccr.mteal ); );
@@ -2392,7 +2525,7 @@ void CSDIView::OnDcTcolorTest( )
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( cout.settcolor( dccr.tteal ); );
 		smn( this is a color , < $ , 5 > :: : );
-		cout.setcolor( dccr.whitesmoke, dccr.yellow , cout.m_bk , cout.m_tk );
+		cout.setcolor( dccr.whitesmoke , dccr.yellow , cout.m_bk , cout.m_tk );
 		smn( this is a color , < $ , 5 > :: : );
 
 	}
@@ -2521,7 +2654,7 @@ void CSDIView::OnDcTcolorTest( )
 
 		lscode( cout.settcolor( dccr.lightgreen ); );
 		smn( this is a color , < $ , 5 > :: : );
-		cout.setcolor( dccr.lightred , dccr.hlightgreen, cout.m_bk , cout.m_tk );
+		cout.setcolor( dccr.lightred , dccr.hlightgreen , cout.m_bk , cout.m_tk );
 		smn( this is a color , < $ , 5 > :: : );
 
 	}
@@ -2547,7 +2680,7 @@ void CSDIView::OnDcTcolorTest( )
 		smn( this is a color , < $ , 5 > :: : );
 		lscode( lscode( 0 ) );
 		smn( this is a color , < $ , 5 > :: : );
-		cout.setcolor( dccr.midyellow , dccr.smokered, cout.m_bk , cout.m_tk );
+		cout.setcolor( dccr.midyellow , dccr.smokered , cout.m_bk , cout.m_tk );
 		smn( this is a color , < $ , 5 > :: : );
 	}
 }

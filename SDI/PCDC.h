@@ -2,6 +2,11 @@
 #include "pch.h"
 #include "SDI.h"
 
+
+
+class PCDC;
+using XCout = PCDC;
+
 class CColor {
 public:
 	COLORREF red = RGB( 255 , 0 , 0 );
@@ -31,7 +36,7 @@ public:
 	COLORREF darkblue = RGB( 0 , 0 , 139 );
 	COLORREF darkcyan = RGB( 0 , 139 , 139 );
 	COLORREF fgreen = RGB( 34 , 139 , 34 );
-	COLORREF green1 = RGB( 139 , 34 , 34 );
+	COLORREF red1 = RGB( 139 , 34 , 34 );
 	COLORREF green2 = RGB( 34 , 34 , 139 );
 	COLORREF chocolate = RGB( 238 , 118 , 33 );
 	COLORREF dodgerblue = RGB( 16 , 78 , 139 );
@@ -68,7 +73,6 @@ public:
 	COLORREF hlightblue = RGB( 105 , 105 , 255 );
 };
 
-class PCDC;
 extern class CColor dccr;
 extern PCDC* pcout;
 
@@ -92,6 +96,11 @@ CString HEX( );
 CString oct( );
 CString udec( );
 CString address( );
+
+CString bools( );
+CString tab( size_t Ntimes = 1 );
+CString sp( size_t Ntimes = 1 );
+CString letters( char lc , size_t Ntimes = 1 );
 
 #define LOG(objectname)  {\
 		CString strmessage;\
@@ -294,6 +303,10 @@ CString address( );
 
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
+#define code(...)	cout.settcolor(dccr.smokewhite);\
+					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
+					cout.resettcolor();\
+					__VA_ARGS__;
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout.title(L"sourece codes",LOWER);\
 					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
@@ -310,7 +323,7 @@ CString address( );
 #define showtype(...)  cout<<#__VA_ARGS__<<":  type: ";\
 						cout<< typeid( ##__VA_ARGS__ ).name( );\
 						cout<<"  size: ";\
-						cout.settcolor( dccr.red );\
+						cout.settcolor( dccr.gteal );\
 						cout<<sizeof(##__VA_ARGS__);\
 						cout.resettcolor();\
 						cout<<"  HASH :"<<typeid(##__VA_ARGS__).hash_code()<<el
@@ -353,7 +366,13 @@ public:
 	COLORREF m_bk = dccr.grey;
 	//COLORREF m_tk = dccr.greenblue;
 	COLORREF m_tk = dccr.chocolate;
-	COLORREF m_bark = dccr.berry;
+	//COLORREF m_tk = dccr.bluered;
+	//COLORREF m_bark = dccr.chocolate;
+	//COLORREF m_bark = dccr.mteal;
+	COLORREF m_bark = dccr.lteal;
+	//COLORREF m_bark = dccr.bluered;
+	//COLORREF m_bark = dccr.smokered;
+	//COLORREF m_bark = dccr.lbluered;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 120;
 	CFont font , * pfont;
@@ -400,13 +419,10 @@ public:
 	PCDC& operator<<( const double n );
 	PCDC& operator<<( const long double n );
 	PCDC& operator<<( const size_t n );
-	PCDC& operator<<( std::nullptr_t p )
-	{
-		ms = "nullptr";
-		imresizeout(ms);
-		return *this;
-	}
-		
+	template <typename A , typename ...X , typename R>
+	PCDC& operator<<( R( A::* p )( X... ) );
+	PCDC& operator<<( std::nullptr_t p );
+
 	PCDC& operator<<( PCDC& dc ) {
 		if ( this == &dc )
 		{
@@ -507,7 +523,8 @@ public:
 	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
 	template <typename T> PCDC& operator <<( const complex<T>& z );
 	template <typename T> PCDC& operator ()( initializer_list<T> c );
-	template <typename T> PCDC& operator <<( T* p );
+	template <typename P> PCDC& operator <<( P* p );
+	template <typename P> PCDC& operator <<( const P* p );
 	template <typename T> PCDC& operator<<( initializer_list<T> c );
 	template <typename T> PCDC& operator <<( const list<T>& l );
 	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
@@ -555,9 +572,9 @@ public:
 	PCDC& pl( ) { return *this; }
 	template <typename T , typename ...X> PCDC& pl( T a , X...args );
 
-
 public:
 	PCDC& displayfile( CString filename );
+	template <typename T , typename ...X> PCDC& prints( T a , X...args );
 
 public:
 	PCDC& args( )
@@ -589,7 +606,6 @@ public:
 public:
 
 };
-
 
 template <typename A , typename B>
 PCDC& PCDC::operator||( const tuple<A , B>& tup )
@@ -631,8 +647,39 @@ PCDC& PCDC::operator [] ( const tuple<Args...>& tupa )
 	return ( *this )[tupa._Get_rest( )];
 };
 
-template<typename T>
-PCDC& PCDC::operator <<( T* p )
+template <typename A , typename ...X , typename R>
+PCDC& PCDC::operator<<( R( A::* p )( X... ) )
+{
+	//( __thiscall A::*p )| ( __cdecl A::*p )
+	if ( p == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , p );
+	}
+	imresizeout( ms );
+	return *this;
+}
+
+template<typename P>
+PCDC& PCDC::operator <<( const P* p )
+{
+	if ( p == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , p );
+	}
+	imresizeout( ms );
+	return *this;
+}
+
+template<typename P>
+PCDC& PCDC::operator <<( P* p )
 {
 	if ( p == nullptr )
 	{
@@ -825,7 +872,7 @@ template <typename T >
 PCDC& PCDC::type( T& a )
 {
 	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
-	settcolor( dccr.red );
+	settcolor( dccr.gteal );
 	*this << sizeof( a );
 	resettcolor( );
 	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
@@ -836,7 +883,7 @@ template <typename T >
 PCDC& PCDC::type( T&& a )
 {
 	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
-	settcolor( dccr.red );
+	settcolor( dccr.gteal );
 	*this << sizeof( (T&&)a );
 	resettcolor( );
 	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
@@ -849,7 +896,9 @@ PCDC& PCDC::TypeCount( B<A...> a )
 	*this << "type:  " << typeid( a ).name( );
 	*this << "  size:  " << sizeof( a );
 	*this << "  HASH: " << typeid( a ).hash_code( );
-	*this << " A<T...> T...count is :" << sizeof...( A );
+	settcolor( dccr.midyellow );
+	*this << " A<T...> T...count is :" << sizeof...( A ) << sp;
+	resettcolor( );
 	return *this;
 }
 
@@ -934,6 +983,20 @@ PCDC& PCDC::pb( X a )
 {
 	*this << '{' << a << "}" << '\n';
 	return *this;
+}
+
+template <typename T , typename ...X>
+PCDC& PCDC::prints( T a , X...args )
+{
+	*this << a;
+	if constexpr ( ( sizeof...( X ) ) == 0 )
+	{
+		return *this;
+	}
+	else
+	{
+		return prints( args... );
+	}
 }
 
 template <typename T , typename ...X>
@@ -1053,7 +1116,8 @@ PCDC& PCDC::forprintm( const T& m )
 	return *this;
 }
 
-template<typename T> PCDC& PCDC::forprinta( const T* arr , size_t len )
+template<typename T>
+PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
 	int il = 0;
 	for ( size_t i = 0; i < len; ++i )
@@ -1070,7 +1134,7 @@ CString address( T* p )
 	//getcout;
 	//cout << st( T* ) << sp;
 	CString cs;
-	if (p == nullptr )
+	if ( p == nullptr )
 	{
 		cs = "nullptr";
 	}
@@ -1179,6 +1243,60 @@ CString HEX( T& t , X&...args )
 	return ms;
 };
 
+template <typename B >
+CString bools( B b )
+{
+	CString cs;
+	if ( (bool)b == true )
+	{
+		cs = "true";
+	}
+	else
+	{
+		cs = "false";
+	}
+	return cs;
+}
+
+template <typename B , typename...X>
+CString bools( B b , X...args )
+{
+	CString cs;
+	cs += bools( b );
+	if ( cs.GetLength( ) >= 4 )
+	{
+		cs += "  ";
+	}
+	cs += bools( args... );
+	return cs;
+};
+
+template <typename T >
+CString sizeos( T& t )
+{
+	CString cs;
+	cs.Format( _T( "%lu" ) , sizeof( t ) );
+	return cs;
+}
+
+template <typename T , typename...X>
+CString sizeos( T& t , X&...args )
+{
+	static CString cs;
+	CString ms = sizeos( t );
+	if ( !ms.IsEmpty( ) )
+	{
+		cs += ms;
+	}
+	if constexpr ( ( sizeof...( args ) ) != 0 )
+	{
+		cs += ' ' + sizeos( args... );
+	}
+	ms = cs;
+	cs.Empty( );
+	return ms;
+};
+
 template <typename T >
 CString hex( T& t )
 {
@@ -1219,8 +1337,50 @@ bool swap( T& a , T& b )
 	return false;
 }
 
-template<typename V , typename T>
-T emax( V v )
+template<typename T>
+T gsum( initializer_list<T> v )
+{
+	T isum {};
+	if ( v.size( ) ) {
+		for ( const auto& i : v )
+		{
+			isum += i;
+		}
+	}
+	return isum;
+}
+
+template<typename A = long double , typename ...X>
+auto gsum( A a , X...args )
+{
+	using T = common_type_t<A , X...>;
+	initializer_list<T>il { (T)a,(T)( args )... };
+	return gsum<T>( il );
+}
+
+template<typename T>
+T gmin( initializer_list<T> v )
+{
+	T imin = *v.begin( );
+	if ( v.size( ) ) {
+		for ( const auto& i : v )
+		{
+			imin = min( imin , i );
+		}
+	}
+	return imin;
+}
+
+template<typename A = long double , typename ...X>
+auto gmin( A a , X...args )
+{
+	using T = common_type_t<A , X...>;
+	initializer_list<T>il { (T)a,(T)( args )... };
+	return gmin<T>( il );
+}
+
+template<typename T>
+T gmax( initializer_list<T> v )
 {
 	T imax = *v.begin( );
 	if ( v.size( ) ) {
@@ -1237,14 +1397,14 @@ auto gmax( A a , X...args )
 {
 	using T = common_type_t<A , X...>;
 	initializer_list<T>il { (T)a,(T)( args )... };
-	return emax<initializer_list<T> , T>( il );
+	return gmax<T>( il );
 }
 
 template<typename T = int , typename ...X>
 T imax( X...args )
 {
 	initializer_list<T>il { (T)( args )... };
-	return emax<initializer_list<T> , T>( il );
+	return gmax<T>( il );
 }
 
 template<typename T = int>
@@ -1352,8 +1512,6 @@ bool compare( T a , T b )
 	}
 }
 
-
-
 template <typename T = int , bool isort = bigtosmall>
 class icompset {
 public:
@@ -1423,4 +1581,6 @@ public:
 		return cout;
 	};
 };
+
+
 

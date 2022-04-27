@@ -25,7 +25,13 @@ PCDC& semi( PCDC& dc ) { return dc << ';'; }
 PCDC& nl( PCDC& dc ) { return  dc << '\n'; }
 PCDC& el( PCDC& dc ) { return  dc << '\n'; }
 PCDC& endl( PCDC& dc ) { return  dc << '\n'; }
-PCDC& cut( PCDC& dc ) { return dc << starline; }
+PCDC& cut( PCDC& dc )
+{ 
+	dc.settcolor( dccr.xteal );
+	dc << starline; 
+	dc.resettcolor( );
+	return dc;
+}
 PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
 void newl( ) { getcout;  cout << endl; }
 void cut( ) { getcout; cout << cut; }
@@ -331,7 +337,7 @@ PCDC& PCDC::operator <<( const int n )
 
 PCDC& PCDC::operator<<( const char c )
 {
-	if ( c == 0 ) { ms = "null(0)";}
+	if ( c == 0 ) { ms = "null(0)"; }
 	if ( c == '\n' ) {
 		p.y += step;
 		p.x = initalpos;
@@ -417,5 +423,47 @@ PCDC& PCDC::operator<<( const unsigned int n )
 	imresizeout( ms );
 	return *this;
 };
+
+PCDC& PCDC::operator<<( std::nullptr_t p )
+{
+	ms = "nullptr";
+	imresizeout( ms );
+	return *this;
+}
+
+CString bools( )
+{
+	CString cs;
+	cs = "}";
+	return cs;
+}
+
+CString tab( size_t Ntimes )
+{
+	CString cs;
+	NTIME( Ntimes )
+		cs += "    ";
+	return cs;
+}
+
+CString sp( size_t Ntimes )
+
+{
+	CString cs;
+	NTIME( Ntimes )
+		cs += ' ';
+	return cs;
+}
+
+CString letters( char lc , size_t Ntimes )
+
+{
+	CString cs;
+	if ( isprint( lc ) )
+		NTIME( Ntimes )
+		cs += lc;
+	return cs;
+}
+
 
 
