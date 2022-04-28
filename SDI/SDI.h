@@ -13,7 +13,7 @@
 #include "resource.h"       // 主符号
 #include <vector>
 
-
+class CDockablePane;
 
 
 using namespace std;

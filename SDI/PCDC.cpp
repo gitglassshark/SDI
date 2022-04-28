@@ -6,13 +6,9 @@ size_t PCDC::icount = 0;
 extern class CColor dccr;
 
 CString hex( ) { return CString( ); }
-
 CString HEX( ) { return CString( ); }
-
 CString oct( ) { return CString( ); }
-
 CString udec( ) { return CString( ); }
-
 CString address( ) { CString cs; return cs; }
 
 PCDC& sp( PCDC& dc ) { return  dc << "  "; }

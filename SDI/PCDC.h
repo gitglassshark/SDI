@@ -3,7 +3,6 @@
 #include "SDI.h"
 
 
-
 class PCDC;
 using XCout = PCDC;
 
@@ -307,6 +306,7 @@ CString letters( char lc , size_t Ntimes = 1 );
 					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
 					cout.resettcolor();\
 					__VA_ARGS__;
+
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout.title(L"sourece codes",LOWER);\
 					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
@@ -335,6 +335,19 @@ CString letters( char lc , size_t Ntimes = 1 );
 #define Msptr(va,tp) shared_ptr<tp>va=make_shared<tp>();
 #define Mptrs(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
 #define Msptrs(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
+
+
+#define abstype(a)		{std::string sc = "";\
+						if ( std::is_const<decltype( a )>::value )\
+						sc = "const ";\
+						sc += typeid( a ).name( );\
+						if ( std::is_reference<decltype( a )>::value )\
+						sc += "&";\
+						if ( std::is_rvalue_reference<decltype( a )>::value )\
+						sc += "&";\
+						cout << "type:  " << sc << "  size:  ";\
+						cout<< sizeof( a );\
+						cout<<"  HASH: " << typeid( a ).hash_code( ) << el;}
 
 //printsource(¡ª__FILE__,__LINE__);
 	//#define comment printsource(__FILE__,__LINE__);
@@ -421,8 +434,24 @@ public:
 	PCDC& operator<<( const size_t n );
 	template <typename A , typename ...X , typename R>
 	PCDC& operator<<( R( A::* p )( X... ) );
+	//template <typename P> PCDC& operator <<( P p )
+	//{
+	//	if ( std::is_member_pointer<decltype( p )>::value )
+	//	{
+	//		if ( p == nullptr )
+	//		{
+	//			ms = "nullptr";
+	//		}
+	//		else
+	//		{
+	//			ms.Format( _T( "[0x%p]" ) , p );
+	//		}
+	//		imresizeout( ms );
+	//		return *this;
+	//	}
+	//	return *this;
+	//};
 	PCDC& operator<<( std::nullptr_t p );
-
 	PCDC& operator<<( PCDC& dc ) {
 		if ( this == &dc )
 		{
@@ -544,24 +573,27 @@ public:
 	template <typename T , size_t N = std::tuple_size<T>::value> PCDC& disptup( T t );
 	template <typename A , typename B> bool comp( A a , B b ) { return a > b; };
 
-	template <typename T> PCDC& forprintr( const T* b , const T* e );
+	//template <typename T> PCDC& forprintr( const T* b , const T* e );
 	template <typename T> PCDC& forprintv( const T& v );
-	template <typename T> PCDC& forprintm( const T& m );
 	template <typename T> PCDC& forprinta( const T* arr , size_t len );
 
 	PCDC& adress( ) { *this << st( address( ) ) << sp; return *this; };
-
 	template <typename X> PCDC& address( X& a );
 	template <typename T , typename ...X> PCDC& address( T& a , X&...args );
 	template <typename X> PCDC& value( X* a );
 	template <typename T , typename ...X> PCDC& value( T* a , X*...args );
 
 	PCDC& type( ) { return *this; };
+	//template <typename T > PCDC& type( T a );
 	template <typename T > PCDC& type( T& a );
 	template <typename T > PCDC& type( T&& a );
+	//template <typename T , typename ...X> PCDC& type( T a , X...args );
 	template <typename T , typename ...X> PCDC& type( T& a , X&...args );
 	template <typename T , typename ...X> PCDC& type( T&& a , X&&...args );
-	template <typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...> a );
+	template<typename A , typename ...T > PCDC& TypeCount( A& a , T&... t );
+	template <typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...>& a );
+	template<typename A , typename ...T > PCDC& TypeCount( A&& a , T&&... t );
+	template <typename ...A , template<typename ...T> typename B> PCDC& TypeCount( B<A...>&& a );
 
 	template <typename X> PCDC& pt( X a );
 	template <typename T , typename ...X> PCDC& pt( T a , X...args );
@@ -704,7 +736,8 @@ PCDC& PCDC::operator <<( const unique_ptr<X>& unptr )
 template <typename A , typename B>
 PCDC& PCDC::operator <<( const pair<A , B>& i )
 {
-	*this << "{ " << i.first << ", " << i.second << "}   ";
+	auto& [first , second] = i;
+	*this << "{ " << first << ", " << second << "}   ";
 	return *this;
 }
 
@@ -741,7 +774,7 @@ PCDC& PCDC::operator <<( const map<T , X>& m )
 	if ( !m.size( ) )
 		return *this;
 	else
-		return forprintm( m );
+		return forprintv( m );
 }
 
 template <typename T , typename X>
@@ -750,7 +783,7 @@ PCDC& PCDC::operator <<( const multimap<T , X>& m )
 	if ( !m.size( ) )
 		return *this;
 	else
-		return forprintm( m );
+		return forprintv( m );
 }
 
 template <typename...T>
@@ -868,30 +901,89 @@ T& PCDC::MakeEleRandom( T& rc , const size_t elesize , const int mod )
 	return rc;
 }
 
+template <typename X>
+PCDC& PCDC::address( X& a )
+{
+	//*this << st( T& ) << sp;
+	if ( &a == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , &a );
+	}
+	imresizeout( ms );
+	*this << '\t';
+	return *this;
+}
+
+template <typename T , typename ...X>
+PCDC& PCDC::address( T& a , X&...args )
+{
+	//*this << ( sizeof...( args ) ) << st( T... ) << sp;
+	if ( &a == nullptr )
+	{
+		ms = "nullptr";
+	}
+	else
+	{
+		ms.Format( _T( "[0x%p]" ) , &a );
+	}
+	imresizeout( ms );
+	return address( args... );
+}
+
 template <typename T >
 PCDC& PCDC::type( T& a )
 {
-	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
+
+	std::string sc = "";
+	if ( std::is_const<decltype( a )>::value )
+		sc = "const ";
+	sc += typeid( a ).name( );
+	if ( std::is_reference<decltype( a )>::value )
+		sc += "&";
+	*this << "type:  " << sc << "  size:  ";
 	settcolor( dccr.gteal );
 	*this << sizeof( a );
 	resettcolor( );
-	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
+	*this << "  HASH: " << typeid( a ).hash_code( ) << el;
 	return *this;
 };
+template <typename T , typename ...X>
+PCDC& PCDC::type( T& a , X&...args )
+{
+	type( a );
+	return type( args... );
+}
+
+template <typename T , typename ...X>
+PCDC& PCDC::type( T&& a , X&&...args )
+{
+	type( a );
+	return type( args... );
+}
 
 template <typename T >
 PCDC& PCDC::type( T&& a )
 {
-	*this << "type:  " << typeid( (T&&)a ).name( ) << "  size:  ";
+	std::string sc = "";
+	if ( std::is_const<decltype( a )>::value )
+		sc = "const ";
+	sc += typeid( a ).name( );
+	if ( std::is_reference<decltype( a )>::value )
+		sc += "&";
+	*this << "type:  " << sc << "  size:  ";
 	settcolor( dccr.gteal );
-	*this << sizeof( (T&&)a );
+	*this << sizeof( a );
 	resettcolor( );
-	*this << "  HASH: " << typeid( (T&&)a ).hash_code( ) << el;
+	*this << "  HASH: " << typeid( a ).hash_code( ) << el;
 	return *this;
 };
 
 template<typename ...A , template<typename ...T> typename B>
-PCDC& PCDC::TypeCount( B<A...> a )
+PCDC& PCDC::TypeCount( B<A...>& a )
 {
 	*this << "type:  " << typeid( a ).name( );
 	*this << "  size:  " << sizeof( a );
@@ -901,6 +993,50 @@ PCDC& PCDC::TypeCount( B<A...> a )
 	resettcolor( );
 	return *this;
 }
+
+template<typename A , typename ...T >
+PCDC& PCDC::TypeCount( A& a , T&... t )
+{
+	TypeCount( a );
+	*this << endl;
+	if constexpr ( sizeof...( T ) == 1 )
+	{
+		TypeCount( a );
+	}
+	else
+	{
+		TypeCount( t... );
+	}
+	return *this;
+}
+
+template <typename ...A , template<typename ...T> typename B>
+PCDC& PCDC::TypeCount( B<A...>&& a )
+{
+	*this << "type:  " << typeid( a ).name( );
+	*this << "  size:  " << sizeof( a );
+	*this << "  HASH: " << typeid( a ).hash_code( );
+	settcolor( dccr.midyellow );
+	*this << " A<T...> T...count is :" << sizeof...( A ) << sp;
+	resettcolor( );
+	return *this;
+};
+
+template<typename A , typename ...T >
+PCDC& PCDC::TypeCount( A&& a , T&&... t )
+{
+	TypeCount( a );
+	*this << endl;
+	if constexpr ( sizeof...( T ) == 1 )
+	{
+		TypeCount( a );
+	}
+	else
+	{
+		TypeCount( t... );
+	}
+	return *this;
+};
 
 template <typename T>
 PCDC& PCDC::title( T t , bool i )
@@ -1022,53 +1158,6 @@ PCDC& PCDC::value( T* a , X*...args )
 	return value( args... );
 }
 
-template <typename X>
-PCDC& PCDC::address( X& a )
-{
-	//*this << st( T& ) << sp;
-	if ( &a == nullptr )
-	{
-		ms = "nullptr";
-	}
-	else
-	{
-		ms.Format( _T( "[0x%p]" ) , &a );
-	}
-	imresizeout( ms );
-	*this << '\t';
-	return *this;
-}
-
-template <typename T , typename ...X>
-PCDC& PCDC::address( T& a , X&...args )
-{
-	//*this << ( sizeof...( args ) ) << st( T... ) << sp;
-	if ( &a == nullptr )
-	{
-		ms = "nullptr";
-	}
-	else
-	{
-		ms.Format( _T( "[0x%p]" ) , &a );
-	}
-	imresizeout( ms );
-	return address( args... );
-}
-
-template <typename T , typename ...X>
-PCDC& PCDC::type( T& a , X&...args )
-{
-	type( (T&&)a );
-	return type( (X&&)args... );
-}
-
-template <typename T , typename ...X>
-PCDC& PCDC::type( T&& a , X&&...args )
-{
-	type( (T&&)a );
-	return type( (X&&)args... );
-}
-
 template <typename S>
 void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 {
@@ -1080,17 +1169,6 @@ void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 	}
 }
 
-template<typename T>
-PCDC& PCDC::forprintr( const T* b , const T* e )
-{
-	int il = 0;
-	for ( const auto* it = b; it != e; ++it )
-	{
-		*this << *it << spchar;
-		linemod( ++il , ilinemod );
-	}
-	return *this;
-}
 
 template<typename T>
 PCDC& PCDC::forprintv( const T& v )
@@ -1099,18 +1177,6 @@ PCDC& PCDC::forprintv( const T& v )
 	for ( const auto& i : v )
 	{
 		*this << i << spchar;
-		linemod( ++il , ilinemod );
-	}
-	return *this;
-}
-
-template<typename T>
-PCDC& PCDC::forprintm( const T& m )
-{
-	int il = 0;
-	for ( const auto& i : m )
-	{
-		*this << i;
 		linemod( ++il , ilinemod );
 	}
 	return *this;
@@ -1401,10 +1467,11 @@ auto gmax( A a , X...args )
 }
 
 template<typename T = int , typename ...X>
-T imax( X...args )
+auto imax( X...args )
 {
 	initializer_list<T>il { (T)( args )... };
-	return gmax<T>( il );
+	return il;
+	//return gmax<T>( il );
 }
 
 template<typename T = int>
@@ -1442,18 +1509,6 @@ template<typename T = int>
 T lexzero( T a = T( ) )
 {
 	return T( );
-}
-
-template<typename int ic = 100 , typename C>
-auto sum( C c )
-{
-	C t;
-	auto a = ( *c.begin( ) - *c.begin( ) );
-	for ( size_t icount = 0; icount < ic; ++icount )
-		t.insert( t.end( ) , *c.begin( ) );
-	for ( auto i : t )
-		a += i;
-	return a;
 }
 
 template<typename T >
@@ -1582,5 +1637,40 @@ public:
 	};
 };
 
-
+//template <typename T >
+//PCDC& PCDC::type( T a )
+//{
+//
+//	std::string sc = "";
+//	if ( std::is_const<decltype( a )>::value )
+//		sc = "const ";
+//	sc += typeid( a ).name( );
+//	if ( std::is_reference<decltype( a )>::value )
+//		sc += "&";
+//	*this << "type:  " << sc << "  size:  ";
+//	settcolor( dccr.gteal );
+//	*this << sizeof( a );
+//	resettcolor( );
+//	*this << "  HASH: " << typeid( a ).hash_code( ) << el;
+//	return *this;
+//};
+//
+//template <typename T , typename ...X>
+//PCDC& PCDC::type( T a , X...args )
+//{
+//	type( a );
+//	return type(args... );
+//}
+//
+//template<typename T>
+//PCDC& PCDC::forprintr( const T* b , const T* e )
+//{
+//	int il = 0;
+//	for ( const auto* it = b; it != e; ++it )
+//	{
+//		*this << *it << spchar;
+//		linemod( ++il , ilinemod );
+//	}
+//	return *this;
+//}
 

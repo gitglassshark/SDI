@@ -1292,7 +1292,6 @@ void CSDIView::OnStlMapMenu( )
 	string name = "map second";
 	map<string , pfunc>::iterator itt = menu.begin( );
 	lscode(
-
 		itt->second( cout , itt->first );
 	itt->second( cout , name );
 	);
@@ -1300,35 +1299,21 @@ void CSDIView::OnStlMapMenu( )
 	lscode(
 		cout << *itt << tab << &ntest << endl << cut;
 	cout << ( itt->second == &ntest ) << tab << st( itt->second == &ntest , is equal ) << nl;
+	); 
+	code(
+		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
+	multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	pair<int , string>paone { 100,"pair" };
+	auto & [i , x] = paone;
 	);
 	lscode(
-		void* p = nullptr;
-	cout << p << el;
-	cout << ( int ) nullptr << tab << NULL << el;
-	cout << sizeof( nullptr ) << tab << sizeof( 0 ) << tab << sizeof( NULL ) << tab << sizeof( p ) << el;
+		cout << i << com << x << endl;
+	for ( const auto& [first , second] : mif )
+		cout << first << com << second << semi << tab;
+	cout << endl;
 	);
-	lscode(
-		const int size = 80;
-	int* pint = new int[size];
-	long long int sum = 0;
-	for ( size_t i = 0; i < size; ++i )
-	{
-		pint[i] = 1 + i;
-		sum += pint[i];
-	}
-	int* plint = new int;
-	*plint = sizeof( pint );
-	cout << "array size is : " << *plint << tab << "sum is " << sum << "  array elements is :" << el;
-	for ( size_t i = 0; i < size; i++ )
-	{
-		cout << pint[i] << ", ";
-		if ( ( 1 + i ) % 20 == 0 )
-			cout << cut;
-	}
-	cout << el;
-	delete[ ]pint;
-	delete[ ]plint;
-	)
+
+
 
 }
 
@@ -1633,7 +1618,6 @@ void CSDIView::OnPCDCFunctionTest( )
 		); lscode(
 			cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << el;
 		);
-
 	};
 
 
@@ -2060,6 +2044,28 @@ void CSDIView::OnPtrUniqueTest( )
 	unique_ptr<int>unaptr( pa );
 	cout << *unaptr << tab << unaptr << tab << address( unaptr ) << tab << pa << tab; cout.type( unaptr );
 
+	lscode(
+	size = 80;
+	int* pint = new int[size];
+	long long int sum = 0;
+	for ( size_t i = 0; i < size; ++i )
+	{
+		pint[i] = 1 + i;
+		sum += pint[i];
+	}
+	int* plint = new int;
+	*plint = sizeof( pint );
+	cout << "array size is : " << *plint << tab << "sum is " << sum << "  array elements is :" << el;
+	for ( size_t i = 0; i < size; i++ )
+	{
+		cout << pint[i] << ", ";
+		if ( ( 1 + i ) % 20 == 0 )
+			cout << cut;
+	}
+	cout << el;
+	delete[ ]pint;
+	delete[ ]plint;
+	)
 }
 
 void CSDIView::OnSTLFuncTest( )
@@ -2688,7 +2694,6 @@ void CSDIView::OnDcTcolorTest( )
 void CSDIView::OnGroundTest( )
 {
 	coutExtSetSimulation;
-	cout << cl;
 
 	test00( cout );
 	test01( cout );
