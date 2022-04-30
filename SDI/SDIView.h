@@ -111,6 +111,7 @@ public:
 	afx_msg void OnStlStackTest( );
 	afx_msg void OnStlFunctorTypereloadTest( );
 	afx_msg void OnDcTcolorTest( );
+	afx_msg void OnTaskRuntimeTest( );
 };
 
 #ifndef _DEBUG  // SDIView.cpp 中的调试版本

@@ -23,10 +23,7 @@ PCDC& el( PCDC& dc ) { return  dc << '\n'; }
 PCDC& endl( PCDC& dc ) { return  dc << '\n'; }
 PCDC& cut( PCDC& dc )
 { 
-	dc.settcolor( dccr.xteal );
-	dc << starline; 
-	dc.resettcolor( );
-	return dc;
+	return dc.settcolor( dccr.xteal ).cut().resettcolor();
 }
 PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
 void newl( ) { getcout;  cout << endl; }
@@ -34,19 +31,9 @@ void cut( ) { getcout; cout << cut; }
 
 PCDC& starline( PCDC& dc )
 {
-	CString cs;
-	cs = dc.mlinechar;
-	CSize size = dc.GetOutputTextExtent( cs );
-	dc.m_pwnd->GetClientRect( &dc.mrect );
-	//auto h = dc.mrect.bottom - (dc.mrect.top + dc.initalpos * 2);
-	auto w = dc.mrect.right - ( dc.mrect.left + dc.initalpos * 2 );
-	size_t icount = w / size.cx;
-	for ( size_t i = 0; i < icount - 1; ++i )
-	{
-		cs += dc.mlinechar;
-	}
-	dc << cs << el;
-	return dc;
+	if ( dc.p.x != dc.mrect.left + dc.initalpos )
+		dc << nl;
+	return 	dc << cut;
 }
 
 PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
@@ -166,8 +153,8 @@ PCDC& PCDC::clearscreen( const CRect* r , const COLORREF* cr )
 	{
 		cr != nullptr ? m_bk = *cr : true;
 		p.x = mrect.left + initalpos;
-		p.y = mrect.top + initalpos - 5;
-
+		//p.y = mrect.top + initalpos - 5;
+		p.y = mrect.top + initalpos;
 		rect.left = 0;
 		rect.top = 0;
 		FillSolidRect( rect , m_bark );

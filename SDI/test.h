@@ -3,6 +3,10 @@
 #include "PCDC.h"
 #include "pch.h"
 
+
+
+void OnTaskRuntimeTest1( PCDC &dc );
+void OnTaskRuntimeTest2( PCDC &dc );
 void test00( PCDC& dc );
 void test01( PCDC& dc );
 void test02( PCDC& dc );

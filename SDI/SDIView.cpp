@@ -72,6 +72,7 @@ BEGIN_MESSAGE_MAP( CSDIView , CView )
 	ON_COMMAND( ID_STL_STACK_TEST , &CSDIView::OnStlStackTest )
 	ON_COMMAND( ID_STL_FUNCTOR_TYPERELOAD_TEST , &CSDIView::OnStlFunctorTypereloadTest )
 	ON_COMMAND( ID_DC_TCOLOR_TEST , &CSDIView::OnDcTcolorTest )
+	ON_COMMAND( ID_TASK_RUNTIME_TEST , &CSDIView::OnTaskRuntimeTest )
 END_MESSAGE_MAP( )
 
 // CSDIView 构造/析构
@@ -1299,7 +1300,7 @@ void CSDIView::OnStlMapMenu( )
 	lscode(
 		cout << *itt << tab << &ntest << endl << cut;
 	cout << ( itt->second == &ntest ) << tab << st( itt->second == &ntest , is equal ) << nl;
-	); 
+	);
 	code(
 		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
 	multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
@@ -1537,7 +1538,7 @@ void CSDIView::OnPCDCFunctionTest( )
 	SimulationStdCout;
 	static size_t imod = 0;
 	++imod;
-	if ( imod == 7 )
+	if ( imod == 8 )
 		imod = 1;
 
 	//打印整型数据
@@ -1598,25 +1599,6 @@ void CSDIView::OnPCDCFunctionTest( )
 		const long double clda = 262.8;
 		); lscode(
 			cout << fa << sp << da << sp << lda << sp << clda << sp << 0.999 << sp << -100.01 << sp << 2 / 3.0 << sp << 100.88 << sp << -35.22 << endl;
-		);
-
-		// "打印指针型数据：" 
-		cout << "打印指针型数据：" << el;
-		code(
-			int* ip = &ia;
-		char* cp = &ca;
-		const char* ccp = &ca;
-		long* lp = &la;
-		long long* llp = &lla;
-		double* dp = &da;
-		); lscode(
-			cout << ip << sp << *ip << semi;
-		cout << sp << *cp << *ccp << semi;
-		cout << lp << sp << *lp << semi;
-		cout << llp << sp << *llp << semi;
-		cout << dp << sp << *dp << endl;
-		); lscode(
-			cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << el;
 		);
 	};
 
@@ -1891,6 +1873,34 @@ void CSDIView::OnPCDCFunctionTest( )
 			cout.prints( "a address is :" , &a , tab( ) , " b address is " , address( b ) , tab( ) , " a sizeof is  " , sizeof( a ) , tab( ) , " b sizeof is " , sizeof( b ) , tab( ) , letters( '*' , 8 ) );
 		);
 
+		// "打印指针型数据：" 
+		cout << "打印指针型数据：" << el;
+		code(
+			int ia = 10;
+		size_t icount = 100;
+		int& ria = ia;
+		char   ca = 'c';
+		int&& rra = 19;
+		long la = 50;
+		const long cla = 50;
+		long long lla = 256;
+		double da = 22.2;
+		float fa = 1222.32;
+		int* ip = &ia;
+		char* cp = &ca;
+		const char* ccp = &ca;
+		long* lp = &la;
+		long long* llp = &lla;
+		double* dp = &da;
+		); lscode(
+			cout << ip << sp << *ip << semi;
+		cout << *cp << *ccp << semi;
+		cout << lp << sp << *lp << semi;
+		cout << llp << sp << *llp << semi;
+		cout << dp << sp << *dp << endl;
+		); lscode(
+			cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << el;
+		);
 	}
 }
 
@@ -2045,7 +2055,7 @@ void CSDIView::OnPtrUniqueTest( )
 	cout << *unaptr << tab << unaptr << tab << address( unaptr ) << tab << pa << tab; cout.type( unaptr );
 
 	lscode(
-	size = 80;
+		size = 80;
 	int* pint = new int[size];
 	long long int sum = 0;
 	for ( size_t i = 0; i < size; ++i )
@@ -2703,6 +2713,161 @@ void CSDIView::OnGroundTest( )
 	test05( cout );
 
 }
+
+void OnTaskRuntimeTest1( PCDC& cout )
+{
+	int x = 100;
+	size_t y = 100;
+	int* p;
+
+	code( BEGINTEST( 100'000 ) { x++; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { ++x; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { y--; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { --y; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { x -= y; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { p = new int; delete p; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { p = new int( 5 ); delete p; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { p = new int( 0 ); delete p; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { p = new int[20]; delete[ ]p; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { p = new int[20]( 5 ); delete[ ] p; }ENDTEST );
+
+	code( BEGINTEST( 1000'000 ) { x = 5; }ENDTEST );
+
+	code( BEGINTEST( 1000'000 ) { x -= 5; }ENDTEST );
+
+	code( BEGINTEST( 1000'000 ) { int z = 5; }ENDTEST );
+
+	code( BEGINTEST( 1000'000 ) { int z { 5 }; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { CString cs = _T( " " ); }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { string cs = ( " " ); }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { wstring cs = _T( " " ); }ENDTEST );
+
+}
+
+void OnTaskRuntimeTest2( PCDC& cout )
+{
+	cout << "开始进行基本功能运行时间测试" << cut;
+	code(
+		class AV
+	{
+	public:
+		int run( ) { return 0; }
+	};
+	); code(
+		class BV
+	{
+	public:
+		virtual int run( ) { return 0; }
+	};
+	); code(
+		unsigned long long int x = 11;
+	unsigned long long int sx = 1;
+	size_t y = 1;
+	int* p;
+	); code(
+		AV a;
+	BV b;
+	AV * pva = &a;
+	AV * pvb = (AV*)&b;
+	CRect rm;
+	);
+
+	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { while ( x < 10 ) x++; x = 1; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { do { x++; } while ( x < 10 ); x = 1; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { if ( x > 10000 )--x; else ++x; }ENDTEST );
+
+	code( BEGINTEST( 100'000 ) { x+sx; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { add<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { mul<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { divv<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { sub<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { sx* sx; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { a.run( ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { b.run( ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { pva->run( ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { pvb->run( ); }ENDTEST );
+
+	//code( BEGINTEST( 100'000 ) { string cs = ( " " ); }ENDTEST );
+
+	//code( BEGINTEST( 100'000 ) { wstring cs = _T( " " ); }ENDTEST );
+
+}
+
+void OnTaskRuntimeTest3( PCDC& cout )
+{
+	cout << "API功能运行时间测试" << cut;
+	code(
+		class AV
+	{
+	public:
+		int run( ) { return 0; }
+	};
+	); code(
+		class BV
+	{
+	public:
+		virtual int run( ) { return 0; }
+	};
+	); code(
+		unsigned long long int x = 11;
+	unsigned long long int sx = 1;
+	size_t y = 1;
+	int* p;
+	); code(
+		AV a;
+	BV b;
+	AV * pva = &a;
+	AV * pvb = (AV*)&b;
+	CRect rm;
+	CString cs( "#1234567890 test length string out 1234567890# " );
+	);
+	code( BEGINTEST( 100'000 ) { cout.m_pwnd->GetClientRect( &rm ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { sizeof( int ); }ENDTEST );
+	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
+	cout << cl;
+	code( BEGINTEST( 50 ) { cout.imresizeout( cs ); }ENDTEST );
+	code( BEGINTEST( 50 ) { cout.msout( cs ); }ENDTEST );
+	//code( BEGINTEST( 100'000 ) { }ENDTEST );
+	//code( BEGINTEST( 100'000 ) { }ENDTEST );
+
+}
+
+void CSDIView::OnTaskRuntimeTest( )
+{
+	coutExtSetSimulation;
+	static size_t imod = 0;
+	++imod;
+	if ( imod == 4 )
+		imod = 1;
+	//
+	if ( imod == 1 )
+	{
+		OnTaskRuntimeTest1( cout );
+	}
+	//
+	if ( imod == 2 )
+	{
+		OnTaskRuntimeTest2( cout );
+	}
+	if ( imod == 3 )
+	{
+		OnTaskRuntimeTest3( cout );
+	}
+
+}
+
+
+
 
 
 

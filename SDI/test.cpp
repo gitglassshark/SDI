@@ -3,57 +3,81 @@
 #include "test.h"
 
 
-template<template<typename A,typename ...Z> class  C,typename T , typename ...X>
-auto build( T a , X... args )
-{
-	C<T>il { a,args... };
-	getcout;
-	cout <<"in build "<< il<<sp<<"sizeof args is "<<sizeof...(args)+1 << endl;
-	return il;
-}
-
-class A {
-public:
-	void getid( ) {}
-};
-
 void test00( PCDC& cout )
 {
-	code(
-		auto il = build<list>( 1 , 2 , 3 , 4 , 5 , 6 , 7 );
-	); code(
-		auto iv = build<vector>( 2 , 2 , 3 , 4 , 5 , 6 , 7 );
-	); code(
-		cout << iv << endl;
-	); lcode(
-		cout << il << endl;
-	);
-}
-
-void test06( PCDC& cout )
-{
-	map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
-	multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
-	pair<int , string>paone { 100,"pair" };
-	auto& [i , x] = paone;
-
-	lscode(
-		cout << i << com << x << endl;
-	); lscode(
-		for ( const auto& [first , second] : mif )
-			cout << first << com << second << semi << sp;
-	cout << endl;
-	); lscode(
-		for ( const auto& [first , second] : mmif )
-			cout << first << com << second << semi << sp;
-	cout << endl;
-	);
+	vector<int>va { 2,3,4,5,6 };
+	int x = 100;
+	size_t y = 100;
+	int* p;
+	CString cs = _T( "1" );
+	wstring ss = L"1";
+	char c = '1';
+	const char* cp = "char *p";
+	cp = "char *p2";
+	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
+	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
+	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
+	 cout << cut;
+	 cout << starline;
+	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
+	 cout.cut( );
+	 cout << cp; cout.cut( );
+	 cout.cut( );
+	 cout.title( st( ok ) );
 
 }
+
+//void test07( PCDC& cout )
+//{
+// /*lscode(
+//CString cs;
+//cs = "1234567890";
+//); lscode(
+//CSize size = cout.GetOutputTextExtent( cs );;
+//); lscode(
+//	cout << size.cx << sp << size.cy << endl;
+//); lscode(
+//	size = cout.GetOutputTextExtent( cs );;
+//); lscode(
+//	cout << size.cx << sp << size.cy << endl;
+//);
+//code(
+//	CRect mrect;
+//)
+//lscode(
+//	cout.m_pwnd->GetClientRect( &mrect );
+//); lscode(
+//	cout << mrect.top << sp << mrect.left << sp << mrect.bottom << sp << mrect.right << endl;
+//); */
+	//int i = 1;
+	//auto start = clock( );
+	//NTIME( 1000  ) {
+	//	//cout << 1;
+	//	cout << i;
+	//	//size = cout.GetOutputTextExtent( cs );
+	//	//cout.m_pwnd->GetClientRect( &mrect );
+	//	//cout.FillSolidRect( mrect , cout.m_bk );
+	//	//cout.clearscreen( );
+	//}
+	//auto end = clock( );
+	//cout << cut;
+	//cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
+	//auto start = clock( );
+	//vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
+	//NTIME( 100 )
+	//{
+	//	cout << va;
+	//	for ( auto& i : va )
+	//	{
+	//		cout << i << tab;
+	//		cout << cut;
+	//	}
+	//	auto end = clock( );
+	//	cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
+	//}
 
 void test01( PCDC& cout )
 {
-
 
 }
 
@@ -145,6 +169,18 @@ void macrotest( )
 	//++imod;
 	//if ( imod == 3 )
 	//	imod = 1;
+	//template<template<typename A , typename ...Z> class  C , typename T , typename ...X>
+	//auto build( T a , X... args )
+	//{
+	//	C<T>il { a,args... };
+	//	getcout;
+	//	cout << "in build " << il << sp << "sizeof args is " << sizeof...( args ) + 1 << endl;
+	//	return il;
+	//}
+	// 	auto il=build< initializer_list>( 1 , 2 , 3 , 5 , 5 );
+	//auto ii = build< initializer_list>( 2 , 2 , 3 , 5 , 5 );
+
+	//cout << il << sp << ii << endl;
 
 	//cout << ( 0 == NULL ) << tab << ( 0 == nullptr ) << tab << ( NULL == nullptr ) << endl;
 	////sms( print a message , , , for test sms macro , ; .*<>[ ] { }\ , / ~!^ %$#@ - +*'"?:' / 0123456789... );
@@ -287,3 +323,75 @@ void macrotest( )
 	//	//);
 }
 
+//inline const CSize& imresizeout( const CString& cs )
+//{
+//	m_pwnd->GetClientRect( &mrect );
+//	msize = GetOutputTextExtent( cs );
+//
+//	CString news( 'x' );
+//	auto size = GetOutputTextExtent( news );
+//
+//	LONG linelen = mrect.right - mrect.left - initalpos * 2;
+//	LONG strlen = msize.cx;
+//	int cslen = cs.GetLength( );
+//	news = cs;
+//	CString heads;
+//	CString tails;
+//	int tkpos = cslen * linelen / strlen - 1;
+//	if ( strlen > ( linelen - size.cx ) ) {
+//		for ( int i = cslen; i >= 0; i -= tkpos )
+//		{
+//			heads = news.Mid( 0 , tkpos );
+//			tails = news.Mid( tkpos , news.GetLength( ) );
+//			imresizeout( heads );
+//			news = tails;
+//		}
+//	}
+//	else {
+//		if ( p.x + msize.cx >= mrect.right - mrect.left - initalpos )
+//		{
+//			p.x = mrect.left + initalpos;
+//			p.y += step;
+//		}
+//		if ( p.y >= mrect.bottom - mrect.top - initalpos )
+//		{
+//			this->FillSolidRect( mrect , m_bk );
+//			this->clearscreen( );
+//			p.y = mrect.top + initalpos + wbar;
+//		}
+//		//need recalc ned***
+//		TextOut( p.x , p.y , cs );
+//		p.x += msize.cx;
+//	}
+//	return msize;
+//}
+
+//template<template<typename B , typename ...D>typename A , typename T , typename ...X>
+//auto builda( T a , X... Args )
+//{
+//	A<T> inita { a , Args... };
+//	
+//	getcout;
+//	cout << "in build " << inita << sp << "sizeof args is " << sizeof...( Args ) + 1 << endl;
+//	return inita;
+//}
+//
+//template<template<typename A , typename ...Z> class  C , typename T , typename ...X>
+//auto build( T a , X... args )
+//{
+//	C<T>il { a,args... };
+//	getcout;
+//	cout << "in build " << il << sp << "sizeof args is " << sizeof...( args ) + 1 << endl;
+//	return il;
+//}
+//
+//struct AF
+//
+//{
+//	int af = 7;
+//};
+//
+//class A :public AF {
+//public:
+//	int getid( ) { return af; }
+//};

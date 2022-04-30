@@ -303,14 +303,14 @@ CString letters( char lc , size_t Ntimes = 1 );
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
 #define code(...)	cout.settcolor(dccr.smokewhite);\
-					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
+					cout<<"{ "#__VA_ARGS__<<L" }";\
 					cout.resettcolor();\
 					__VA_ARGS__;
 
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\
-					cout.title(L"sourece codes",LOWER);\
-					cout<<"{ "#__VA_ARGS__<<L" }"<<el;\
-					cout.title(L"run result",LOWER);\
+					cout.title(L"sourcecodes",LOWER);\
+					cout<<"{ "#__VA_ARGS__<<L" }";\
+					cout.title(L"outresult",LOWER);\
 					cout.resettcolor();\
 					__VA_ARGS__;
 
@@ -335,9 +335,22 @@ CString letters( char lc , size_t Ntimes = 1 );
 #define Msptr(va,tp) shared_ptr<tp>va=make_shared<tp>();
 #define Mptrs(va,tp,n) unique_ptr<tp[]>va=make_unique<tp[]>(n);
 #define Msptrs(va,tp,n) shared_ptr<tp[]>va=make_shared<tp[]>(n);
+#define BEGINTEST(times)  {size_t itimes=times;\
+					auto start = clock( );\
+					NTIME( itimes){
 
+#define ENDTEST 	};auto end = clock( );\
+					cout<<starline;\
+					cout <<itimes<<"'s Totaltimes: ";\
+					cout<<long double( ( (long double)end - (long double)start ) * 1000 / CLOCKS_PER_SEC ) << "\'ms.";\
+					cout<<"   Once: ";\
+					cout<<long double( ( (long double)end - (long double)start ) * 1000*1000) / (CLOCKS_PER_SEC *itimes);\
+					cout<<"\'us, ";\
+					cout<<long double( ( (long double)end - (long double)start ) * 1000*1000*1000) / (CLOCKS_PER_SEC *itimes);\
+					cout<<"\'ns.   Total clock: "<<end-start<<sp;\
+					cout<<st(CLOCKS_PER_SEC :)<<CLOCKS_PER_SEC<<'.'<<endl;}
 
-#define abstype(a)		{std::string sc = "";\
+#define abstype(a)		{ std::string sc = "";\
 						if ( std::is_const<decltype( a )>::value )\
 						sc = "const ";\
 						sc += typeid( a ).name( );\
@@ -467,8 +480,43 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
-	inline const CSize& imresizeout( const CString& cs )
+	const CSize& imresizeout( const CString& cs )
 	{
+		m_pwnd->GetClientRect( &mrect );
+		msize = GetOutputTextExtent( cs );
+
+		LONG linelen = mrect.right - initalpos - p.x;
+		LONG strlen = msize.cx;
+		int cslen = cs.GetLength( );
+		if ( strlen > linelen )
+		{
+			int tkpos = ( linelen * cslen ) / strlen;
+			imresizeout( cs.Mid(0,tkpos));
+			imresizeout( cs.Mid(tkpos,cs.GetLength()) );
+		}
+		else
+		{
+			//need recalc ned***
+			if ( !cs.IsEmpty( ) ) {
+				TextOut( p.x , p.y , cs );
+				p.x += msize.cx;
+				if ( p.x >= ( mrect.right - initalpos * 2 ) )
+				{
+					p.x = mrect.left + initalpos;
+					p.y += step;
+				}
+				if ( p.y >= mrect.bottom - mrect.top - initalpos )
+				{
+					this->clearscreen( );
+					p.y = mrect.top + initalpos;
+				}
+			}
+		}
+		return msize;
+	}
+	const CSize& msout( const CString& cs )
+	{
+		//this->GetTextExtent
 		m_pwnd->GetClientRect( &mrect );
 		msize = GetOutputTextExtent( cs );
 
@@ -482,16 +530,18 @@ public:
 		CString heads;
 		CString tails;
 		int tkpos = cslen * linelen / strlen - 1;
-		if ( strlen > ( linelen - size.cx ) ) {
+		if ( strlen > ( linelen - size.cx ) ) 
+		{
 			for ( int i = cslen; i >= 0; i -= tkpos )
 			{
 				heads = news.Mid( 0 , tkpos );
 				tails = news.Mid( tkpos , news.GetLength( ) );
-				imresizeout( heads );
+				msout( heads );
 				news = tails;
 			}
 		}
-		else {
+		else
+		{
 			if ( p.x + msize.cx >= mrect.right - mrect.left - initalpos )
 			{
 				p.x = mrect.left + initalpos;
@@ -501,7 +551,7 @@ public:
 			{
 				this->FillSolidRect( mrect , m_bk );
 				this->clearscreen( );
-				p.y = mrect.top + initalpos + wbar;
+				p.y = mrect.top + initalpos;
 			}
 			//need recalc ned***
 			TextOut( p.x , p.y , cs );
@@ -509,6 +559,7 @@ public:
 		}
 		return msize;
 	}
+
 	PCDC& resettcolor( );
 	PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
 	PCDC& settcolor( COLORREF tk );
@@ -516,6 +567,25 @@ public:
 	PCDC& setimod( int imod );
 	template <typename T = CString>
 	PCDC& title( T t , bool ib = true );
+	PCDC& cut(CString t=CString() , char c = '-' , bool ib = true )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		CSize charsize = GetOutputTextExtent( CString( mlinechar ) );
+		long w;
+		if ( ib )
+		{
+			w = mrect.right -  initalpos - p.x;
+		}
+		else
+		{
+			w = mrect.right - ( mrect.left + initalpos * 2 );
+
+		};
+		auto icount = w / charsize.cx;
+		CString line( mlinechar , icount );
+		imresizeout( line );
+		return *this;
+	};
 	char setlinechar( const char& c = '=' );
 	PCDC& clearscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
 	PCDC& location( )
@@ -558,7 +628,7 @@ public:
 	template <typename T> PCDC& operator <<( const list<T>& l );
 	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
 	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
-	template <typename... X> PCDC& operator <<( const vector<X...>& v );
+	template <typename... X> inline PCDC& operator <<( const vector<X...>& v );
 	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
 	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
 	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
@@ -569,12 +639,12 @@ public:
 
 public:
 	template <typename T> T& MakeEleRandom( T& rc , const size_t elesize = 20 , const int mod = 10 );
-	template <typename S = size_t> void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
+	template <typename S = size_t> inline void linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) = el , char* stail = nullptr );
 	template <typename T , size_t N = std::tuple_size<T>::value> PCDC& disptup( T t );
 	template <typename A , typename B> bool comp( A a , B b ) { return a > b; };
 
 	//template <typename T> PCDC& forprintr( const T* b , const T* e );
-	template <typename T> PCDC& forprintv( const T& v );
+	template <typename T> inline PCDC& forprintv( const T& v );
 	template <typename T> PCDC& forprinta( const T* arr , size_t len );
 
 	PCDC& adress( ) { *this << st( address( ) ) << sp; return *this; };
@@ -760,7 +830,7 @@ PCDC& PCDC::operator <<( const vector<X...>& v )
 }
 
 template <typename... T>
-PCDC& PCDC::operator <<( const deque<T...>& d )
+inline PCDC& PCDC::operator <<( const deque<T...>& d )
 {
 	if ( d.empty( ) )
 		return *this;
@@ -951,6 +1021,7 @@ PCDC& PCDC::type( T& a )
 	*this << "  HASH: " << typeid( a ).hash_code( ) << el;
 	return *this;
 };
+
 template <typename T , typename ...X>
 PCDC& PCDC::type( T& a , X&...args )
 {
@@ -1060,7 +1131,6 @@ PCDC& PCDC::title( T t , bool i )
 	dc.m_pwnd->GetClientRect( &dc.mrect );
 	auto w = dc.mrect.right - ( dc.mrect.left + dc.initalpos * 2 );
 	size_t icount = w / size.cx - ts.GetLength( ) - 2;
-	//icount /= 2;
 	for ( size_t i = 0; i < ( icount / 2 ); ++i )
 	{
 		cs += this->mlinechar;
@@ -1071,8 +1141,9 @@ PCDC& PCDC::title( T t , bool i )
 		cs += this->mlinechar;
 	}
 	cs += mmarkchar;
+	if ( dc.p.x > dc.mrect.left + dc.initalpos )
+		*this << endl;
 	imresizeout( cs );
-	( *this ) << el;
 	return *this;
 }
 
@@ -1159,7 +1230,7 @@ PCDC& PCDC::value( T* a , X*...args )
 }
 
 template <typename S>
-void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
+inline void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 {
 	if ( l % linemod == 0 )
 	{
@@ -1169,9 +1240,8 @@ void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stail )
 	}
 }
 
-
 template<typename T>
-PCDC& PCDC::forprintv( const T& v )
+inline PCDC& PCDC::forprintv( const T& v )
 {
 	int il = 0;
 	for ( const auto& i : v )
@@ -1672,5 +1742,3 @@ public:
 //		linemod( ++il , ilinemod );
 //	}
 //	return *this;
-//}
-
