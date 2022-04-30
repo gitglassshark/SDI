@@ -302,10 +302,11 @@ CString letters( char lc , size_t Ntimes = 1 );
 
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
-#define code(...)	cout.settcolor(dccr.smokewhite);\
+#define code(...)	__VA_ARGS__;\
+					cout<<cut;\
+					cout.settcolor(dccr.smokewhite);\
 					cout<<"{ "#__VA_ARGS__<<L" }";\
-					cout.resettcolor();\
-					__VA_ARGS__;
+					cout.resettcolor();
 
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout.title(L"sourcecodes",LOWER);\
@@ -411,8 +412,8 @@ public:
 	char mlinechar = _T( '-' );
 	char mmarkchar = '=';
 	CString spchar = _T( "  " );
-	CString ms;
-	CString opstr;
+	CString ms = _T( "" );
+	CString opstr = _T( "" );
 
 public:
 	PCDC( CWnd* pwnd = nullptr );
@@ -428,6 +429,7 @@ public:
 	PCDC& operator<<( unsigned char c ) { return ( *this ) << (const char)c; };
 	PCDC& operator<<( char cs[ ] );
 	PCDC& operator<<( char const cs[ ] );
+
 	PCDC& operator<<( signed char const cs[ ] ) { return ( *this ) << (const char*)cs; };
 	PCDC& operator<<( unsigned char const cs[ ] ) { return ( *this ) << (const char*)cs; };
 	PCDC& operator<<( LPCTSTR s );
@@ -480,40 +482,46 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
-	const CSize& imresizeout( const CString& cs )
-	{
-		m_pwnd->GetClientRect( &mrect );
-		msize = GetOutputTextExtent( cs );
 
-		LONG linelen = mrect.right - initalpos - p.x;
-		LONG strlen = msize.cx;
-		int cslen = cs.GetLength( );
-		if ( strlen > linelen )
+	void imresizeout( const CString& cs )
+	{
+		if ( cs.IsEmpty( ) )
 		{
-			int tkpos = ( linelen * cslen ) / strlen;
-			imresizeout( cs.Mid(0,tkpos));
-			imresizeout( cs.Mid(tkpos,cs.GetLength()) );
+			return;
+		}
+		m_pwnd->GetClientRect( &mrect );
+		msize = this->GetOutputTextExtent( cs );
+		long linelen = mrect.right - initalpos - p.x;
+		long strlen = msize.cx;
+		long cslen ;
+		long tkpos; 
+
+		if ( strlen <= linelen )
+		{
+			//need recalc position***
+			TextOut( p.x , p.y , cs );
+			p.x += msize.cx;
+			//need check position***
+			if ( p.x >= ( mrect.right - initalpos * 2 ) )
+			{
+				p.x = mrect.left + initalpos;
+				p.y += step;
+			}
+			if ( p.y >= mrect.bottom - mrect.top - initalpos )
+			{
+				this->clearscreen( );
+				p.y = mrect.top + initalpos;
+			}
 		}
 		else
 		{
-			//need recalc ned***
-			if ( !cs.IsEmpty( ) ) {
-				TextOut( p.x , p.y , cs );
-				p.x += msize.cx;
-				if ( p.x >= ( mrect.right - initalpos * 2 ) )
-				{
-					p.x = mrect.left + initalpos;
-					p.y += step;
-				}
-				if ( p.y >= mrect.bottom - mrect.top - initalpos )
-				{
-					this->clearscreen( );
-					p.y = mrect.top + initalpos;
-				}
-			}
+			cslen = cs.GetLength( );
+			tkpos = linelen * cslen / strlen;
+			imresizeout( cs.Mid( 0 , tkpos ) );
+			imresizeout( cs.Mid( tkpos , cslen ) );
 		}
-		return msize;
 	}
+
 	const CSize& msout( const CString& cs )
 	{
 		//this->GetTextExtent
@@ -530,7 +538,7 @@ public:
 		CString heads;
 		CString tails;
 		int tkpos = cslen * linelen / strlen - 1;
-		if ( strlen > ( linelen - size.cx ) ) 
+		if ( strlen > ( linelen - size.cx ) )
 		{
 			for ( int i = cslen; i >= 0; i -= tkpos )
 			{
@@ -567,14 +575,14 @@ public:
 	PCDC& setimod( int imod );
 	template <typename T = CString>
 	PCDC& title( T t , bool ib = true );
-	PCDC& cut(CString t=CString() , char c = '-' , bool ib = true )
+	PCDC& cut( CString t = CString( ) , char c = '-' , bool ib = true )
 	{
 		m_pwnd->GetClientRect( &mrect );
 		CSize charsize = GetOutputTextExtent( CString( mlinechar ) );
 		long w;
 		if ( ib )
 		{
-			w = mrect.right -  initalpos - p.x;
+			w = mrect.right - initalpos - p.x;
 		}
 		else
 		{

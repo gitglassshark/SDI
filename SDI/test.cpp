@@ -5,25 +5,16 @@
 
 void test00( PCDC& cout )
 {
-	vector<int>va { 2,3,4,5,6 };
-	int x = 100;
-	size_t y = 100;
-	int* p;
-	CString cs = _T( "1" );
-	wstring ss = L"1";
-	char c = '1';
-	const char* cp = "char *p";
-	cp = "char *p2";
-	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
-	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
-	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
-	 cout << cut;
-	 cout << starline;
-	 cout << "123456789 this is a test STRING for imresizeout 1234567890";
-	 cout.cut( );
-	 cout << cp; cout.cut( );
-	 cout.cut( );
-	 cout.title( st( ok ) );
+	code(
+		const char* str = "ÖÐÎÄ×Ö·û´®²âÊÔ";
+	CString cs;
+	cs = str;
+	); lscode(
+		cout << cs.GetLength( ) << endl;
+	);
+	code( BEGINTEST( 200 ) {
+		cout << str << sp;
+	}ENDTEST );
 
 }
 

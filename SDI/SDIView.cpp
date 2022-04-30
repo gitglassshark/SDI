@@ -1538,14 +1538,30 @@ void CSDIView::OnPCDCFunctionTest( )
 	SimulationStdCout;
 	static size_t imod = 0;
 	++imod;
-	if ( imod == 8 )
+	if ( imod == 9 )
 		imod = 1;
 
-	//打印整型数据
+	if ( imod == 1 )
+	{
+		cout << L"中文常量字符串打印指针型字符串功能测试" << cut;
+		code(
+			CString cs = L"#中文常量字符串打印指针型字符串功能测试#";
+		CString xcs( "#1234567890a test string 1234567890#" );
+		)code(
+			cout <<nl<< cs.GetLength( ) << sp << cs.StringLength( cs ) << sp;
+		cout << xcs.GetLength( ) << sp << xcs.StringLength( xcs ) << nl<<cut;
+		)
+			cout << cut;
+			code( BEGINTEST( 3 ) {
+			NTIME( 10 ) cout << ix << cs;
+			NTIME( 10 ) cout << ix << xcs;
+		}ENDTEST );
+	}
 	if ( imod == 7 )
 	{
+		//打印整型数据
 		cout.clearscreen( );
-		cout << "打印整型数据：" << el;
+		cout << "打印整型数据" << el;
 		code(
 			int ia = 10;
 		size_t icount = 100;
@@ -1560,7 +1576,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 
 		//打印布尔数据
-		cout << "打印布尔型数据：" << el;
+		cout << "打印布尔型数据" << el;
 		code(
 			bool it = true;
 		bool in = false;
@@ -1573,7 +1589,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 
 		// "打印字符型数据：" 
-		cout << "打印字符型数据：" << el;
+		cout << "打印字符型数据" << el;
 		code(
 			char c0 = '!';
 		char ca = 'A';
@@ -1591,7 +1607,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 
 		// "打印浮点型数据：" 
-		cout << "打印浮点型数据：" << el;
+		cout << "打印浮点型数据" << el;
 		code(
 			float fa = 31.1;
 		double da = 62.444;
@@ -1654,27 +1670,27 @@ void CSDIView::OnPCDCFunctionTest( )
 		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
 		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
 		); lscode(
-			cout << "对组（pair):" << tab( 2 ) << paone << tab( 4 );
+			cout << "对组（pair)" << tab( 2 ) << paone << tab( 4 );
 		); lscode(
-			cout << "复数（complex):" << tab( 2 ) << complexa << el;
+			cout << "复数（complex)" << tab( 2 ) << complexa << el;
 		); lscode(
-			cout << "数组(array)：" << tab( 3 ) << arrone << el;
+			cout << "数组(array)" << tab( 3 ) << arrone << el;
 		cout << "vector:" << tab( 4 ) << vecta << el;
 		); lscode(
 			cout << "列表(list)：" << tab( 6 ) << lista << el;
 		cout << "双端列表(deque)：" << tab( 5 ) << dqa << el;
 		); lscode(
-			cout << "初始化列表(initializer_list)：" << tab << v << el;
+			cout << "初始化列表(initializer_list)" << tab << v << el;
 		); lscode(
-			cout << "图(map)：" << tab( 4 ) << mif << el;
+			cout << "图(map)" << tab( 4 ) << mif << el;
 		); lscode(
-			cout << "图(multimap)：" << tab( 2 ) << mmif << el;
+			cout << "图(multimap)" << tab( 2 ) << mmif << el;
 		); lscode(
 			cout << "tuple:" << tab( 4 ) << tuplea << tab << tab;
 		); lscode(
-			cout << "集合 (set):" << tab( 4 ) << seta << el;
+			cout << "集合 (set)" << tab( 4 ) << seta << el;
 		); lscode(
-			cout << "集合 (multiset):" << tab( 2 ) << mseta << el;
+			cout << "集合 (multiset)" << tab( 2 ) << mseta << el;
 		);
 	}
 
@@ -1825,7 +1841,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 	}
 
-	if ( imod == 1 )
+	if ( imod == 8 )
 	{
 		//成员函数地址打印功能测试
 		cout << "类类型、成员函数、指针址打印功能测试" << cut;
@@ -1858,7 +1874,7 @@ void CSDIView::OnPCDCFunctionTest( )
 		B b;
 		);
 		lscode(
-			cout << address( a , b , a.id ) << endl;
+			cout << address( a , b , a.id ) <<tab;
 		); lscode(
 			cout.type( a , b );
 		); lscode(
@@ -1874,18 +1890,13 @@ void CSDIView::OnPCDCFunctionTest( )
 		);
 
 		// "打印指针型数据：" 
-		cout << "打印指针型数据：" << el;
+		cout <<"打印指针型数据" << el;
 		code(
 			int ia = 10;
-		size_t icount = 100;
-		int& ria = ia;
 		char   ca = 'c';
-		int&& rra = 19;
 		long la = 50;
-		const long cla = 50;
 		long long lla = 256;
 		double da = 22.2;
-		float fa = 1222.32;
 		int* ip = &ia;
 		char* cp = &ca;
 		const char* ccp = &ca;
@@ -1894,10 +1905,10 @@ void CSDIView::OnPCDCFunctionTest( )
 		double* dp = &da;
 		); lscode(
 			cout << ip << sp << *ip << semi;
-		cout << *cp << *ccp << semi;
+		cout << *cp <<sp<< *ccp << semi;
 		cout << lp << sp << *lp << semi;
 		cout << llp << sp << *llp << semi;
-		cout << dp << sp << *dp << endl;
+		cout << dp << sp << *dp<<tab ;
 		); lscode(
 			cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << el;
 		);
@@ -2785,7 +2796,7 @@ void OnTaskRuntimeTest2( PCDC& cout )
 	code( BEGINTEST( 100'000 ) { do { x++; } while ( x < 10 ); x = 1; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { if ( x > 10000 )--x; else ++x; }ENDTEST );
 
-	code( BEGINTEST( 100'000 ) { x+sx; }ENDTEST );
+	code( BEGINTEST( 100'000 ) { x + sx; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { add<int>( x , sx ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { mul<int>( x , sx ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { divv<int>( x , sx ); }ENDTEST );
@@ -2828,17 +2839,31 @@ void OnTaskRuntimeTest3( PCDC& cout )
 	AV * pva = &a;
 	AV * pvb = (AV*)&b;
 	CRect rm;
-	CString cs( "#1234567890 test length string out 1234567890# " );
 	);
 	code( BEGINTEST( 100'000 ) { cout.m_pwnd->GetClientRect( &rm ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { sizeof( int ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
-	cout << cl;
-	code( BEGINTEST( 50 ) { cout.imresizeout( cs ); }ENDTEST );
-	code( BEGINTEST( 50 ) { cout.msout( cs ); }ENDTEST );
-	//code( BEGINTEST( 100'000 ) { }ENDTEST );
-	//code( BEGINTEST( 100'000 ) { }ENDTEST );
+
+}
+
+void OnTaskRuntimeTest4( PCDC& cout )
+{
+	cout << "API功能运行时间测试" << nl << cut;
+	code(
+		CString cs( "#1234567890abcdefghijklmnopqrstuvwxyz`-=~!@#$%^&*()_+[]\{}|;':,./<>?1234567890#" );
+	);
+	code( BEGINTEST( 1000 ) { cout.imresizeout( cs ); }ENDTEST );
+
+}
+
+void OnTaskRuntimeTest5( PCDC& cout )
+{
+	cout << "API功能运行时间测试" <<nl<< cut;
+	code(
+	CString cs( "#1234567890abcdefghijklmnopqrstuvwxyz`-=~!@#$%^&*()_+[]\{}|;':,./<>?1234567890#" );
+	);
+	code( BEGINTEST( 1000 ) { cout.msout( cs ); }ENDTEST );
 
 }
 
@@ -2847,22 +2872,14 @@ void CSDIView::OnTaskRuntimeTest( )
 	coutExtSetSimulation;
 	static size_t imod = 0;
 	++imod;
-	if ( imod == 4 )
+	if ( imod == 6 )
 		imod = 1;
-	//
-	if ( imod == 1 )
-	{
-		OnTaskRuntimeTest1( cout );
-	}
-	//
-	if ( imod == 2 )
-	{
-		OnTaskRuntimeTest2( cout );
-	}
-	if ( imod == 3 )
-	{
-		OnTaskRuntimeTest3( cout );
-	}
+
+	if ( imod == 1 ) { OnTaskRuntimeTest1( cout ); }
+	if ( imod == 2 ) { OnTaskRuntimeTest2( cout ); }
+	if ( imod == 3 ) { OnTaskRuntimeTest3( cout ); }
+	if ( imod == 4 ) { OnTaskRuntimeTest4( cout ); }
+	if ( imod == 5 ) { OnTaskRuntimeTest5( cout ); }
 
 }
 

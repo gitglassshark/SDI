@@ -22,8 +22,8 @@ PCDC& nl( PCDC& dc ) { return  dc << '\n'; }
 PCDC& el( PCDC& dc ) { return  dc << '\n'; }
 PCDC& endl( PCDC& dc ) { return  dc << '\n'; }
 PCDC& cut( PCDC& dc )
-{ 
-	return dc.settcolor( dccr.xteal ).cut().resettcolor();
+{
+	return dc.settcolor( dccr.xteal ).cut( ).resettcolor( );
 }
 PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
 void newl( ) { getcout;  cout << endl; }
@@ -229,11 +229,11 @@ PCDC& PCDC::operator <<( LPCTSTR cs )
 	return *this;
 }
 
-PCDC& PCDC::operator <<( char cs[ ] )
+PCDC& PCDC::operator <<( char * pc )
 {
-	if ( ( cs != nullptr ) && ( strlen( cs ) ) )
+	if ( ( pc != nullptr ) && ( strlen( pc ) ) )
 	{
-		ms = cs;
+		ms = pc;
 		imresizeout( ms );
 	}
 	else
@@ -244,11 +244,11 @@ PCDC& PCDC::operator <<( char cs[ ] )
 	return *this;
 }
 
-PCDC& PCDC::operator <<( char const cs[ ] )
+PCDC& PCDC::operator <<( const char *pcs )
 {
-	if ( ( cs != nullptr ) && ( strlen( cs ) ) )
+	if ( ( pcs != nullptr ) && ( strlen( pcs ) ) )
 	{
-		ms = cs;
+		ms =pcs;
 	}
 	else
 	{
@@ -286,7 +286,8 @@ PCDC& PCDC::operator <<( const std::wstring& s )
 
 PCDC& PCDC::operator <<( const std::string& s )
 {
-	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
+	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) )
+	{
 		ms = s.c_str( );
 	}
 	else
