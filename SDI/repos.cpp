@@ -15,10 +15,10 @@ void test_build_container( )
 {
 	getcout;
 	int a = 10;
-	cout << build_container<vector>( a , 3 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<deque>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<set>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
-	cout << build_container<list>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << el << cut;
+	cout << build_container<vector>( a , 3 , 4 , 8 , -1 , 0 ) << newl << cut;
+	cout << build_container<deque>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << newl << cut;
+	cout << build_container<set>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << newl << cut;
+	cout << build_container<list>( a , 3 , 3 , 4 , 4 , 8 , -1 , 0 ) << newl << cut;
 }
 
 int adfunc( const int a )
@@ -73,7 +73,7 @@ void fun( int* a )
 
 int ntest( PCDC& dc , string p )
 {
-	dc << p << el;
+	dc << p << newl;
 	return 0;
 }
 

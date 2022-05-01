@@ -4,15 +4,47 @@
 #include "pch.h"
 
 
+void OnStlSetTest1( PCDC& cout );
+void OnStlSetTest2( PCDC& cout );
+void OnStlSetTest3( PCDC& cout );
 
-void OnTaskRuntimeTest1( PCDC &dc );
-void OnTaskRuntimeTest2( PCDC &dc );
+void OnStlTypeTest1( PCDC& cout );
+void OnStlTypeTest2( PCDC& cout );
+void OnStlTypeTest3( PCDC& cout );
+
+void OnObjectSize1( PCDC& cout );
+void OnObjectSize2( PCDC& cout );
+void OnObjectSize3( PCDC& cout );
+
+void OnDcTcolorTest1( PCDC& cout );
+void OnDcTcolorTest2( PCDC& cout );
+void OnDcTcolorTest3( PCDC& cout );
+void OnDcTcolorTest4( PCDC& cout );
+void OnDcTcolorTest5( PCDC& cout );
+
+void OnPCDCFunctionTest1( PCDC& dc );
+void OnPCDCFunctionTest2( PCDC& dc );
+void OnPCDCFunctionTest3( PCDC& dc );
+void OnPCDCFunctionTest4( PCDC& dc );
+void OnPCDCFunctionTest5( PCDC& dc );
+void OnPCDCFunctionTest6( PCDC& dc );
+void OnPCDCFunctionTest7( PCDC& dc );
+void OnPCDCFunctionTest8( PCDC& dc );
+void OnPCDCFunctionTest9( PCDC& dc );
+
+void OnTaskRuntimeTest1( PCDC& dc );
+void OnTaskRuntimeTest2( PCDC& dc );
+void OnTaskRuntimeTest3( PCDC& dc );
+void OnTaskRuntimeTest4( PCDC& dc );
+void OnTaskRuntimeTest5( PCDC& dc );
+
 void test00( PCDC& dc );
 void test01( PCDC& dc );
 void test02( PCDC& dc );
 void test03( PCDC& dc );
 void test04( PCDC& dc );
 void test05( PCDC& dc );
+
 void test_build_container( );
 void test_build_vector( );
 
@@ -52,7 +84,7 @@ auto makevector( A a , T...args )
 {
 	getcout;
 	vector<A>c { a,args... };
-	cout << c << el;
+	cout << c << newl;
 	return c;
 }
 
@@ -248,7 +280,7 @@ public:
 		++ikill;
 		--iall;
 		cout << name << " is destory,iall is  " << iall << ",  mid is " << mid;
-		cout << " boring is " << isborn << sp << " kill is " << ikill << el;
+		cout << " boring is " << isborn << sp << " kill is " << ikill << newl;
 	}
 };
 

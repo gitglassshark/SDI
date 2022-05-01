@@ -2,70 +2,42 @@
 #include "PCDC.h"
 #include "test.h"
 
+class AV
+{
+public:
+	inline static int id = 1;
+	int xid;
+	string name;
+public:
+	AV( ) :xid( 0 ) , name( "nonaymous" ) {};
+	AV( int eid , string ename ) :xid( eid ) , name( ename ) {};
+	AV( AV&& r )
+	{
+		xid = r.xid;
+		name = std::move( r.name );
+	}
+	int run( ) { return 0; }
+};
+class BV
+{
+public:
+	virtual int run( ) { return 0; }
+};
+vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
 
 void test00( PCDC& cout )
 {
-	code(
-		const char* str = "中文字符串测试";
-	CString cs;
-	cs = str;
-	); lscode(
-		cout << cs.GetLength( ) << endl;
-	);
-	code( BEGINTEST( 200 ) {
-		cout << str << sp;
-	}ENDTEST );
+	//NTIME( cout.getmaxline( ) - 2 )
+	//	cout << ix << endl;
+	cout.stoprecode( );
+	cout << clear;
+	for ( int i=cout.mvlogs.size() - cout.getmaxline()+2;i<cout.mvlogs.size();i++ )
+		cout << cout.mvlogs[i]<<nl;
+	cout << "保存记录行数： " << cout.mvlogs.size( ) <<sp << "屏幕显示最大行数：" << cout.getmaxline( ) <<sp;
+	cout << "纪录容量： " << cout.mvlogs.capacity( ) <<sp<<"累计记录："<<cout.storesms(false);
+	cout.startrecode( );
 
 }
-
-//void test07( PCDC& cout )
-//{
-// /*lscode(
-//CString cs;
-//cs = "1234567890";
-//); lscode(
-//CSize size = cout.GetOutputTextExtent( cs );;
-//); lscode(
-//	cout << size.cx << sp << size.cy << endl;
-//); lscode(
-//	size = cout.GetOutputTextExtent( cs );;
-//); lscode(
-//	cout << size.cx << sp << size.cy << endl;
-//);
-//code(
-//	CRect mrect;
-//)
-//lscode(
-//	cout.m_pwnd->GetClientRect( &mrect );
-//); lscode(
-//	cout << mrect.top << sp << mrect.left << sp << mrect.bottom << sp << mrect.right << endl;
-//); */
-	//int i = 1;
-	//auto start = clock( );
-	//NTIME( 1000  ) {
-	//	//cout << 1;
-	//	cout << i;
-	//	//size = cout.GetOutputTextExtent( cs );
-	//	//cout.m_pwnd->GetClientRect( &mrect );
-	//	//cout.FillSolidRect( mrect , cout.m_bk );
-	//	//cout.clearscreen( );
-	//}
-	//auto end = clock( );
-	//cout << cut;
-	//cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
-	//auto start = clock( );
-	//vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
-	//NTIME( 100 )
-	//{
-	//	cout << va;
-	//	for ( auto& i : va )
-	//	{
-	//		cout << i << tab;
-	//		cout << cut;
-	//	}
-	//	auto end = clock( );
-	//	cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
-	//}
 
 void test01( PCDC& cout )
 {
@@ -90,6 +62,91 @@ void test04( PCDC& cout )
 void test05( PCDC& cout )
 {
 
+}
+
+
+void test_is_v( PCDC& cout )
+{
+
+	//lcode(
+	//	unsigned long long int x = 11;
+	//const int cx = 11;
+	//int&& rx = 11;
+	//int& lx = rx;
+	//unsigned long long int sx = 1;
+	//size_t y = 1;
+	//int* p;
+	//);lcode(
+	//	AV a;
+	//BV b;
+	//AV * pva = &a;
+	//AV * pvb = (AV*)&b;
+	//);
+
+	//lcode(
+	//	cout << ( std::is_class_v<decltype( a )> ) << endl;
+	//); lcode( cout << std::is_class_v<decltype( x )> << endl;
+	//); lcode( cout << std::is_const_v<decltype( cx )> << endl;
+	//); lcode( cout << std::is_const_v<decltype( x )> << endl;
+	//); lcode( cout << std::is_lvalue_reference<decltype( lx )>::value << endl;
+	//); lcode( cout << std::is_lvalue_reference_v<decltype( rx )> << endl;
+	//); lcode( cout <<typeid( std::is_member_function_pointer<decltype(pvb)>::value_type ).name() << endl;
+	//); lcode( cout <<typeid(AV::id).name() << endl;
+	//); lcode( cout <<typeid(&AV::run).name() << endl;
+	//); lcode( abstype( &AV::run ); 
+	//); lcode( abstype( AV::id ); 
+	//)
+
+
+}
+
+void test_task_time( PCDC& cout )
+{
+	// /*lscode(
+	//CString cs;
+	//cs = "1234567890";
+	//); lscode(
+	//CSize size = cout.GetOutputTextExtent( cs );;
+	//); lscode(
+	//	cout << size.cx << sp << size.cy << endl;
+	//); lscode(
+	//	size = cout.GetOutputTextExtent( cs );;
+	//); lscode(
+	//	cout << size.cx << sp << size.cy << endl;
+	//);
+	//code(
+	//	CRect mrect;
+	//)
+	//lscode(
+	//	cout.m_pwnd->GetClientRect( &mrect );
+	//); lscode(
+	//	cout << mrect.top << sp << mrect.left << sp << mrect.bottom << sp << mrect.right << endl;
+	//); */
+		//int i = 1;
+		//auto start = clock( );
+		//NTIME( 1000  ) {
+		//	//cout << 1;
+		//	cout << i;
+		//	//size = cout.GetOutputTextExtent( cs );
+		//	//cout.m_pwnd->GetClientRect( &mrect );
+		//	//cout.FillSolidRect( mrect , cout.m_bk );
+		//	//cout.flushscreen( );
+		//}
+		//auto end = clock( );
+		//cout << cut;
+		//cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
+		//auto start = clock( );
+		//vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
+		//NTIME( 100 )
+		//{
+		//	cout << va;
+		//	for ( auto& i : va )
+		//	{
+		//		cout << i << tab;
+		//		cout << cut;
+		//	}
+		//	auto end = clock( );
+		//	cout << float( ( (float)end - (float)start ) * 1000 / CLOCKS_PER_SEC ) << "ms" << endl;
 }
 
 void macrotest( )
@@ -189,19 +246,19 @@ void macrotest( )
 	/*lscode( ;
 	size_t incount = 10;
 	NTIME( incount )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	); lscode( ;
 	UNTIL( incount )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	STEPTO( 2 , 2 , 20 )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	); lscode( ;
 	STEP( 2 , 2 , 20 )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	FORTO( 2 , 8 )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	FORDOWNTO( 10 + 2 , 2 )
-		cout << ix << sp; cout << el;
+		cout << ix << sp; cout << newl;
 	); lscode( ;
 	int pointer pa = new int( 10 );
 	int ref ra = *pa;
@@ -212,7 +269,7 @@ void macrotest( )
 	memset( array1 , init , sizeof( array1 ) );
 	for ( const auto& i : array1 )
 		cout << hex( i ) << sp;
-	cout << el;
+	cout << newl;
 	); lscode( ;
 	int* p1 = new int( 2 ) , *p2 = new int( 3 );
 	char* p3 = new char( 90 );
@@ -312,6 +369,34 @@ void macrotest( )
 	//	//); lscode( 
 	//	//); lscode( 
 	//	//);
+
+
+	////code(
+	//	const char* str = "中文字符串测试";
+	//const char* str2 = "string";
+	//auto str3 = _T( "string" );
+	//auto str4 = L"string";
+	//CString cs;
+	//cs = str;
+	//cs += _T( "CString" );
+	////); lscode(
+	////	cout << cs.GetLength( ) << endl;
+	////);
+	//////code( BEGINTEST( 200 ) {
+	////	cout << str << sp;
+	////}ENDTEST );
+
+	////lscode(
+	////	cout << "中文" << endl;
+	////cout << _T( "中文" ) << endl;
+	////cout << st( 中文 ) << endl;
+	////cout << cs << endl;
+	////cout << str << sp << cout.type( str ) << endl;
+	////cout << str2 << sp << cout.type( str2 ) << endl;
+	////cout << str3 << sp << cout.type( str3 ) << endl;
+	////cout << str4 << sp << cout.type( str4 ) << endl;
+	////)
+
 }
 
 //inline const CSize& imresizeout( const CString& cs )
@@ -347,7 +432,7 @@ void macrotest( )
 //		if ( p.y >= mrect.bottom - mrect.top - initalpos )
 //		{
 //			this->FillSolidRect( mrect , m_bk );
-//			this->clearscreen( );
+//			this->flushscreen( );
 //			p.y = mrect.top + initalpos + wbar;
 //		}
 //		//need recalc ned***
@@ -386,3 +471,5 @@ void macrotest( )
 //public:
 //	int getid( ) { return af; }
 //};
+
+

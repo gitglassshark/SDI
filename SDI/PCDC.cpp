@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "PCDC.h"
 #include "SDI.h"
+#include "muse.h"
 
-size_t PCDC::icount = 0;
+//size_t PCDC::icount = 0;
 extern class CColor dccr;
 
 CString hex( ) { return CString( ); }
@@ -18,21 +19,48 @@ PCDC& com( PCDC& dc ) { return dc << ','; }
 PCDC& tab( PCDC& dc ) { return dc << '\t'; }
 PCDC& semi( PCDC& dc ) { return dc << ';'; }
 
-PCDC& nl( PCDC& dc ) { return  dc << '\n'; }
-PCDC& el( PCDC& dc ) { return  dc << '\n'; }
-PCDC& endl( PCDC& dc ) { return  dc << '\n'; }
+PCDC& nl( PCDC& dc ) {
+	dc.storesms( );
+	if ( dc.p.x == dc.mrect.left + dc.initalpos )
+		return dc;
+	return  dc << '\n';
+}
+PCDC& newl( PCDC& dc )
+{
+	dc.storesms( );
+	return  dc << '\n';
+}
+PCDC& endl( PCDC& dc )
+{
+	if ( dc.p.x == dc.mrect.left + dc.initalpos )
+		return dc;
+	dc.storesms( );
+	return  dc << '\n';
+}
 PCDC& cut( PCDC& dc )
 {
-	return dc.settcolor( dccr.xteal ).cut( ).resettcolor( );
+	dc.settcolor( dccr.xteal ).cut( ).resettcolor( );
+	dc.storesms( );
+	return dc;
 }
-PCDC& cl( PCDC& dc ) { return dc.clearscreen( ); }
-void newl( ) { getcout;  cout << endl; }
-void cut( ) { getcout; cout << cut; }
+PCDC& cl( PCDC& dc )
+{
+	dc.quickclear( );
+	dc.storesms( );
+	return dc;
+}
+PCDC& clear( PCDC& dc )
+{
+	dc.flushscreen( );
+	dc.storesms( );
+	return dc;
+}
 
 PCDC& starline( PCDC& dc )
 {
 	if ( dc.p.x != dc.mrect.left + dc.initalpos )
 		dc << nl;
+	dc.storesms( );
 	return 	dc << cut;
 }
 
@@ -88,8 +116,9 @@ PCDC& PCDC::Create( CWnd* pwnd )
 		p.x = initalpos;
 		p.y = initalpos;
 	}
-	*this << cl;
+	//*this << cl;
 	icreate = true;
+	mvlogs.reserve( getmaxline( ) * 10 );
 	return *this;
 }
 
@@ -141,8 +170,9 @@ char PCDC::setlinechar( const char& c )
 	return rc;
 }
 
-PCDC& PCDC::clearscreen( const CRect* r , const COLORREF* cr )
+PCDC& PCDC::flushscreen( const CRect* r , const COLORREF* cr )
 {
+	auto iwbar = wbar;
 	m_pwnd->GetClientRect( &mrect );
 	CRect rect( mrect );
 	if ( r != nullptr )
@@ -153,27 +183,26 @@ PCDC& PCDC::clearscreen( const CRect* r , const COLORREF* cr )
 	{
 		cr != nullptr ? m_bk = *cr : true;
 		p.x = mrect.left + initalpos;
-		//p.y = mrect.top + initalpos - 5;
 		p.y = mrect.top + initalpos;
 		rect.left = 0;
 		rect.top = 0;
 		FillSolidRect( rect , m_bark );
 
-		rect.bottom -= wbar;
-		rect.left += wbar;
-		rect.right -= wbar;
-		rect.top += wbar;
+		rect.bottom -= iwbar;
+		rect.left += iwbar;
+		rect.right -= iwbar;
+		rect.top += iwbar;
 		FillSolidRect( rect , m_linek );
 	}
 
-	wbar = 12;
-	rect.bottom -= wbar;
-	rect.left += wbar;
-	rect.right -= wbar;
-	rect.top += wbar;
+	iwbar = 12;
+	rect.bottom -= iwbar;
+	rect.left += iwbar;
+	rect.right -= iwbar;
+	rect.top += iwbar;
 	FillSolidRect( rect , m_bk );
+	storesms( );
 	return *this;
-
 }
 
 PCDC& PCDC::displayfile( CString filename )
@@ -212,14 +241,20 @@ PCDC& PCDC::displayfile( CString filename )
 
 PCDC& PCDC::operator << ( PCDC& ( *op ) ( PCDC& ) )
 {
+	if ( op == nl || op == newl || op == cl || op == clear )
+	{
+		if ( p.x == mrect.left + initalpos )
+			return *this;
+		storesms( );
+	}
 	return ( *op ) ( *this );
 }
 
-PCDC& PCDC::operator <<( LPCTSTR cs )
+PCDC& PCDC::operator <<( LPCTSTR p )
 {
-	if ( ( cs != nullptr ) && ( *cs != '\0' ) )
+	if ( ( p != nullptr ) && ( *p != '\0' ) )
 	{
-		ms = cs;
+		ms = p;
 	}
 	else
 	{
@@ -229,12 +264,11 @@ PCDC& PCDC::operator <<( LPCTSTR cs )
 	return *this;
 }
 
-PCDC& PCDC::operator <<( char * pc )
+PCDC& PCDC::operator <<( char* p )
 {
-	if ( ( pc != nullptr ) && ( strlen( pc ) ) )
+	if ( ( p != nullptr ) && ( *p != '\0' ) )
 	{
-		ms = pc;
-		imresizeout( ms );
+		ms = p;
 	}
 	else
 	{
@@ -244,11 +278,11 @@ PCDC& PCDC::operator <<( char * pc )
 	return *this;
 }
 
-PCDC& PCDC::operator <<( const char *pcs )
+PCDC& PCDC::operator <<( const char* p )
 {
-	if ( ( pcs != nullptr ) && ( strlen( pcs ) ) )
+	if ( ( p != nullptr ) && ( *p != '\0' ) )
 	{
-		ms =pcs;
+		ms = p;
 	}
 	else
 	{
@@ -260,14 +294,15 @@ PCDC& PCDC::operator <<( const char *pcs )
 
 PCDC& PCDC::operator <<( const CAtlString& s )
 {
-	if ( s.IsEmpty( ) ) {
+	if ( s.IsEmpty( ) )
+	{
 		ms = "null(0)";
+		imresizeout( ms );
 	}
 	else
 	{
-		ms = s;
+		imresizeout( s );
 	}
-	imresizeout( ms );
 	return *this;
 }
 
@@ -302,13 +337,27 @@ PCDC& PCDC::operator <<( const CString& s )
 {
 	if ( !s.IsEmpty( ) )
 	{
-		ms = s;
+		imresizeout( s );
 	}
 	else
 	{
 		ms = "null(0)";
+		imresizeout( ms );
 	}
-	imresizeout( ms );
+	return *this;
+}
+
+PCDC& PCDC::operator <<( const CString&& s )
+{
+	if ( !s.IsEmpty( ) )
+	{
+		imresizeout( s );
+	}
+	else
+	{
+		ms = "null(0)";
+		imresizeout( ms );
+	}
 	return *this;
 }
 
@@ -325,6 +374,7 @@ PCDC& PCDC::operator<<( const char c )
 	if ( c == '\n' ) {
 		p.y += step;
 		p.x = initalpos;
+		storesms( );
 		return *this;
 	}
 	if ( c == '\t' )
@@ -431,7 +481,6 @@ CString tab( size_t Ntimes )
 }
 
 CString sp( size_t Ntimes )
-
 {
 	CString cs;
 	NTIME( Ntimes )
@@ -440,7 +489,6 @@ CString sp( size_t Ntimes )
 }
 
 CString letters( char lc , size_t Ntimes )
-
 {
 	CString cs;
 	if ( isprint( lc ) )

@@ -250,6 +250,7 @@
     <ClInclude Include="CDialogExDoModal.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="muse.h" />
     <ClInclude Include="PCDC.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
@@ -274,6 +275,7 @@
     <ClCompile Include="SDIView.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="repos.cpp" />
+    <ClCompile Include="viewtask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDI.rc" />
