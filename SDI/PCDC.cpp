@@ -20,39 +20,33 @@ PCDC& tab( PCDC& dc ) { return dc << '\t'; }
 PCDC& semi( PCDC& dc ) { return dc << ';'; }
 
 PCDC& nl( PCDC& dc ) {
-	dc.storesms( );
 	if ( dc.p.x == dc.mrect.left + dc.initalpos )
 		return dc;
 	return  dc << '\n';
 }
 PCDC& newl( PCDC& dc )
 {
-	dc.storesms( );
 	return  dc << '\n';
 }
 PCDC& endl( PCDC& dc )
 {
 	if ( dc.p.x == dc.mrect.left + dc.initalpos )
 		return dc;
-	dc.storesms( );
 	return  dc << '\n';
 }
 PCDC& cut( PCDC& dc )
 {
 	dc.settcolor( dccr.xteal ).cut( ).resettcolor( );
-	dc.storesms( );
 	return dc;
 }
 PCDC& cl( PCDC& dc )
 {
-	dc.quickclear( );
-	dc.storesms( );
+	dc.flushscreen( );
 	return dc;
 }
 PCDC& clear( PCDC& dc )
 {
 	dc.flushscreen( );
-	dc.storesms( );
 	return dc;
 }
 
@@ -60,8 +54,8 @@ PCDC& starline( PCDC& dc )
 {
 	if ( dc.p.x != dc.mrect.left + dc.initalpos )
 		dc << nl;
-	dc.storesms( );
-	return 	dc << cut;
+	dc.cut( );
+	return 	dc;
 }
 
 PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
@@ -201,7 +195,6 @@ PCDC& PCDC::flushscreen( const CRect* r , const COLORREF* cr )
 	rect.right -= iwbar;
 	rect.top += iwbar;
 	FillSolidRect( rect , m_bk );
-	storesms( );
 	return *this;
 }
 
@@ -239,13 +232,62 @@ PCDC& PCDC::displayfile( CString filename )
 	return *this;
 }
 
+void PCDC::status( bool ibshowrecode )
+{
+	auto& cout = *this;
+	LOGFONT l;
+	CAtlString str = _T( "显示设备XCout工作状态" );
+	RECT rect;
+	cout.stoprecode( );
+	size_t* pnstore = cout.storesms( false );
+	font.GetLogFont( &l );
+	m_pwnd->GetWindowRect( &rect );
+	theApp.m_pMainWnd->SetWindowText( str );
+	cout << clear;
+	cout.sourcemode( );
+	cout << "XCout状态：保存记录 " << cout.mvlogs.size( ) << sp;
+	cout << "屏显行数 " << cout.getmaxline( ) << sp;
+	cout << "纪录容量 " << cout.mvlogs.capacity( ) << sp;
+	cout << "记录调用 " << pnstore[0] << sp;
+	cout << "记录调整 " << pnstore[1] << sp;
+	cout << "实际记录 " << pnstore[2] << sp;
+	cout << "空记录调用 " << pnstore[3] - pnstore[2] << sp;
+	cout << "空打印调用 " << pnstore[4] << sp;
+	cout << "行内打印 " << pnstore[5] << sp;
+	cout << "换行 " << pnstore[6] << sp;
+	cout << "满屏 " << pnstore[7] << sp;
+	cout << "分行打印 " << pnstore[8] << sp;
+	cout << "打印总调用 " << pnstore[9] << sp;
+	cout << "记录总耗时 " << pnstore[10] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "打印总耗时 " << pnstore[11] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "API总耗时 " << pnstore[12] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "API调用 " << pnstore[13] << sp;
+	cout << "step " << step << sp;
+	cout << "rect.left " << rect.left << sp;
+	cout << "rect.right " << rect.right << sp;
+	cout << "rect.top " << rect.top << sp;
+	cout << "rect.bottom " << rect.bottom << sp;
+	cout << "p.x " << p.x << sp;
+	cout << "p.y " << p.y << sp;
+	cout << "字体 " << CString( l.lfFaceName );
+	if ( ibshowrecode ) {
+		str = _T( " [历史记录]-尾部 " );
+		cout << str << nl;
+		cout << starline;
+		cout.resettcolor( );
+		for ( int i = cout.mvlogs.size( ) - cout.getmaxline( ) + 6; i < cout.mvlogs.size( ); i++ )
+			cout << cout.mvlogs[i] << nl;
+	}
+	cout.resettcolor( );
+	cout.startrecode( );
+}
+
 PCDC& PCDC::operator << ( PCDC& ( *op ) ( PCDC& ) )
 {
-	if ( op == nl || op == newl || op == cl || op == clear )
+	if ( op == nl || op == cl )
 	{
 		if ( p.x == mrect.left + initalpos )
 			return *this;
-		storesms( );
 	}
 	return ( *op ) ( *this );
 }

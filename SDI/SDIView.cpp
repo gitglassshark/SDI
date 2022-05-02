@@ -958,14 +958,12 @@ void CSDIView::OnPaintDcTest( )
 	//开始绘图
 	SimulationStdCout;
 	//CRect rect(800, 800,1000,1000);
-	cout << cl;/*cout.Rectangle(&rect);*/
-	lscode(
-		cout << cout.m_cdc << tab << cout.m_hDC << tab
-		<< cout.m_hAttribDC << tab << cout.m_bPrinting << newl;
-	cout << "good" << tab << cout.ms.IsEmpty( ) << tab << cout.ms << newl;
-	);
-
-
+	//cout << cl;/*cout.Rectangle(&rect);*/
+	//lscode(
+	//	cout << cout.m_cdc << tab << cout.m_hDC << tab
+	//	<< cout.m_hAttribDC << tab << cout.m_bPrinting << newl;
+	//);
+	cout.status( );
 
 }
 

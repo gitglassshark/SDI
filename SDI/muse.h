@@ -63,9 +63,9 @@ CString letters( char lc , size_t Ntimes);
 #define SHOWSPLITLWINDOW(objectname)  {\
 		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
 		RECT rect;\
-		rect.left = 0;\
+		rect.left = 1922-12;\
 		rect.top = 0;\
-		rect.right = 1932;\
+		rect.right = 1922+18;\
 		rect.bottom = 2112;\
 		objectname.m_pMainWnd->SetWindowPos(&CWnd::wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);\
 		objectname.m_pMainWnd->UpdateWindow();\
@@ -859,3 +859,16 @@ CString hex( T& t , X&...args )
 	//	if ( p.x == initalpos ) imresizeout( CString( "<&>" ) );
 	//}
 
+	//inline void quickclear( )
+	//{
+	//	CRect rect;
+	//	m_pwnd->GetClientRect( &rect );
+	//	rect.bottom -= initalpos;
+	//	rect.left += initalpos ;
+	//	rect.right -= initalpos ;
+	//	rect.top += initalpos ;
+	//	p.x = rect.left + initalpos;
+	//	p.y = rect.top + initalpos;
+	//	FillSolidRect(rect , m_bk );
+	//	storesms( );
+	//};

@@ -31,7 +31,7 @@ void OnPCDCFunctionTest1( PCDC& cout )
 	const bool inn = false;
 	const bool& rinn = it;
 	); lcode(
-		cout << it << tab << in << tab << inn << tab << rin << tab << rinn << tab << true << tab << false << tab << ( 2 > 1 ) << tab << ( 3 > 5 );
+		cout << it << tab << in << tab << inn << tab << rin << tab << rinn << tab << true << tab << false << tab << ( 2 > 1 ) << tab << ( 3 > 5 )<<sp;
 	cout << bools( true , false , 2 < 3 , 3 > 5 , 0 , 100 ) << nl;
 	);
 
@@ -382,18 +382,18 @@ void OnTaskRuntimeTest1( PCDC& cout )
 	int* p;
 
 	cout << clear;
-	code( BEGINTEST( 100'000 ) { x++; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { ++x; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { y--; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { --y; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { x -= y; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { x++; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { ++x; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { y--; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { --y; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { x -= y; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { p = new int; delete p; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { p = new int( 5 ); delete p; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { p = new int[20]; delete[ ]p; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { p = new int[20]( 5 ); delete[ ] p; }ENDTEST );
-	code( BEGINTEST( 1000'000 ) { x = 5; }ENDTEST );
-	code( BEGINTEST( 1000'000 ) { int z = 5; }ENDTEST );
-	code( BEGINTEST( 1000'000 ) { int z { 5 }; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { x = 5; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { int z = 5; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { int z { 5 }; }ENDTEST );
 
 }
 void OnTaskRuntimeTest2( PCDC& cout )
@@ -424,14 +424,14 @@ void OnTaskRuntimeTest2( PCDC& cout )
 	AV * pvb = (AV*)&b;
 	CRect rm;
 	);
-	code( BEGINTEST( 100'000 ) { add<int>( x , sx ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { mul<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 1000'000 ) { add<int>( x , sx ); }ENDTEST );
+	code( BEGINTEST( 1000'000 ) { mul<int>( x , sx ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { divv<int>( x , sx ); }ENDTEST );
 	code( BEGINTEST( 100'000 ) { sub<int>( x , sx ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { a.run( ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { pva->run( ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { pvb->run( ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { b.run( ); }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { a.run( ); }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { pva->run( ); }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { pvb->run( ); }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { b.run( ); }ENDTEST );
 
 
 }
@@ -466,10 +466,10 @@ void OnTaskRuntimeTest3( PCDC& cout )
 	code( BEGINTEST( 100'000 ) { for ( ; sx < 10;) sx++; sx = 1; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { while ( x < 10 ) x++; x = 1; }ENDTEST );
 	code( BEGINTEST( 100'000 ) { do { x++; } while ( x < 10 ); x = 1; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { if ( x > 10000 )--x; else ++x; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { x + sx; }ENDTEST );
-	code( BEGINTEST( 100'000 ) { sizeof( int ); }ENDTEST );
-	code( BEGINTEST( 100'000 ) { sx* sx; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { if ( x > 10000 )--x; else ++x; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { x + sx; }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { sizeof( int ); }ENDTEST );
+	code( BEGINTEST( 10'000'000 ) { sx* sx; }ENDTEST );
 
 
 }
@@ -492,14 +492,11 @@ void OnTaskRuntimeTest5( PCDC& cout )
 	CRect rm;
 	);
 	code( BEGINTEST( 100'000 ) { CString cs = _T( " " ); }ENDTEST );
-
 	code( BEGINTEST( 100'000 ) { string cs = ( " " ); }ENDTEST );
-
 	code( BEGINTEST( 100'000 ) { wstring cs = _T( " " ); }ENDTEST );
-
 	code( BEGINTEST( 100'000 ) { wstring cs = _T( " " ); }ENDTEST );
-
-	code( BEGINTEST( 100'000 ) { cout.m_pwnd->GetClientRect( &rm ); }ENDTEST );
+	code( BEGINTEST( 1'000'000 ) { cout.m_pwnd->GetClientRect( &rm ); }ENDTEST );
+	code( BEGINTEST( 10'000 ) { cout.TextOutW( 100 , 100 , _T("astring" ) );}ENDTEST );
 }
 
 void OnDcTcolorTest1( PCDC& cout )

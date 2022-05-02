@@ -27,15 +27,6 @@ vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
 
 void test00( PCDC& cout )
 {
-	//NTIME( cout.getmaxline( ) - 2 )
-	//	cout << ix << endl;
-	cout.stoprecode( );
-	cout << clear;
-	for ( int i=cout.mvlogs.size() - cout.getmaxline()+2;i<cout.mvlogs.size();i++ )
-		cout << cout.mvlogs[i]<<nl;
-	cout << "保存记录行数： " << cout.mvlogs.size( ) <<sp << "屏幕显示最大行数：" << cout.getmaxline( ) <<sp;
-	cout << "纪录容量： " << cout.mvlogs.capacity( ) <<sp<<"累计记录："<<cout.storesms(false);
-	cout.startrecode( );
 
 }
 

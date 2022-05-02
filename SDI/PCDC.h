@@ -125,6 +125,7 @@ public:
 public:
 	COLORREF m_bk = dccr.grey;
 	COLORREF m_tk = dccr.chocolate;
+	COLORREF m_tksource = dccr.smokewhite;
 	COLORREF m_bark = dccr.lteal;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 120;
@@ -211,6 +212,11 @@ public:
 public:
 	inline size_t getmaxline( ) { return ( mrect.bottom - mrect.top - initalpos ) / step; }
 	inline PCDC& resettcolor( );
+	inline PCDC& sourcemode( )
+	{
+		this->settcolor( dccr.smokewhite );
+		return *this;
+	};
 	inline bool recode( const CString& cs )
 	{
 		if ( isurerecode )
@@ -225,9 +231,11 @@ public:
 	}
 	inline bool stoprecode( ) { return isurerecode = false; }
 	inline bool startrecode( ) { return isurerecode = true; }
-	inline size_t storesms( bool isstorecomand = true )
+	inline size_t* storesms( bool isstorecomand = true )
 	{
-		static size_t nstore = 0;
+		auto start = clock( );
+		static size_t nstore[14] {};
+		nstore[0]++;//总调用次数
 		if ( !isstorecomand )
 			return nstore;
 		if ( isurerecode )
@@ -238,14 +246,20 @@ public:
 					mvlogs.erase( mvlogs.begin( ) , mvlogs.begin( ) + getmaxline( ) * 5 );
 					mvlogs.shrink_to_fit( );
 					mvlogs.reserve( getmaxline( ) * 10 );
+					nstore[1]++;//调整次数
 				}
 				mvlogs.push_back( sms );
-				nstore++;
 				sms.Empty( );
+				nstore[2]++;//存储次数
 			}
+			nstore[3]++;//字符串为空调用次数
 		}
+		auto end = clock( );
+		nstore[10] += end - start;
 		return nstore;
 	}
+	void status( bool ibshowrecode = true );
+
 	inline size_t showsms( size_t n )
 	{
 		size_t maxn = getmaxline( );
@@ -261,7 +275,7 @@ public:
 		return nshow;
 	}
 	PCDC& settcolor( COLORREF tk );
-	 PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
+	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& setimod( int imod );
 	template <typename T = CString>inline PCDC& title( T t , bool ib = true );
 	char setlinechar( const char& c = '=' );
@@ -291,27 +305,15 @@ public:
 		storesms( );
 		return *this;
 	};
-	inline void quickclear( )
-	{
-		CRect rect = mrect;
-		rect.bottom -= wbar;
-		rect.bottom -= initalpos / 2;
-		rect.left += wbar;
-		rect.left += initalpos / 2;
-		rect.right -= wbar;
-		rect.right -= initalpos / 2;
-		rect.top += wbar;
-		rect.top += initalpos / 2;
-		//m_pwnd->InvalidateRect( rect , true );
-		p.x = mrect.left + initalpos;
-		p.y = mrect.top + initalpos;
-		FillSolidRect( rect , m_bk );
-		storesms( );
-	};
+
 	template<typename Tstring> inline void imresizeout( Tstring cs )
 	{
+		auto start = clock( );
+		static size_t* pnstore = storesms( false );
+		pnstore[9]++;//打印调用次数统计
 		if ( cs.IsEmpty( ) )
 		{
+			pnstore[4]++;//空打印输出次数统计 
 			return;
 		}
 		m_pwnd->GetClientRect( &mrect );
@@ -321,34 +323,43 @@ public:
 
 		if ( strlen <= linelen )
 		{
+			pnstore[5]++;//小行打印输出次数统计
 			//need recalc position***
-			TextOut( p.x , p.y , cs );
+			if ( p.x == mrect.left + initalpos )
+				storesms( );
+			auto tstart = clock( );
+			this->TextOutW( p.x , p.y , cs );
+			pnstore[13]++;//系统API调用次数
+			auto tend = clock( );
+			pnstore[12] += tend - tstart;
 			recode( cs );
 			p.x += msize.cx;
 
 			//need check position***
 			if ( p.x >= ( mrect.right - initalpos * 2 ) )
 			{
-				storesms( );
+				pnstore[6]++;//换行打印输出次数统计
 				p.x = mrect.left + initalpos;
 				p.y += step;
 			}
 
 			if ( p.y >= mrect.bottom - mrect.top - initalpos )
 			{
-				storesms( );
-				this->quickclear( );
-				p.y = mrect.top + initalpos;
+				pnstore[7]++;//满屏打印输出次数统计
+				flushscreen( );
+				/*p.y = mrect.top + initalpos;*/
 			}
 		}
 		else
 		{
+			pnstore[8]++;//分行打印输出次数统计
 			auto cslen = cs.GetLength( );
 			auto tkpos = linelen * cslen / strlen;
 			imresizeout( (Tstring&&)cs.Mid( 0 , tkpos ) );
-			storesms( );
 			imresizeout( (Tstring&&)cs.Mid( tkpos , cslen - tkpos ) );
 		}
+		auto end = clock( );
+		pnstore[11] += end - start;
 	}
 
 public:
