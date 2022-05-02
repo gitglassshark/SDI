@@ -6,6 +6,7 @@
 #define IDR_MAINFRAME                   128
 #define IDR_SDITYPE                     130
 #define IDD_DIALOG_MODAL                311
+#define IDI_ICON1                       317
 #define IDC_EDIT_AGE_DIAONE             1000
 #define IDC_EDIT_NAME_DIALOG2           1001
 #define IDC_EDIT_DECNUM_D1              1002
@@ -78,7 +79,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_RESOURCE_VALUE        318
 #define _APS_NEXT_COMMAND_VALUE         32865
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           310

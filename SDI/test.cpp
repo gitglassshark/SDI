@@ -1,32 +1,23 @@
 #include "Pch.h"
 #include "PCDC.h"
 #include "test.h"
+#include <functional>
+#include <algorithm>
 
-class AV
+template<typename ...Args>
+void ps( Args...args )
 {
-public:
-	inline static int id = 1;
-	int xid;
-	string name;
-public:
-	AV( ) :xid( 0 ) , name( "nonaymous" ) {};
-	AV( int eid , string ename ) :xid( eid ) , name( ename ) {};
-	AV( AV&& r )
-	{
-		xid = r.xid;
-		name = std::move( r.name );
-	}
-	int run( ) { return 0; }
-};
-class BV
-{
-public:
-	virtual int run( ) { return 0; }
-};
-vector<int>va { 2,3,4,5,6,7,9,0,8,1 };
+	getcout;
+	for ( auto &i : { args... } )
+		cout << i << sp;
+	cout << newl;
+}
 
 void test00( PCDC& cout )
 {
+	ps<int>( 2 , 4 , 8, 9 );
+
+
 
 }
 
@@ -52,6 +43,212 @@ void test04( PCDC& cout )
 
 void test05( PCDC& cout )
 {
+
+}
+
+
+void test_funtor( PCDC& cout )
+{
+	/*sms( start program )
+	{
+		lcode(
+			vector<int>vecta { 0,1,2,3,4,5,6,7,8,9,10 };
+		); lcode(
+			auto n = std::count_if( vecta.begin( ) , vecta.end( ) , [ = ] ( int a ) {if ( a > 8 )return true; else return false; } );
+		); lcode(
+			cout << n << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( 6 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( 6 , false ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( ) < ( 8 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( ) > ( 7 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>(false) > ( 7 ) ) << newl;
+		);
+	}
+	sms( end program )*/
+
+}
+
+void test_vector01( PCDC& cout )
+{
+
+	//class AV
+	//{
+	//public:
+	//	inline static int id = 1;
+	//	int xid;
+	//	string name;
+	//public:
+	//	AV( ) :xid( 0 ) , name( "nonaymous" ) {
+	//		getcout;
+	//		cout << "born" << sp;
+	//	};
+	//	AV( int eid , string ename ) :xid( eid ) , name( ename ) {};
+	//	AV( const  AV& r ) = default;
+	//	AV( AV&& r )
+	//	{
+	//		xid = r.xid;
+	//		name = std::move( r.name );
+	//	}
+	//	~AV( )
+	//	{
+	//		getcout;
+	//		cout << "die" << sp;
+	//	}
+	//	int run( ) { return 0; }
+	//};
+	//class BV
+	//{
+	//public:
+	//	virtual int run( ) { return 0; }
+	//};
+	//CString str( "ok" );
+
+	//sms( （重载右移变为属性操作符）start program )
+	//{
+	//	lcode(
+	//		array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
+	//	cout << arrone << tab >> arrone << newl;
+	//	); lcode(
+	//		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
+	//	cout << v << tab >> v << newl;
+	//	); lcode(
+	//		vector<int>vecta { 908, 4,33,89,992,8192,8282,1 };
+	//	cout << vecta << tab >> vecta << newl;
+	//	); lcode(
+	//		list<int>lista { 123,456,000,444,213, 24, 25, 86,1 };
+	//	cout << lista << tab >> lista << newl;
+	//	); lcode(
+	//		deque<int>dqa { 13, 24,12,23,82,918,883,898,1 };
+	//	cout << dqa << tab >> dqa << newl;
+	//	); lcode(
+	//		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{238,8.9399} };
+	//	cout << mif << tab >> mif << newl;
+	//	); lcode(
+	//		multimap<int , float>mmif = { {234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
+	//	cout << mmif << tab >> mmif << newl;
+	//	); lcode(
+	//		auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
+	//	cout << tuplea << tab >> tuplea << newl;
+	//	); lcode(
+	//		set<int>seta { 3 ,  6 , 2,980,222,888,1024,338,8999,0 };
+	//	cout << seta << tab >> seta << newl;
+	//	); lcode(
+	//		multiset<int>mseta { 13 ,84 ,15 , 336 ,19880,2282,3838,88999,0 };
+	//	cout << mseta << tab >> mseta << newl;
+	//	);
+	//}
+	//sms( end program )
+
+
+	//sms( program start )
+	//{
+	//	sms( 头部插入 )
+	//		lcode(
+	//			vector<int>va { 1,2,3 };
+	//	va.insert( va.begin( ) , { 3,2,1 } );
+	//	cout << va << newl;
+	//	); lcode(
+	//		cout << std::size( va ) << sp << std::data( va ) << sp << *std::data( va ) << newl;
+	//	);
+	//	sms( 尾部插入 )
+	//		lcode(
+	//			vector<int>vb { 4,5,6 };
+	//	vb.insert( vb.end( ) , { 3,3,3 } );
+	//	cout << vb << newl;
+	//	); lcode(
+	//		*vb.data( ) = 20;
+	//	cout << vb << newl;
+	//	); lcode(
+	//		cout << std::size( vb ) << sp << std::data( vb ) << sp << *std::data( vb ) << newl;
+	//	);
+	//	sms( 赋值 )
+	//		lcode(
+	//			va = vb;
+	//	cout << va << newl << vb << newl;
+	//	);
+	//	sms( 删除 )
+	//		lcode(
+	//			int ar[20] { 9 };
+	//	cout << std::size( ar ) << sp << std::begin( ar ) << sp << *std::begin( ar ) << newl;
+	//	); lcode(
+	//		cout >> va << sp >> vb << newl;
+	//	); lcode(
+	//		set sa { 3,2,4,5 };
+	//	cout << sa << sp >> sa << newl;
+	//	);
+	//}
+	//sms( program end )
+	//comment( program start... );
+	//lscode(
+	//); lscode(
+	//	AV a;
+	//); lscode(
+	//	vector vav = { a };
+	//); lscode(
+	//	cout << starline;
+	//); lscode(
+	//	vav.resize( 5 );
+	//cout << starline;
+	//vav.clear( );
+	//); lscode(
+	//	cout << starline;
+	//); lscode(
+	//	vav.resize( 3 );
+	////vav.resize( 1 );
+	//); lscode(
+	//	cout << starline;//end
+	//); lscode(
+	//	comment( program end... );
+	//);
+	//AV a;
+	//vector vav { a };
+	//vav.resize( 8 );
+
+	//CString str( "ok" );
+	//rcode(
+	//	vector<int>va { 200,320,999,892,638 };
+	//); rcode(
+	//	vector vb { str };
+	//); rcode(
+	//	vector vc { ( 1.2 ) , ( 2.4 ) ,( 3.4 ) };
+	//); rcode(
+	//	vector vsb( 8 , str );
+	//cout << vsb << newl;
+	//); rcode(
+	//	list la { 1.2 , 2.3 , 3.3 };
+	//);
+	//rcode( BEGINTEST( 1 ) {
+	//	NTIME( 20 )
+	//	{
+	//		va.push_back( ix * rand( ) % 20 );
+	//	}
+	//	cout.lmod( 30 ) << va << newl;
+	//	lscode(
+	//		NTIME( 10 ) {
+	//		str.Format( _T( "number%ld" ) , ix * rand( ) % 20 );
+	//		vb.push_back( str );
+	//	}
+	//	); lscode(
+	//		cout << vb << newl;
+	//	); lscode(
+	//		cout << vc << com << la << newl;
+	//	); lscode(
+	//		vector<int> vd( 3 );
+	//	cout << vd << com << vd.size( ) << newl;
+	//	); lscode(
+	//		auto n = std::count_if( va.begin( ) , va.end( ) , [ = ] ( int a ) { if ( a >= 100 )return true; else return false; } );
+	//	cout << n << newl;
+	//	); lscode(
+	//		auto m = std::count_if( va.begin( ) , va.end( ) , [ = ] ( int a ) { if ( a <= 150 )return true; else return false; } );
+	//	cout << m << newl;
+	//	);
+	//}ENDTEST );
+
 
 }
 

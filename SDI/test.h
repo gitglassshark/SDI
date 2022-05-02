@@ -65,6 +65,33 @@ void runexcept( int ia = 1 , float fa = 2.1 , char* ps = nullptr )throw( int , f
 
 class ptr;
 
+template<typename T>
+struct bigto
+{
+	T ia = T( );
+	bool ibig = true;
+	bigto( ) {};
+	bigto( bool is ) :ibig( is ) {};
+	bigto( T iset , bool is = true ) :ia( iset ) , ibig( is ) {}
+	bool operator()( T icomp )
+	{
+		if ( ibig )
+			return icomp > ia;
+		else
+			return icomp < ia;
+	}
+	bigto& operator >( T icomp )
+	{
+		ia = icomp;
+		return *this;
+	}
+	bigto& operator <( T icomp )
+	{
+		ia = icomp;
+		return *this;
+	}
+};
+
 template <typename T , typename ...Args>
 auto build_vector( T first , Args... args )
 {

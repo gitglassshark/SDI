@@ -1540,10 +1540,10 @@ void CSDIView::OnVectorTest( )
 		vector<int>intvec( 20 );
 		deque<int>intvec2( 10 );
 		cout.MakeEleRandom( intvec , 20 , 100 );
-		cout.setimod( 20 );
+		cout.lmod( 20 );
 		cout << cut << intvec << endl;
 		cout.MakeEleRandom( intvec2 , 50 , 3000 );
-		cout.setimod( 15 );
+		cout.lmod( 15 );
 		cout << cut << intvec2 << endl;
 		std::copy_if( intvec.begin( ) , intvec.end( ) , std::front_inserter( intvec2 ) , [ ] ( int v ) {return v < 10; } );
 		cout << cut << intvec2 << newl;

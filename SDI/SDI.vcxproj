@@ -214,11 +214,15 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <Optimization>MaxSpeed</Optimization>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -262,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CDialogExDoModal.cpp" />
+    <ClCompile Include="clolorstltest.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="PCDC.cpp" />
     <ClCompile Include="pch.cpp">
@@ -286,6 +291,7 @@
     <None Include="vimrc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\icon1.ico" />
     <Image Include="res\SDI.ico" />
     <Image Include="res\SDIDoc.ico" />
     <Image Include="res\Toolbar.bmp" />

@@ -193,6 +193,8 @@ CString letters( char lc , size_t Ntimes);
 
 #define vec(T) vector<T> 
 
+#define comment(...) cout<<"//"#__VA_ARGS__;
+
 #define bigtosmall true
 #define smalltobig false
 #define UP true
@@ -235,10 +237,16 @@ CString letters( char lc , size_t Ntimes);
 
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
-#define code(...)	__VA_ARGS__\
-					cout<<cut;\
-					cout.settcolor(dccr.smokewhite);\
+#define rcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout<<"{ "#__VA_ARGS__<<L" }";\
+					cout<<starline;\
+					cout.resettcolor();\
+					__VA_ARGS__ 
+
+#define code(...)	__VA_ARGS__\
+					cout.settcolor(dccr.smokewhite);\
+					cout<<starline;\
+					cout<<"{ "#__VA_ARGS__<<L" }"<<newl;\
 					cout.resettcolor();
 
 #define lcode(...)	cout.settcolor(dccr.smokewhite);\

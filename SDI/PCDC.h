@@ -106,20 +106,20 @@ class PCDC : public CDC
 public:
 	bool isurerecode = true;
 	bool icreate = false;
-	size_t id = 0;
-	inline static size_t icount = 0;
-	int iargs = 0;
+	//size_t id = 0;
+	//inline static size_t icount = 0;
+	//int iargs = 0;
 	bool ibegin = true;
 
 public:
 	inline static const LONG wbar = 8;
 	inline static const LONG initalpos = wbar + 35;
-	const LONG initalstep = 20;
-	LONG step = initalstep;
+	//const LONG initalstep = 20;
+	LONG step = 36;
 	inline static POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
-	int ilinemod = 20;
+	unsigned char ilinemod = 20;
 	bool icutline = false;
 
 public:
@@ -132,7 +132,7 @@ public:
 	CFont font , * pfont;
 
 public:
-	CDC* m_cdc = nullptr;
+	//CDC* m_cdc = nullptr;
 	CWnd* m_pwnd = nullptr;
 
 public:
@@ -212,6 +212,52 @@ public:
 public:
 	inline size_t getmaxline( ) { return ( mrect.bottom - mrect.top - initalpos ) / step; }
 	inline PCDC& resettcolor( );
+	inline void resetmrect( )
+	{
+		m_pwnd->GetClientRect( &mrect );
+	}
+	inline void rinitx( bool initset = true , long x = 0 )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		if ( initset == true )
+		{
+			p.x = mrect.left + initalpos;
+		}
+		else
+		{
+			p.x = max( x , initalpos );
+			p.x = min( x , ( mrect.right - initalpos ) );
+		}
+	};
+	inline void rinity( bool initset = true , long y = 0 )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		if ( initset == true )
+		{
+			p.y = mrect.top + initalpos;
+		}
+		else
+		{
+			p.y = max( y , initalpos );
+			p.y = min( y , ( mrect.bottom - initalpos ) );
+		}
+	};
+	inline void rinitxy( bool initset = true , long x = 0 , long y = 0 )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		if ( initset == true )
+		{
+			p.x = mrect.left + initalpos;
+			p.y = mrect.top + initalpos;
+		}
+		else
+		{
+			p.x = max( x , initalpos );
+			p.x = min( x , ( mrect.right - initalpos ) );
+			p.y = max( y , initalpos );
+			p.y = min( y , ( mrect.bottom - initalpos ) );
+		}
+	};
 	inline PCDC& sourcemode( )
 	{
 		this->settcolor( dccr.smokewhite );
@@ -258,7 +304,7 @@ public:
 		nstore[10] += end - start;
 		return nstore;
 	}
-	void status( bool ibshowrecode = true );
+	void status( bool ibshowrecode = true , size_t nline = 45 );
 
 	inline size_t showsms( size_t n )
 	{
@@ -276,7 +322,7 @@ public:
 	}
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
-	PCDC& setimod( int imod );
+	PCDC& lmod( unsigned char imod = 30 );
 	template <typename T = CString>inline PCDC& title( T t , bool ib = true );
 	char setlinechar( const char& c = '=' );
 	inline PCDC& flushscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
@@ -297,7 +343,6 @@ public:
 		else
 		{
 			w = mrect.right - ( mrect.left + initalpos * 2 );
-
 		};
 		auto icount = w / charsize.cx;
 		CString line( mlinechar , icount );
@@ -339,7 +384,8 @@ public:
 			if ( p.x >= ( mrect.right - initalpos * 2 ) )
 			{
 				pnstore[6]++;//换行打印输出次数统计
-				p.x = mrect.left + initalpos;
+				rinitx( );
+				//p.x = mrect.left + initalpos;
 				p.y += step;
 			}
 
@@ -355,6 +401,8 @@ public:
 			pnstore[8]++;//分行打印输出次数统计
 			auto cslen = cs.GetLength( );
 			auto tkpos = linelen * cslen / strlen;
+			//if(tkpos==0 &&( ( (double)linelen)/ (double)(( (double)strlen )/((double)cslen) )>0.9))
+				//tkpos++;
 			imresizeout( (Tstring&&)cs.Mid( 0 , tkpos ) );
 			imresizeout( (Tstring&&)cs.Mid( tkpos , cslen - tkpos ) );
 		}
@@ -382,22 +430,105 @@ public:
 	template <typename T> PCDC& operator ()( initializer_list<T> c );
 
 	template <typename... Args> PCDC& operator<<( tuple<Args...> tup );
+	template <typename... Args> PCDC& operator>>( tuple<Args...>& tup )
+	{
+		PCDC& cout = *this;
+		cout << std::tuple_size< tuple<Args...>>::value << sp;
+		cout<< "Args...is: "<< ( sizeof...( Args) ) << tab;
+		return *this;
+	}
 	template <>	PCDC& operator<<( tuple<> tup ) { ibegin = true; return ( *this ) << " }"; }
 	template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
 	template <typename T> PCDC& operator <<( const complex<T>& z );
 	template <typename P> PCDC& operator <<( P* p );
 	template <typename P> PCDC& operator <<( const P* p );
-	template <typename T> PCDC& operator<<( initializer_list<T> c );
+	template <typename T> PCDC& operator <<( initializer_list<T> c );
+	template <typename T> PCDC& operator >>( initializer_list<T>& c )
+	{
+		PCDC& cout = *this;
+		SHOW( c.size( ) );
+		return *this;
+	}
 	template <typename T> PCDC& operator <<( const list<T>& l );
+	template <typename T> PCDC& operator >>( const list<T>& l )
+	{
+		PCDC& cout = *this;
+		SHOW( l.size( ) );
+		SHOW( l.max_size( ) );
+		return *this;
+	}
 	template <typename T , size_t len> PCDC& operator <<( const array< T , len>& a );
+	template <typename T , size_t len> PCDC& operator >>( const array< T , len>& a )
+	{
+		PCDC& cout = *this;
+		SHOW( a.size( ) );
+		SHOW( a.max_size( ) );
+		SHOW( a.data( ) );
+		return *this;
+	}
 	template <typename A , typename B> PCDC& operator <<( const pair<A , B>& i );
 	template <typename... X> inline PCDC& operator <<( const vector<X...>& v );
+	template <typename... X> inline PCDC& operator >>( const vector<X...>& v )
+	{
+		PCDC& cout = *this;
+		SHOW( v.size( ) );
+		SHOW( v.capacity( ) );
+		SHOW( v.max_size( ) );
+		SHOW( v.data( ) );
+		return *this;
+	}
 	template <typename... T> PCDC& operator <<( const multiset<T...>& s );
+	template <typename... T> PCDC& operator >>( const multiset<T...>& s )
+	{
+		PCDC& cout = *this;
+		SHOW( s.size( ) );
+		SHOW( s.max_size( ) );
+		return *this;
+	}
 	template <typename ...T> PCDC& operator <<( const deque<T...>& d );
+	template <typename ...T> PCDC& operator >>( const deque<T...>& d )
+	{
+		PCDC& cout = *this;
+		SHOW( d.size( ) );
+		SHOW( d.max_size( ) );
+		return *this;
+	}
 	template <typename ...T> PCDC& operator <<( const set<T...>& s );
+	template <typename ...T> PCDC& operator >>( const set<T...>& s )
+	{
+		PCDC& cout = *this;
+		SHOW( s.size( ) );
+		SHOW( s.max_size( ) );
+		return *this;
+	}
 	template <typename T , typename X> PCDC& operator <<( const map<T , X>& m );
+	template <typename T , typename X> PCDC& operator >>( const map<T , X>& m )
+	{
+		PCDC& cout = *this;
+		SHOW( m.size( ) );
+		SHOW( m.max_size( ) );
+		return *this;
+	}
 	template <typename T , typename X> PCDC& operator <<( const multimap<T , X>& m );
+	template <typename T , typename X> PCDC& operator >>( const multimap<T , X>& m )
+	{
+		PCDC& cout = *this;
+		SHOW( m.size( ) );
+		SHOW( m.max_size( ) );
+		return *this;
+	}
 	template <typename  int N = 64> PCDC& operator <<( bitset<N>& bits );
+	template <typename  int N = 64> PCDC& operator >>( bitset<N>& bits )
+	{
+		PCDC& cout = *this;
+		SHOW( bits.size( ) );
+		SHOW( bits.max_size( ) );
+		SHOW( bits.none( ) );
+		SHOW( bits.flip( ) );
+		SHOW( bits.all( ) );
+		return *this;
+
+	}
 	template <typename  int N = 64> PCDC& operator <<( const bitset<N>& bits );
 
 public:
@@ -951,7 +1082,6 @@ PCDC& PCDC::pb( T a , X...args )
 template <typename X>
 PCDC& PCDC::value( X* a )
 {
-	//*this << st( T* ) << sp;
 	*this << *a << sp;
 	return *this;
 }
@@ -978,7 +1108,7 @@ inline void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stai
 template<typename T>
 inline PCDC& PCDC::forprintv( const T& v )
 {
-	int il = 0;
+	unsigned char il = 0;
 	for ( const auto& i : v )
 	{
 		*this << i << spchar;
@@ -990,7 +1120,7 @@ inline PCDC& PCDC::forprintv( const T& v )
 template<typename T>
 PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
-	int il = 0;
+	unsigned char il = 0;
 	for ( size_t i = 0; i < len; ++i )
 	{
 		*this << *( arr + i ) << spchar;

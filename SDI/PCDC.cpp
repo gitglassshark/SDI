@@ -36,7 +36,7 @@ PCDC& endl( PCDC& dc )
 }
 PCDC& cut( PCDC& dc )
 {
-	dc.settcolor( dccr.xteal ).cut( ).resettcolor( );
+	dc.cut( );
 	return dc;
 }
 PCDC& cl( PCDC& dc )
@@ -61,15 +61,15 @@ PCDC& starline( PCDC& dc )
 PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
 {
 	if ( m_pwnd ) {
-		id = icount;
-		++icount;
+		//id = icount;
+		//++icount;
 		Create( m_pwnd );
 	}
 }
 
 PCDC::~PCDC( )
 {
-	--icount;
+	//--icount;
 	this->Release( );
 }
 
@@ -81,18 +81,14 @@ PCDC& PCDC::Create( CWnd* pwnd )
 		return *this;
 	this->m_hDC = m_pwnd->GetWindowDC( )->m_hDC;
 	CDC& dc = *this;
-	auto tcolor = dccr.chocolate;
-	auto bcolor = dccr.grey;
+
 
 	//设置窗口背景颜色
-	m_pwnd->GetClientRect( &mrect );
-	p.x = mrect.left + initalpos;
-	p.y = mrect.top + initalpos;
-	dc.FillSolidRect( mrect , m_bk );
-
-	//设置字体颜色
 	dc.SetBkColor( m_bk );
+	//设置字体颜色
 	dc.SetTextColor( m_tk );
+
+	flushscreen( );
 
 	//设置缺省字体
 	LOGFONT lf;
@@ -110,7 +106,6 @@ PCDC& PCDC::Create( CWnd* pwnd )
 		p.x = initalpos;
 		p.y = initalpos;
 	}
-	//*this << cl;
 	icreate = true;
 	mvlogs.reserve( getmaxline( ) * 10 );
 	return *this;
@@ -125,7 +120,7 @@ PCDC& PCDC::Release( )
 	m_pwnd->ReleaseDC( this );
 	font.DeleteObject( );
 	m_pwnd = nullptr;
-	m_cdc = nullptr;
+	//m_cdc = nullptr;
 	icreate = false;
 	return *this;
 }
@@ -151,7 +146,7 @@ PCDC& PCDC::setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk )
 	return *this;
 }
 
-PCDC& PCDC::setimod( int imod )
+PCDC& PCDC::lmod(unsigned char  imod )
 {
 	ilinemod = imod;
 	return *this;
@@ -168,33 +163,28 @@ PCDC& PCDC::flushscreen( const CRect* r , const COLORREF* cr )
 {
 	auto iwbar = wbar;
 	m_pwnd->GetClientRect( &mrect );
-	CRect rect( mrect );
-	if ( r != nullptr )
-	{
-		mrect = *r;
-	}
-	else
-	{
-		cr != nullptr ? m_bk = *cr : true;
-		p.x = mrect.left + initalpos;
-		p.y = mrect.top + initalpos;
-		rect.left = 0;
-		rect.top = 0;
-		FillSolidRect( rect , m_bark );
+	//CRect rect( mrect );
+	//if ( r != nullptr ) { mrect = *r; } else { }
+	//cr != nullptr ? m_bk = *cr : true;
+	//p.x = mrect.left + initalpos;
+	//p.y = mrect.top + initalpos;
+	rinitxy( );
+	mrect.left = 0;
+	mrect.top = 0;
+	FillSolidRect( mrect , m_bark );
 
-		rect.bottom -= iwbar;
-		rect.left += iwbar;
-		rect.right -= iwbar;
-		rect.top += iwbar;
-		FillSolidRect( rect , m_linek );
-	}
+	mrect.bottom -= iwbar;
+	mrect.left += iwbar;
+	mrect.right -= iwbar;
+	mrect.top += iwbar;
+	FillSolidRect( mrect , m_linek );
 
 	iwbar = 12;
-	rect.bottom -= iwbar;
-	rect.left += iwbar;
-	rect.right -= iwbar;
-	rect.top += iwbar;
-	FillSolidRect( rect , m_bk );
+	mrect.bottom -= iwbar;
+	mrect.left += iwbar;
+	mrect.right -= iwbar;
+	mrect.top += iwbar;
+	FillSolidRect( mrect , m_bk );
 	return *this;
 }
 
@@ -232,16 +222,15 @@ PCDC& PCDC::displayfile( CString filename )
 	return *this;
 }
 
-void PCDC::status( bool ibshowrecode )
+void PCDC::status( bool ibshowrecode , size_t nline )
 {
 	auto& cout = *this;
 	LOGFONT l;
 	CAtlString str = _T( "显示设备XCout工作状态" );
-	RECT rect;
 	cout.stoprecode( );
 	size_t* pnstore = cout.storesms( false );
 	font.GetLogFont( &l );
-	m_pwnd->GetWindowRect( &rect );
+	m_pwnd->GetWindowRect( &mrect );
 	theApp.m_pMainWnd->SetWindowText( str );
 	cout << clear;
 	cout.sourcemode( );
@@ -263,20 +252,25 @@ void PCDC::status( bool ibshowrecode )
 	cout << "API总耗时 " << pnstore[12] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
 	cout << "API调用 " << pnstore[13] << sp;
 	cout << "step " << step << sp;
-	cout << "rect.left " << rect.left << sp;
-	cout << "rect.right " << rect.right << sp;
-	cout << "rect.top " << rect.top << sp;
-	cout << "rect.bottom " << rect.bottom << sp;
+	cout << "rect.left " << mrect.left << sp;
+	cout << "rect.right " << mrect.right << sp;
+	cout << "rect.top " << mrect.top << sp;
+	cout << "rect.bottom " << mrect.bottom << sp;
 	cout << "p.x " << p.x << sp;
 	cout << "p.y " << p.y << sp;
 	cout << "字体 " << CString( l.lfFaceName );
 	if ( ibshowrecode ) {
 		str = _T( " [历史记录]-尾部 " );
-		cout << str << nl;
+		size_t maxline = cout.getmaxline( ) - 6;
+		if ( nline <= maxline )maxline = nline;
+		size_t logsize = cout.mvlogs.size( );
+		if ( logsize < maxline )maxline = logsize;
+		settcolor( dccr.red1 );
 		cout << starline;
-		cout.resettcolor( );
-		for ( int i = cout.mvlogs.size( ) - cout.getmaxline( ) + 6; i < cout.mvlogs.size( ); i++ )
+		cout << str<<gmin(maxline,logsize,nline ) << " 行：" << newl;
+		for ( int i = logsize - maxline; i < logsize; i++ )
 			cout << cout.mvlogs[i] << nl;
+		cout.resettcolor( );
 	}
 	cout.resettcolor( );
 	cout.startrecode( );
