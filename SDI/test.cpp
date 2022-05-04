@@ -3,23 +3,137 @@
 #include "test.h"
 #include <functional>
 #include <algorithm>
+#include <concepts>
 
-template<typename ...Args>
-void ps( Args...args )
+//template<typename T>
+//concept Iempty = std::is_empty<T>::value;
+//
+//template<typename T>
+//concept Integral = std::is_integral<T>::value;
+//
+//template <Integral T>
+//T pit(T a ) {
+//	getcout;
+//	cout << "it is int" << sp;
+//	return a;
+//}
+template <typename T>
+concept stdstr = std::same_as<T , string> || same_as<T , CString> || same_as<T , char*> || same_as<T , wstring>;
+
+template<typename T >
+void con( T it )
 {
 	getcout;
-	for ( auto &i : { args... } )
-		cout << i << sp;
-	cout << newl;
+	cout << "it is (T)" << newl;
+
+}
+
+//template<typename T>
+//void con( T* it )
+//{
+//	getcout;
+//	cout << "it is (T*)" << newl;
+//
+//}
+
+template <typename T>
+concept sset = std::is_integral_v<T> || std::is_class_v<T>;//||std::is_pointer<T>::value;
+//concept sset = std::is_integral<T>::value || std::is_class<T>::value;//||std::is_pointer<T>::value;
+
+template <typename T>
+concept ispoint = std::is_pointer<T>::value;
+
+template <typename T > //requires ispoint<T>//ok
+//template <sset T >//ok
+T* con( T* it )
+{
+	getcout;
+	cout << "it is T*" << newl;
+	return it;
+}
+
+template <ispoint T >//ok
+//template <sset T >//ok
+T con( T it )
+{
+	getcout;
+	cout << "it is point concept" << newl;
+	return it;
+}
+
+
+template <typename T > requires sset<T>//ok
+//template <sset T >//ok
+T con( T it )
+{
+	getcout;
+	cout << "it is sset(int+class)" << newl;
+	return it;
+}
+
+template<typename ...A>
+void prarg( A...args )
+{
+	getcout;
+	((cout << args<<sp),...);
+}
+
+template<typename ...A>
+void parg( A...args )
+{
+	getcout;
+	( cout <<...<< args );
+}
+
+template<typename... Args>
+auto alladd( Args...args )
+{
+	auto  x = ( args +...);
+	return x;
 }
 
 void test00( PCDC& cout )
 {
-	ps<int>( 2 , 4 , 8, 9 );
+	cout << separtor;
+	code(
+		int ia = 1;
+	float fa = 2.2;
+	char ca = 'a';
+	class X {};
+	char* p = &ca;
+	void* vp = p;
+	X xa;
+	vector<int>va { 0,1,2,3,4,5,6,7,8,9,10 };
+	CString cs( "good" );
+	);
 
+	lcode(
+		con( ia );
+	); lcode(
+		con( fa );
+	); lcode(
+		con( ca );
+	); lcode(
+		con( xa );
+	); lcode(
+		con( cs );
+	); lcode(
+		con( p );
+	); lcode(
+		con( vp );
+	); lscode(
+		cout << alladd( 3 , 4 , 5 ) << newl;
+	); lscode(
+		prarg( ia , fa , ca ,  cs );
+		parg( ia , fa , ca ,  cs );
+		cout.ps( ia , fa , ca , cs );
+	);
 
-
+	//); code(
+	cout << separtor;
 }
+
+
 
 void test01( PCDC& cout )
 {
@@ -46,9 +160,67 @@ void test05( PCDC& cout )
 
 }
 
+void testx0( PCDC& cout )
+{
+	//template<typename ...Args>
+	//void ps( Args...args )
+	//{
+	//	getcout;
+	//	for ( auto &i : { args... } )
+	//		cout << i << sp;
+	//	cout << newl;
+	//
+	//}
+	//	ps<int>( 2 , 4 , 8, 9 );
+	//
+	//
 
+}
+
+void test_for_each( PCDC& cout )
+{
+	/*lcode( BEGINTEST( 1 ) {
+		vector<int>vecta { 0,1,2,3,4,5,6,7,8,9,10 };
+		cout << vecta << newl;
+		std::for_each( vecta.begin( ) , vecta.end( ) , [ & ] ( int& a ) {if ( a > 8 )a++; else a--; } );
+		cout << vecta << newl;
+	}ENDTEST );*/
+
+
+}
 void test_funtor( PCDC& cout )
 {
+
+
+
+	//template<typename T>
+	//struct bigto
+	//{
+	//	T ia = T( );
+	//	bool ibig = true;
+	//	bigto( ) {};
+	//	bigto( bool is ) :ibig( is ) {};
+	//	bigto( T iset , bool is = true ) :ia( iset ) , ibig( is ) {}
+	//	bool operator()( T icomp )
+	//	{
+	//		if ( ibig )
+	//			return icomp > ia;
+	//		else
+	//			return icomp < ia;
+	//	}
+	//	bigto& operator >( T icomp )
+	//	{
+	//		ia = icomp;
+	//		return *this;
+	//	}
+	//	bigto& operator <( T icomp )
+	//	{
+	//		ia = icomp;
+	//		return *this;
+	//	}
+	//};
+
+
 	/*sms( start program )
 	{
 		lcode(
@@ -190,18 +362,18 @@ void test_vector01( PCDC& cout )
 	//); lscode(
 	//	vector vav = { a };
 	//); lscode(
-	//	cout << starline;
+	//	cout << separtor;
 	//); lscode(
 	//	vav.resize( 5 );
-	//cout << starline;
+	//cout << separtor;
 	//vav.clear( );
 	//); lscode(
-	//	cout << starline;
+	//	cout << separtor;
 	//); lscode(
 	//	vav.resize( 3 );
 	////vav.resize( 1 );
 	//); lscode(
-	//	cout << starline;//end
+	//	cout << separtor;//end
 	//); lscode(
 	//	comment( program end... );
 	//);
@@ -251,7 +423,6 @@ void test_vector01( PCDC& cout )
 
 
 }
-
 
 void test_is_v( PCDC& cout )
 {
@@ -587,6 +758,109 @@ void macrotest( )
 
 }
 
+void test_va_count_if_bigtofuntor( PCDC& cout )
+{
+	/*sms( start program )
+	{
+		code(
+			vector<int>vecta { 0,1,2,3,4,5,6,7,8,9,10 };
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , [ = ] ( int a ) {if ( a > 8 )return true; else return false; } ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( 6 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( 6 , false ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( ) < ( 7 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( true ) > ( 7 ) ) << newl;
+		); lcode(
+			cout << std::count_if( vecta.begin( ) , vecta.end( ) , bigto<int>( false ) > ( 7 ) ) << newl;
+		);
+	}
+	sms( end program )*/
+
+}
+
+
+void test_dc_00( PCDC& cout )
+{
+	//sms( start program )
+	//{
+	//	lcode(
+	//		vector<int>vecta { 0,1,2,3,4,5,6,7,8,9,10 };
+	//	int i = 0;
+	//	float ifl = 4.8;
+	//	int x = 256;
+	//	string name = "myname";
+	//	CString cname;
+	//	cname = "good man";
+	//	list vl { 33.2,4.44,5.99 };
+
+	//	); lcode(
+	//		cout.pt( i , ifl , name , cname , vl , vecta );
+	//	); lcode(
+	//		cout.pl( i , ifl , name , cname , vl , vecta );
+	//	); lcode(
+	//		cout.pb( i , ifl , name , cname , vl , vecta );
+	//	); lcode(
+	//		cout << i << sp << ifl << sp << name << sp << cname << semi << vl << semi << vecta;
+	//	); lcode(
+	//		cout << hex( i , x ) << newl;
+	//	); lcode(
+	//		cout.type( vl );
+	//	);
+	//}
+	//cout << separtor;
+	//sms( end program )
+
+
+}
+//void test00( PCDC& cout )
+//{
+//	//sms( start program )
+//	{
+//		lcode(
+//			auto start = clock( );
+//		cout << clear;
+//		NTIME(5)
+//			cout<<"start"<<nl<<cout.displayfile( CString( "d:/demo.txt" ) ) << newl << "end" << nl;
+//		auto end = clock( );
+//		); lcode(
+//			cout.sourcemode( );
+//		cout << separtor;
+//		cout << start << tab << end << newl;
+//		cout << tformatstr( start , end ) << newl;
+//		);
+//
+//	}
+//	//cout << separtor;
+//	//sms( end program )
+//
+//
+//}
+//void test00( PCDC& cout )
+//{
+//	sms( start program )
+//	{
+//		int ib = 7;
+//		lcode(
+//			auto start = clock( );
+//		NTIME( 1'000 )
+//			tformatstr( start , start );
+//		cout << separtor;
+//		cout.sourcemode( );
+//		auto end = clock( );
+//		);
+//		cout << tformatstr( start , end ) << newl;
+//		cout << start << tab << end << newl;
+//
+//	}
+//	cout << separtor;
+//	sms( end program )
+//
+//
+//}
 //inline const CSize& imresizeout( const CString& cs )
 //{
 //	m_pwnd->GetClientRect( &mrect );

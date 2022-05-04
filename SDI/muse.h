@@ -19,7 +19,7 @@ PCDC& sp( PCDC& dc );
 PCDC& newl( PCDC& dc );
 PCDC& nl( PCDC& dc );
 PCDC& endl( PCDC& dc );
-PCDC& starline( PCDC& dc );
+PCDC& separtor( PCDC& dc );
 void newl( );
 void cut( );
 
@@ -195,6 +195,9 @@ CString letters( char lc , size_t Ntimes);
 
 #define comment(...) cout<<"//"#__VA_ARGS__;
 
+#define SNint unsigned char
+#define SSint unsigned short int
+
 #define bigtosmall true
 #define smalltobig false
 #define UP true
@@ -239,13 +242,13 @@ CString letters( char lc , size_t Ntimes);
 
 #define rcode(...)	cout.settcolor(dccr.smokewhite);\
 					cout<<"{ "#__VA_ARGS__<<L" }";\
-					cout<<starline;\
+					cout<<separtor;\
 					cout.resettcolor();\
 					__VA_ARGS__ 
 
 #define code(...)	__VA_ARGS__\
 					cout.settcolor(dccr.smokewhite);\
-					cout<<starline;\
+					cout<<separtor;\
 					cout<<"{ "#__VA_ARGS__<<L" }"<<newl;\
 					cout.resettcolor();
 
@@ -282,7 +285,7 @@ CString letters( char lc , size_t Ntimes);
 					NTIME( itimes){
 
 #define ENDTEST 	}auto end = clock( );\
-					cout<<starline;\
+					cout<<separtor;\
 					cout <<itimes<<"'s Totaltimes: ";\
 					cout<<long double( ( (long double)end - (long double)start ) * 1000 / CLOCKS_PER_SEC ) << "\'ms.";\
 					cout<<"   Once: ";\
@@ -678,6 +681,8 @@ CString hex( T& t , X&...args )
 	cs.Empty( );
 	return ms;
 };
+
+
 
 
 //template <typename T >

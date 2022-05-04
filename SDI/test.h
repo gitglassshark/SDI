@@ -75,10 +75,20 @@ struct bigto
 	bigto( T iset , bool is = true ) :ia( iset ) , ibig( is ) {}
 	bool operator()( T icomp )
 	{
-		if ( ibig )
-			return icomp > ia;
-		else
-			return icomp < ia;
+		bool iret = true;
+		if ( ibig ) {
+			iret = icomp > ia;
+		}
+		else {
+			iret = icomp < ia;
+		}
+		getcout;
+		static int imod = 0;
+		cout << "*" << icomp << sp << "ibig=" << ibig << sp << "iret=" << iret << tab;
+		if ( ( imod + 1 ) % 3 == 0 )
+			cout << "%" << (int)imod << newl;
+		imod++;
+		return iret;
 	}
 	bigto& operator >( T icomp )
 	{

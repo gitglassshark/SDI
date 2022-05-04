@@ -23,8 +23,10 @@
 #endif
 
 extern int igi;
-class CColor dccr;
-PCDC* pcout = nullptr;
+extern class CColor dccr;
+extern PCDC* pcout;
+//class CColor dccr;
+//PCDC* pcout = nullptr;
 bool is_show_logmessage = false;
 
 // CSDIView
@@ -181,7 +183,7 @@ void CSDIView::OnShowlog( ) {
 	if ( is_show_logmessage ) {
 		is_show_logmessage = false;
 		auto ic = 1;
-		cout << clear << "系统调用顺序" << starline;
+		cout << clear << "系统调用顺序" << separtor;
 		for ( const auto& i : theApp.messagelog )
 			cout << ic++ << sp << i << newl;
 	}
@@ -1220,7 +1222,7 @@ void CSDIView::OnSTLFuncTest( )
 		cout << i << tab;
 	cout << newl;
 	d1.pop_front( );
-	cout << starline;
+	cout << separtor;
 	d1.push_front( 1000 );
 	for ( int j = 0; j < 8; j++ ) {
 		cout << j << "#" << tab;
@@ -1230,7 +1232,7 @@ void CSDIView::OnSTLFuncTest( )
 		cout << newl;
 	}
 	CRect rect = { 0,0,0,0 };
-	cout << starline;
+	cout << separtor;
 	for ( auto& i : d1 )
 		cout << i << tab;
 	cout << newl;
@@ -1248,7 +1250,7 @@ void CSDIView::OnSTLFuncTest( )
 	SHOW( d1.at( 5 ) );
 	cout << newl;
 	cout.setlinechar( '-' );
-	cout << starline;
+	cout << separtor;
 	for ( auto& i : d1 )
 		cout << i << tab;
 	cout << newl;
@@ -1283,7 +1285,7 @@ void CSDIView::OnStlStackTest( )
 		}
 		cout << ist.top( ) << newl;
 		cout << ist.size( ) << tab << ist.top( ) << tab << ( ist.pop( ) , ist.top( ) ) << newl;
-		cout << starline;
+		cout << separtor;
 		cout << ist.size( ) << tab << ist.top( ) << newl;
 		cout << ist.top( ) << tab << ist.size( ) << tab << ( ist.pop( ) , ist.top( ) ) << tab << ist.size( ) << tab << ist.top( ) << newl;
 		cout << ist.size( ) << tab << ist.top( ) << newl;
@@ -1295,7 +1297,7 @@ void CSDIView::OnStlStackTest( )
 			ieq.push( i + 2 );
 		}
 		cout.setlinechar( '#' );
-		cout << starline;
+		cout << separtor;
 		cout << ieq.front( ) << newl;
 		cout << ieq.back( ) << newl;
 
@@ -1633,7 +1635,7 @@ void CSDIView::OnVectorTest( )
 		intvect.swap( intvect2 );
 		cout << st( swap v1 & v2 ) << newl;
 
-		cout << starline;
+		cout << separtor;
 		cout << intvect;
 		cout << cut;
 		cout << intvect2;

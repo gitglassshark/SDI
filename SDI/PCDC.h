@@ -2,10 +2,42 @@
 #include "pch.h"
 #include "SDI.h"
 #include "muse.h"
+#include <type_traits>
 
 
 class PCDC;
+class CColor;
 using XCout = PCDC;
+
+extern class CColor dccr;
+extern PCDC* pcout;
+
+
+PCDC& com( PCDC& dc );
+PCDC& semi( PCDC& dc );
+PCDC& dash( PCDC& dc );
+PCDC& sp( PCDC& dc );
+PCDC& tab( PCDC& dc );
+PCDC& cut( PCDC& dc );
+PCDC& star( PCDC& dc );
+PCDC& separtor( PCDC& dc );
+PCDC& nl( PCDC& dc );
+PCDC& newl( PCDC& dc );
+PCDC& endl( PCDC& dc );
+PCDC& cl( PCDC& dc );
+PCDC& clear( PCDC& dc );
+
+CString hex( );
+CString HEX( );
+CString oct( );
+CString udec( );
+CString address( );
+CString bools( );
+CString tab( size_t Ntimes = 1 );
+CString sp( size_t Ntimes = 1 );
+CString letters( char lc , size_t Ntimes = 1 );
+CString tasktimestr( clock_t start , clock_t end , size_t itimes = 1 );
+
 
 class CColor {
 public:
@@ -73,54 +105,28 @@ public:
 	COLORREF hlightblue = RGB( 105 , 105 , 255 );
 };
 
-extern class CColor dccr;
-extern PCDC* pcout;
-
-PCDC& cl( PCDC& dc );
-PCDC& clear( PCDC& dc );
-PCDC& com( PCDC& dc );
-PCDC& semi( PCDC& dc );
-PCDC& dash( PCDC& dc );
-PCDC& star( PCDC& dc );
-PCDC& cut( PCDC& dc );
-PCDC& tab( PCDC& dc );
-PCDC& sp( PCDC& dc );
-PCDC& newl( PCDC& dc );
-PCDC& nl( PCDC& dc );
-PCDC& endl( PCDC& dc );
-PCDC& starline( PCDC& dc );
-
-CString hex( );
-CString HEX( );
-CString oct( );
-CString udec( );
-CString address( );
-CString bools( );
-CString tab( size_t Ntimes = 1 );
-CString sp( size_t Ntimes = 1 );
-CString letters( char lc , size_t Ntimes = 1 );
-
 
 class PCDC : public CDC
 {
 public:
 	bool isurerecode = true;
 	bool icreate = false;
+	unsigned short maxrecode = 100;
 	//size_t id = 0;
 	//inline static size_t icount = 0;
 	//int iargs = 0;
 	bool ibegin = true;
 
 public:
-	inline static const LONG wbar = 8;
-	inline static const LONG initalpos = wbar + 35;
-	//const LONG initalstep = 20;
+	//inline static const LONG wbar = 8;
 	LONG step = 36;
+	inline static const LONG initalpos = 40;
+	//const LONG initalstep = 20;
 	inline static POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
 	unsigned char ilinemod = 20;
-	bool icutline = false;
+	//bool icutline = false;
 
 public:
 	COLORREF m_bk = dccr.grey;
@@ -128,11 +134,12 @@ public:
 	COLORREF m_tksource = dccr.smokewhite;
 	COLORREF m_bark = dccr.lteal;
 	COLORREF m_linek = dccr.azure;
-	int mfontsize = 120;
-	CFont font , * pfont;
+	int mfontsize = 118;
+	CFont font , * pfont=nullptr;
 
 public:
 	//CDC* m_cdc = nullptr;
+	inline static PCDC* pXCout = nullptr;
 	CWnd* m_pwnd = nullptr;
 
 public:
@@ -146,8 +153,8 @@ public:
 
 public:
 	PCDC( CWnd* pwnd = nullptr );
-	PCDC& Create( CWnd* pwnd );
-	PCDC& Release( );
+	inline bool Create( CWnd* pwnd );
+	inline bool Release( );
 	~PCDC( );
 
 	//explicit operator char *() const;
@@ -210,7 +217,45 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
-	inline size_t getmaxline( ) { return ( mrect.bottom - mrect.top - initalpos ) / step; }
+	inline size_t getmaxline(bool getmax=true )
+	{
+		m_pwnd->GetClientRect( &mrect );
+		size_t retn = 0;
+		if(getmax==true )
+		{
+			retn=( mrect.bottom - mrect.top - initalpos ) / step;
+		}
+		else
+		{
+			retn = (mrect.bottom-initalpos-mrect.top-p.y) / step;
+		}
+		return retn;
+	}
+	inline size_t getmaxcows(bool getmax=true )
+	{
+		CString cs;
+		cs = "abcdefgABCDEFG";
+		size_t cslen = cs.GetLength( );
+		
+		m_pwnd->GetClientRect( &mrect );
+		msize = this->GetOutputTextExtent( cs );
+		
+		auto acharsize = msize.cx / cslen;
+		auto linelength = mrect.right - mrect.left - 2 * initalpos;
+		auto maxcows = linelength * cslen / msize.cx;
+		
+		size_t retn = 0;
+		if ( getmax == true )
+		{
+			retn = maxcows;
+		}
+		else
+		{
+			retn = ( mrect.right-mrect.left-initalpos - p.x ) / acharsize;
+		}
+		return retn;
+
+	}
 	inline PCDC& resettcolor( );
 	inline void resetmrect( )
 	{
@@ -304,22 +349,23 @@ public:
 		nstore[10] += end - start;
 		return nstore;
 	}
+	void status_head( bool ishow = true , size_t nline = 0 );
 	void status( bool ibshowrecode = true , size_t nline = 45 );
+	size_t showlogn( size_t start , size_t end );
+	//inline size_t showsms( size_t n )
+	//{
+	//	size_t maxn = getmaxline( );
+	//	size_t logsize = mvlogs.size( );
+	//	size_t nshow = gmin( n , maxn , logsize );
+	//	auto itend = mvlogs.end( );
+	//	auto itstart = itend - nshow;
 
-	inline size_t showsms( size_t n )
-	{
-		size_t maxn = getmaxline( );
-		size_t logsize = mvlogs.size( );
-		size_t nshow = gmin( n , maxn , logsize );
-		auto itend = mvlogs.end( );
-		auto itstart = itend - nshow;
-
-		isurerecode = false;
-		for ( ; itstart != mvlogs.end( ); itstart++ )
-			*this << *itstart << endl;
-		isurerecode = true;
-		return nshow;
-	}
+	//	isurerecode = false;
+	//	for ( ; itstart != mvlogs.end( ); itstart++ )
+	//		*this << *itstart << endl;
+	//	isurerecode = true;
+	//	return nshow;
+	//}
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& lmod( unsigned char imod = 30 );
@@ -346,18 +392,19 @@ public:
 		};
 		auto icount = w / charsize.cx;
 		CString line( mlinechar , icount );
-		imresizeout( line );
+		imresizeout(line );
 		storesms( );
 		return *this;
 	};
 
-	template<typename Tstring> inline void imresizeout( Tstring cs )
+	template<typename S>
+	//requires Xstring<S>
+	inline void imresizeout(S cs ) //requires Xstring<S&>
 	{
 		auto start = clock( );
 		static size_t* pnstore = storesms( false );
 		pnstore[9]++;//打印调用次数统计
-		if ( cs.IsEmpty( ) )
-		{
+		if ( cs.IsEmpty( ) ) {
 			pnstore[4]++;//空打印输出次数统计 
 			return;
 		}
@@ -366,12 +413,16 @@ public:
 		auto linelen = mrect.right - initalpos - p.x;
 		auto strlen = msize.cx;
 
-		if ( strlen <= linelen )
-		{
+		if ( strlen <= linelen ) {
+			if ( p.y >= mrect.bottom - mrect.top - initalpos ) {
+				pnstore[7]++;//满屏打印输出次数统计
+				flushscreen( );
+			}
 			pnstore[5]++;//小行打印输出次数统计
 			//need recalc position***
-			if ( p.x == mrect.left + initalpos )
+			if ( p.x == mrect.left + initalpos ) {
 				storesms( );
+			}
 			auto tstart = clock( );
 			this->TextOutW( p.x , p.y , cs );
 			pnstore[13]++;//系统API调用次数
@@ -381,30 +432,21 @@ public:
 			p.x += msize.cx;
 
 			//need check position***
-			if ( p.x >= ( mrect.right - initalpos * 2 ) )
-			{
+			if ( p.x >= ( mrect.right - initalpos * 2 ) ) {
 				pnstore[6]++;//换行打印输出次数统计
+				storesms( );
 				rinitx( );
 				//p.x = mrect.left + initalpos;
 				p.y += step;
 			}
 
-			if ( p.y >= mrect.bottom - mrect.top - initalpos )
-			{
-				pnstore[7]++;//满屏打印输出次数统计
-				flushscreen( );
-				/*p.y = mrect.top + initalpos;*/
-			}
 		}
-		else
-		{
+		else {
 			pnstore[8]++;//分行打印输出次数统计
 			auto cslen = cs.GetLength( );
 			auto tkpos = linelen * cslen / strlen;
-			//if(tkpos==0 &&( ( (double)linelen)/ (double)(( (double)strlen )/((double)cslen) )>0.9))
-				//tkpos++;
-			imresizeout( (Tstring&&)cs.Mid( 0 , tkpos ) );
-			imresizeout( (Tstring&&)cs.Mid( tkpos , cslen - tkpos ) );
+			imresizeout( (S&&)cs.Mid( 0 , tkpos ) );
+			imresizeout( (S&&)cs.Mid( tkpos , cslen - tkpos ) );
 		}
 		auto end = clock( );
 		pnstore[11] += end - start;
@@ -434,7 +476,7 @@ public:
 	{
 		PCDC& cout = *this;
 		cout << std::tuple_size< tuple<Args...>>::value << sp;
-		cout<< "Args...is: "<< ( sizeof...( Args) ) << tab;
+		cout << "Args...is: " << ( sizeof...( Args ) ) << tab;
 		return *this;
 	}
 	template <>	PCDC& operator<<( tuple<> tup ) { ibegin = true; return ( *this ) << " }"; }
@@ -539,9 +581,13 @@ public:
 
 	//template <typename T> PCDC& forprintr( const T* b , const T* e );
 	template <typename T> inline PCDC& forprintv( const T& v );
-	template <typename T> PCDC& forprinta( const T* arr , size_t len );
+	template <typename T> inline PCDC& forprinta( const T* arr , size_t len );
 
-	PCDC& adress( ) { *this << st( address( ) ) << sp; return *this; };
+	PCDC& adress( )
+	{ 
+		*this << st( address( ) ) << sp;
+		return *this;
+	};
 	template <typename X> PCDC& address( X& a );
 	template <typename T , typename ...X> PCDC& address( T& a , X&...args );
 	template <typename X> PCDC& value( X* a );
@@ -567,14 +613,43 @@ public:
 	template <typename T , typename ...X> PCDC& pb( T a , X...args );
 	PCDC& pl( ) { return *this; }
 	template <typename T , typename ...X> PCDC& pl( T a , X...args );
+	template<typename ...A>	PCDC& ps( A...args )
+	{
+		( ( *this << args << sp ) , ... );//	( cout << ...<< args);
+		return *this;
+	}
 
 public:
 	PCDC& displayfile( CString filename );
 	template <typename T , typename ...X> PCDC& prints( T a , X...args );
 
 public:
+	//template<typename A>
+//concept Xstring = requires( A s) {
+//	s.IsEmpty( );
+//	s.GetLength( );
+//	s.Mid( );
+//	requires std::same_as<A,CString>||same_as<A,CAtlString>;
+//};
+	//template<typename S>
+	//requires Xstring<S>
+	//PCDC& operator <<( S& s )
+	//{
+	//	*this << "Xstring";
+	//	if ( !s.IsEmpty( ) )
+	//	{
+	//		imresizeout( s );
+	//	}
+	//	else
+	//	{
+	//		ms = "null(0)";
+	//		imresizeout( ms );
+	//	}
+	//	return *this;
+	//};
 
 };
+
 
 template <typename A , typename B>
 PCDC& PCDC::operator||( const tuple<A , B>& tup )
@@ -1118,7 +1193,7 @@ inline PCDC& PCDC::forprintv( const T& v )
 }
 
 template<typename T>
-PCDC& PCDC::forprinta( const T* arr , size_t len )
+inline PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
 	unsigned char il = 0;
 	for ( size_t i = 0; i < len; ++i )
@@ -1128,6 +1203,7 @@ PCDC& PCDC::forprinta( const T* arr , size_t len )
 	}
 	return *this;
 }
+
 
 template <typename T = int , bool isort = bigtosmall>
 class icompset {
@@ -1198,6 +1274,4 @@ public:
 		return cout;
 	};
 };
-
-
 

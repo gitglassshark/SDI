@@ -4,7 +4,9 @@
 #include "muse.h"
 
 //size_t PCDC::icount = 0;
-extern class CColor dccr;
+
+class CColor dccr;
+PCDC* pcout = nullptr;
 
 CString hex( ) { return CString( ); }
 CString HEX( ) { return CString( ); }
@@ -13,7 +15,6 @@ CString udec( ) { return CString( ); }
 CString address( ) { CString cs; return cs; }
 
 PCDC& sp( PCDC& dc ) { return  dc << "  "; }
-PCDC& star( PCDC& dc ) { return dc << "*"; }
 PCDC& dash( PCDC& dc ) { return dc << "-";; }
 PCDC& com( PCDC& dc ) { return dc << ','; }
 PCDC& tab( PCDC& dc ) { return dc << '\t'; }
@@ -39,18 +40,8 @@ PCDC& cut( PCDC& dc )
 	dc.cut( );
 	return dc;
 }
-PCDC& cl( PCDC& dc )
-{
-	dc.flushscreen( );
-	return dc;
-}
-PCDC& clear( PCDC& dc )
-{
-	dc.flushscreen( );
-	return dc;
-}
-
-PCDC& starline( PCDC& dc )
+PCDC& star( PCDC& dc ) { return dc << "*"; }
+PCDC& separtor( PCDC& dc )
 {
 	if ( dc.p.x != dc.mrect.left + dc.initalpos )
 		dc << nl;
@@ -58,71 +49,121 @@ PCDC& starline( PCDC& dc )
 	return 	dc;
 }
 
+PCDC& clear( PCDC& dc )
+{
+	dc.flushscreen( );
+	return dc;
+}
+PCDC& cl( PCDC& dc )
+{
+	dc.flushscreen( );
+	return dc;
+}
+
+
 PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
 {
-	if ( m_pwnd ) {
+	if ( ( m_pwnd != nullptr ) && ( this != nullptr ) )
+	{
 		//id = icount;
 		//++icount;
-		Create( m_pwnd );
+		bool iret = Create( m_pwnd );
+		if ( iret == false )
+			AfxMessageBox( _T( "Create XCout is faile!" ) );
 	}
 }
 
 PCDC::~PCDC( )
 {
 	//--icount;
-	this->Release( );
-}
-
-PCDC& PCDC::Create( CWnd* pwnd )
-{
-	if ( pwnd != nullptr )
-		m_pwnd = pwnd;
-	if ( icreate )
-		return *this;
-	this->m_hDC = m_pwnd->GetWindowDC( )->m_hDC;
-	CDC& dc = *this;
-
-
-	//设置窗口背景颜色
-	dc.SetBkColor( m_bk );
-	//设置字体颜色
-	dc.SetTextColor( m_tk );
-
-	flushscreen( );
-
-	//设置缺省字体
-	LOGFONT lf;
-	// zero out structure
-	memset( &lf , 0 , sizeof( LOGFONT ) );
-	font.CreatePointFont( this->mfontsize , _T( "Cascadia Mono" ) );
-	pfont = dc.SelectObject( &font );
-
-	//根据字体大小调整步长
-	font.GetLogFont( &lf );
-	step = abs( lf.lfHeight + lf.lfHeight / 2 );
-
-	//检查输出位置
-	if ( !dc.PtVisible( p ) ) {
-		p.x = initalpos;
-		p.y = initalpos;
+	if ( ( this != nullptr ) && ( icreate != false ) )
+	{
+		bool iret = this->Release( );
+		if ( iret == false )
+			AfxMessageBox( _T( "Relase XCout is faile!" ) );
 	}
-	icreate = true;
-	mvlogs.reserve( getmaxline( ) * 10 );
-	return *this;
 }
 
-PCDC& PCDC::Release( )
+inline bool PCDC::Create( CWnd* pwnd )
 {
-	if ( !icreate )
-		return *this;
-	CDC& dc = *this;
-	dc.SelectObject( pfont );
-	m_pwnd->ReleaseDC( this );
-	font.DeleteObject( );
-	m_pwnd = nullptr;
+	if ( ( pwnd != nullptr ) && ( icreate != true ) && ( this != nullptr ) )
+	{
+		m_pwnd = pwnd;
+		CDC* pdc = m_pwnd->GetWindowDC( );
+		if ( pdc != nullptr ) {
+			m_hDC = pdc->m_hDC;
+			CDC& dc = *this;
+
+			//设置缺省字体
+			LOGFONT lf;
+			// zero out structure
+			memset( &lf , 0 , sizeof( LOGFONT ) );
+			font.CreatePointFont( this->mfontsize , _T( "Cascadia Code SemiLight" ) );
+			pfont = dc.SelectObject( &font );
+			if ( pfont != nullptr )
+			{
+				//设置窗口背景颜色
+				dc.SetBkColor( m_bk );
+				//设置字体颜色
+				dc.SetTextColor( m_tk );
+				flushscreen( );
+
+				//根据字体大小调整步长
+				font.GetLogFont( &lf );
+				step = abs( lf.lfHeight + lf.lfHeight / 2 );
+
+				//设置日志记录容量
+				mvlogs.reserve( getmaxline( ) * maxrecode );
+
+				//检查输出位置
+				if ( !dc.PtVisible( p ) ) {
+					p.x = initalpos;
+					p.y = initalpos;
+				}
+
+				icreate = true;
+				pXCout = this;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+inline bool PCDC::Release( )
+{
+	if ( ( icreate != false ) && ( this != nullptr ) )
+	{
+		CDC& dc = *this;
+		if ( pfont != nullptr )
+			dc.SelectObject( pfont );
+		if ( m_pwnd != nullptr )
+		{
+			m_pwnd->ReleaseDC( this );
+		}
+		font.DeleteObject( );
+		m_pwnd = nullptr;
+		pfont = nullptr;
+		pXCout = nullptr;
+		icreate = false;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 	//m_cdc = nullptr;
-	icreate = false;
-	return *this;
 }
 
 PCDC& PCDC::resettcolor( )
@@ -146,7 +187,7 @@ PCDC& PCDC::setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk )
 	return *this;
 }
 
-PCDC& PCDC::lmod(unsigned char  imod )
+PCDC& PCDC::lmod( unsigned char  imod )
 {
 	ilinemod = imod;
 	return *this;
@@ -161,30 +202,28 @@ char PCDC::setlinechar( const char& c )
 
 PCDC& PCDC::flushscreen( const CRect* r , const COLORREF* cr )
 {
-	auto iwbar = wbar;
 	m_pwnd->GetClientRect( &mrect );
 	//CRect rect( mrect );
 	//if ( r != nullptr ) { mrect = *r; } else { }
 	//cr != nullptr ? m_bk = *cr : true;
-	//p.x = mrect.left + initalpos;
-	//p.y = mrect.top + initalpos;
 	rinitxy( );
-	mrect.left = 0;
-	mrect.top = 0;
-	FillSolidRect( mrect , m_bark );
+	auto rect = mrect;
+	auto iwbar = initalpos / 4;
+	//rect.left = 0;
+	//rect.top = 0;
+	FillSolidRect( rect , m_bark );
 
-	mrect.bottom -= iwbar;
-	mrect.left += iwbar;
-	mrect.right -= iwbar;
-	mrect.top += iwbar;
-	FillSolidRect( mrect , m_linek );
+	rect.bottom -= iwbar;
+	rect.left += iwbar;
+	rect.right -= iwbar;
+	rect.top += iwbar;
+	FillSolidRect( rect , m_linek );
 
-	iwbar = 12;
-	mrect.bottom -= iwbar;
-	mrect.left += iwbar;
-	mrect.right -= iwbar;
-	mrect.top += iwbar;
-	FillSolidRect( mrect , m_bk );
+	rect.bottom -= iwbar;
+	rect.left += iwbar;
+	rect.right -= iwbar;
+	rect.top += iwbar;
+	FillSolidRect( rect , m_bk );
 	return *this;
 }
 
@@ -222,24 +261,40 @@ PCDC& PCDC::displayfile( CString filename )
 	return *this;
 }
 
-void PCDC::status( bool ibshowrecode , size_t nline )
+void PCDC::status_head( bool ishow , size_t nline )
 {
+	static bool ifirst = true;
+	ifirst = ishow;
+	if ( ifirst != true )
+		return;
+	CString cs;
+	cs = "abcdefgABCDEFG";
+	auto maxl = getmaxline( );
+	auto maxc = getmaxcows( );
+	auto size = sizeof( cs[0] );
 	auto& cout = *this;
 	LOGFONT l;
 	CAtlString str = _T( "显示设备XCout工作状态" );
-	cout.stoprecode( );
 	size_t* pnstore = cout.storesms( false );
+	size_t cslen = cs.GetLength( );
+	size_t maxline = cout.getmaxline( ) - 6;
+	size_t logsize = cout.mvlogs.size( );
 	font.GetLogFont( &l );
 	m_pwnd->GetWindowRect( &mrect );
 	theApp.m_pMainWnd->SetWindowText( str );
+
 	cout << clear;
 	cout.sourcemode( );
-	cout << "XCout状态：保存记录 " << cout.mvlogs.size( ) << sp;
-	cout << "屏显行数 " << cout.getmaxline( ) << sp;
-	cout << "纪录容量 " << cout.mvlogs.capacity( ) << sp;
+	cout << "XCout纪录状态:" << tab;
+	cout << "当前保存记录 " << cout.mvlogs.size( ) << sp;
+	cout << "纪录容量行 " << cout.mvlogs.capacity( ) << sp;
+	cout << "纪录最大内存空间：" << double( maxl * maxc * size * cout.maxrecode ) / ( 1024 * 1024 ) << "M" << sp;
+	cout << "纪录当前内存：" << double( maxl * maxc * size * logsize ) / ( 1024 * 1024 ) << "M" << sp;
+	cout << "实际记录 " << pnstore[2];
+
+	cout << newl << "XCout调用数据:" << tab;
 	cout << "记录调用 " << pnstore[0] << sp;
 	cout << "记录调整 " << pnstore[1] << sp;
-	cout << "实际记录 " << pnstore[2] << sp;
 	cout << "空记录调用 " << pnstore[3] - pnstore[2] << sp;
 	cout << "空打印调用 " << pnstore[4] << sp;
 	cout << "行内打印 " << pnstore[5] << sp;
@@ -250,28 +305,85 @@ void PCDC::status( bool ibshowrecode , size_t nline )
 	cout << "记录总耗时 " << pnstore[10] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
 	cout << "打印总耗时 " << pnstore[11] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
 	cout << "API总耗时 " << pnstore[12] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
-	cout << "API调用 " << pnstore[13] << sp;
-	cout << "step " << step << sp;
-	cout << "rect.left " << mrect.left << sp;
-	cout << "rect.right " << mrect.right << sp;
-	cout << "rect.top " << mrect.top << sp;
-	cout << "rect.bottom " << mrect.bottom << sp;
-	cout << "p.x " << p.x << sp;
-	cout << "p.y " << p.y << sp;
-	cout << "字体 " << CString( l.lfFaceName );
-	if ( ibshowrecode ) {
-		str = _T( " [历史记录]-尾部 " );
-		size_t maxline = cout.getmaxline( ) - 6;
-		if ( nline <= maxline )maxline = nline;
-		size_t logsize = cout.mvlogs.size( );
-		if ( logsize < maxline )maxline = logsize;
-		settcolor( dccr.red1 );
-		cout << starline;
-		cout << str<<gmin(maxline,logsize,nline ) << " 行：" << newl;
-		for ( int i = logsize - maxline; i < logsize; i++ )
-			cout << cout.mvlogs[i] << nl;
-		cout.resettcolor( );
+	cout << "API调用 " << pnstore[13];
+
+	cout << newl << "XCout显示状态:" << tab;
+	cout << "屏显行数 " << cout.getmaxline( ) << sp;
+	cout << "屏显列数 " << cout.getmaxcows( ) << sp;
+	cout << "字体 " << CString( l.lfFaceName ) << sp;
+	cout << "当前位置（XY) " << p.x << com << p.y << sp;
+	cout << "步进 " << step << sp;
+	cout << "左 " << mrect.left << sp;
+	cout << "右 " << mrect.right << sp;
+	cout << "上 " << mrect.top << sp;
+	cout << "下 " << mrect.bottom << sp;
+	cout << "剩余行数 " << getmaxline( false ) << sp;
+	cout << "剩余列数 " << getmaxcows( false );
+
+	cout << separtor;
+	str = _T( " [历史记录]-尾部 " );
+	cout << str << newl;
+
+	ifirst = false;
+}
+
+size_t PCDC::showlogn( size_t start , size_t end )
+{
+	if ( ( start < 0 ) || ( end < 0 ) || ( end < start ) || mvlogs.empty( ) || ( end > mvlogs.size( ) - 1 ) )
+	{
+		return -1;
 	}
+	else
+	{
+		for ( int i = start; i <= end; i++ )
+			*this << mvlogs[i] << nl;
+		return end - start+1;
+	}
+}
+
+void PCDC::status( bool ibshowrecode , size_t nline )
+{
+	static bool ifirst = true;
+	auto& cout = *this;
+	cout.stoprecode( );
+
+	if ( ifirst == true )
+		status_head( true , nline );
+
+	size_t maxline;
+	if ( ifirst )
+	{
+		maxline = cout.getmaxline( ) - 12;
+	}
+	else
+	{
+		maxline = cout.getmaxline( ) - 1;
+	}
+	size_t logsize = cout.mvlogs.size( );
+	static size_t oldshow = 0;
+
+	CString cs;
+	if ( nline <= maxline )maxline = nline;
+	if ( logsize < maxline )maxline = logsize;
+
+	auto start = logsize - maxline - oldshow;
+	auto end = logsize - 1 - oldshow;
+	start = max( 0 , start );
+	end = max( 0 , end );
+	end = max( start , end );
+	end = min( logsize , end );
+	settcolor( dccr.gteal );
+	if ( ibshowrecode ) {
+		showlogn( start , end );
+	}
+	oldshow += end - start;
+	ifirst = false;
+	if ( oldshow >= logsize - 1 )
+	{
+		ifirst = true;
+		oldshow = 0;
+	}
+
 	cout.resettcolor( );
 	cout.startrecode( );
 }
@@ -404,7 +516,7 @@ PCDC& PCDC::operator <<( const int n )
 	return *this;
 }
 
-PCDC& PCDC::operator<<( const char c )
+PCDC& PCDC::operator <<( const char c )
 {
 	if ( c == 0 ) { ms = "null(0)"; }
 	if ( c == '\n' ) {
@@ -479,14 +591,14 @@ PCDC& PCDC::operator <<( const bool b )
 	return *this;
 }
 
-PCDC& PCDC::operator<<( const unsigned long int n )
+PCDC& PCDC::operator <<( const unsigned long int n )
 {
 	ms.Format( _T( "%lu" ) , n );
 	imresizeout( ms );
 	return *this;
 };
 
-PCDC& PCDC::operator<<( const unsigned int n )
+PCDC& PCDC::operator <<( const unsigned int n )
 {
 	//( *this ) << (const int)n; return *this; 
 	ms.Format( _T( "%lu" ) , n );
@@ -494,12 +606,13 @@ PCDC& PCDC::operator<<( const unsigned int n )
 	return *this;
 };
 
-PCDC& PCDC::operator<<( std::nullptr_t p )
+PCDC& PCDC::operator <<( std::nullptr_t p )
 {
 	ms = "nullptr";
 	imresizeout( ms );
 	return *this;
 }
+
 
 CString bools( )
 {
@@ -533,5 +646,21 @@ CString letters( char lc , size_t Ntimes )
 	return cs;
 }
 
+CString tasktimestr( clock_t start , clock_t end , size_t itimes )
+{
+	size_t times;
+	CString cs;
+
+	cs = "Totaltimes: ";
+	cs.AppendFormat( _T( "%8.6f" ) , ( (long double)(end)-(long double)start ) * 1000 / CLOCKS_PER_SEC );
+	cs += "\'ms.  Once: ";
+	cs.AppendFormat( _T( "%8.2lf" ) , long double( ( (long double)end - (long double)start ) * 1000 * 1000 ) / ( CLOCKS_PER_SEC * itimes ) );
+	cs += "\'us ";
+
+	cs.AppendFormat( _T( "%8.2lf" ) , long double( ( (long double)end - (long double)start ) * 1000 * 1000 * 1000 ) / ( CLOCKS_PER_SEC * itimes ) );
+	cs += "\'ns.   Total clock: ";
+	cs.AppendFormat( _T( "%lu" ) , ( end - start ) );
+	return cs;
+}
 
 
