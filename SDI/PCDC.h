@@ -105,6 +105,18 @@ public:
 	COLORREF hlightblue = RGB( 105 , 105 , 255 );
 };
 
+template<typename T>
+concept enumc = requires( T a )
+{
+	std::is_enum_v<T>;
+};
+template<typename S>
+concept PS = requires ( S s )
+{
+	s.length( );
+	s.at( );
+	s.c_str( );
+};
 
 class PCDC : public CDC
 {
@@ -135,7 +147,7 @@ public:
 	COLORREF m_bark = dccr.lteal;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 118;
-	CFont font , * pfont=nullptr;
+	CFont font , * pfont = nullptr;
 
 public:
 	//CDC* m_cdc = nullptr;
@@ -168,11 +180,51 @@ public:
 	PCDC& operator<<( signed char const* p ) { return *this << (char const*)p; };
 	PCDC& operator<<( unsigned char const* p ) { return *this << (char const*)p; };
 	PCDC& operator<<( LPCTSTR s );
+
+	//template<typename S>
+	//requires requires (S s )
+	//{
+	//	s.length( );
+	//	s.at( );
+	//	s.c_str( );
+	//}
+	//PCDC& operator<<( const S& s ) 
+	//{
+	//	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
+	//		ms = s.c_str( );
+	//	}
+	//	else
+	//	{
+	//		ms = "null(0)";
+	//	}
+	//	imresizeout( ms );
+	//	return *this;
+	//}
+
+	//template<typename S>
+	//requires PS<S>
+	//PCDC& operator<<(const S& s )
+	//{
+	//	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
+	//		ms = s.c_str( );
+	//	}
+	//	else
+	//	{
+	//		ms = "null(0)";
+	//	}
+	//	imresizeout( ms );
+	//	return *this;
+	//}
 	PCDC& operator<<( const std::string& s );
 	PCDC& operator<<( const std::wstring& s );
 	PCDC& operator<<( const CString& s );
 	PCDC& operator<<( const CString&& s );
 	PCDC& operator<<( const CAtlString& s );
+	//template<enumc E>
+	//PCDC& operator<<( enumc auto s )
+	//{
+	//	return *this << (int)s;
+	//};
 	PCDC& operator<<( const bool b );
 	PCDC& operator<<( const int n );
 	PCDC& operator<<( const unsigned int n );
@@ -217,33 +269,33 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
-	inline size_t getmaxline(bool getmax=true )
+	inline size_t getmaxline( bool getmax = true )
 	{
 		m_pwnd->GetClientRect( &mrect );
 		size_t retn = 0;
-		if(getmax==true )
+		if ( getmax == true )
 		{
-			retn=( mrect.bottom - mrect.top - initalpos ) / step;
+			retn = ( mrect.bottom - mrect.top - initalpos ) / step;
 		}
 		else
 		{
-			retn = (mrect.bottom-initalpos-mrect.top-p.y) / step;
+			retn = ( mrect.bottom - initalpos - mrect.top - p.y ) / step;
 		}
 		return retn;
 	}
-	inline size_t getmaxcows(bool getmax=true )
+	inline size_t getmaxcows( bool getmax = true )
 	{
 		CString cs;
 		cs = "abcdefgABCDEFG";
 		size_t cslen = cs.GetLength( );
-		
+
 		m_pwnd->GetClientRect( &mrect );
 		msize = this->GetOutputTextExtent( cs );
-		
+
 		auto acharsize = msize.cx / cslen;
 		auto linelength = mrect.right - mrect.left - 2 * initalpos;
 		auto maxcows = linelength * cslen / msize.cx;
-		
+
 		size_t retn = 0;
 		if ( getmax == true )
 		{
@@ -251,12 +303,18 @@ public:
 		}
 		else
 		{
-			retn = ( mrect.right-mrect.left-initalpos - p.x ) / acharsize;
+			retn = ( mrect.right - mrect.left - initalpos - p.x ) / acharsize;
 		}
 		return retn;
 
 	}
 	inline PCDC& resettcolor( );
+	inline PCDC & printX( auto...x )
+	{
+		(((*this<<"- "),type( x ),(*this << "+" ) ) , ... );
+		((* this << x<<sp ),...);
+		return *this;
+	}
 	inline void resetmrect( )
 	{
 		m_pwnd->GetClientRect( &mrect );
@@ -320,10 +378,21 @@ public:
 		}
 		return true;
 	}
+	inline size_t setmaxlog( bool isreset = false , size_t max = 0 )
+	{
+		if ( ( isreset == true ) && ( max >= 0 ) ) {
+			maxrecode = max;
+			mvlogs.resize( getmaxline( ) * maxrecode );
+			mvlogs.shrink_to_fit( );
+		}
+		return maxrecode;
+	}
 	inline bool stoprecode( ) { return isurerecode = false; }
 	inline bool startrecode( ) { return isurerecode = true; }
 	inline size_t* storesms( bool isstorecomand = true )
 	{
+		size_t maxline = getmaxline( );
+		size_t totalmaxline = maxline * maxrecode;
 		auto start = clock( );
 		static size_t nstore[14] {};
 		nstore[0]++;//总调用次数
@@ -332,11 +401,10 @@ public:
 		if ( isurerecode )
 		{
 			if ( !sms.IsEmpty( ) ) {
-				if ( mvlogs.size( ) >= getmaxline( ) * 10 - 2 )
+				if ( mvlogs.size( ) >= totalmaxline )
 				{
-					mvlogs.erase( mvlogs.begin( ) , mvlogs.begin( ) + getmaxline( ) * 5 );
-					mvlogs.shrink_to_fit( );
-					mvlogs.reserve( getmaxline( ) * 10 );
+					mvlogs.erase( mvlogs.begin( ) , mvlogs.begin( ) + totalmaxline / 2 );
+					mvlogs.reserve( totalmaxline );
 					nstore[1]++;//调整次数
 				}
 				mvlogs.push_back( sms );
@@ -349,9 +417,26 @@ public:
 		nstore[10] += end - start;
 		return nstore;
 	}
-	void status_head( bool ishow = true , size_t nline = 0 );
+	void status_head( bool ishow = true , size_t nline = 0 , bool ishowtail = true );
 	void status( bool ibshowrecode = true , size_t nline = 45 );
 	size_t showlogn( size_t start , size_t end );
+	clock_t timestart( bool isstart = true )
+	{
+		clock_t static start {};
+		if ( isstart == true ) {
+			start = clock( );
+		}
+		return start;
+	}
+	CString timeend( size_t itimes = 1 )
+	{
+		clock_t static end {};
+		end = clock( );
+		clock_t start = timestart( false );
+		CString strcount=tasktimestr( timestart( false ) , end , itimes );
+		if(itimes!=0 )*this << strcount << newl;
+		return strcount;
+	}
 	//inline size_t showsms( size_t n )
 	//{
 	//	size_t maxn = getmaxline( );
@@ -373,9 +458,17 @@ public:
 	char setlinechar( const char& c = '=' );
 	inline PCDC& flushscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
 	inline PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
-	inline PCDC& location( )
+	inline PCDC& location( auto s )
 	{
-		return *this << __FILE__ << sp << __LINE__ << sp << __func__ << endl;
+		CString strloc;
+		strloc += "当前位置{ 文件：";
+		strloc += s.file_name( );
+		strloc += " 函数：";
+		strloc += s.function_name( );
+		strloc += " 行号：";
+		strloc.AppendFormat(_T("%ld" ) ,s.line( ));
+		strloc += " } ";
+		return *this << strloc ;
 	};
 	inline PCDC& cut( CString t = CString( ) , char c = '-' , bool ib = true )
 	{
@@ -392,14 +485,14 @@ public:
 		};
 		auto icount = w / charsize.cx;
 		CString line( mlinechar , icount );
-		imresizeout(line );
+		imresizeout( line );
 		storesms( );
 		return *this;
 	};
 
 	template<typename S>
 	//requires Xstring<S>
-	inline void imresizeout(S cs ) //requires Xstring<S&>
+	inline void imresizeout( S cs ) //requires Xstring<S&>
 	{
 		auto start = clock( );
 		static size_t* pnstore = storesms( false );
@@ -584,7 +677,7 @@ public:
 	template <typename T> inline PCDC& forprinta( const T* arr , size_t len );
 
 	PCDC& adress( )
-	{ 
+	{
 		*this << st( address( ) ) << sp;
 		return *this;
 	};
@@ -1204,7 +1297,6 @@ inline PCDC& PCDC::forprinta( const T* arr , size_t len )
 	return *this;
 }
 
-
 template <typename T = int , bool isort = bigtosmall>
 class icompset {
 public:
@@ -1274,4 +1366,6 @@ public:
 		return cout;
 	};
 };
+
+
 

@@ -8,7 +8,7 @@
 #include "SDI.h"
 #include "MainFrm.h"
 #endif
-
+#include <source_location>
 
 #include "SDIDoc.h"
 #include "SDIView.h"
@@ -1441,7 +1441,7 @@ void CSDIView::OnMacroTest( )
 			cout << __DATE__ << sp << __TIME__ << tab << __FILE__ << tab << __LINE__ << tab << __func__ << tab << __STDC_HOSTED__ << newl;
 		);
 		lscode(
-			cout.location( );
+			cout.location( std::source_location::current( ) );
 		);
 
 		lscode(

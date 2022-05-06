@@ -4,6 +4,8 @@
 #include <functional>
 #include <algorithm>
 #include <concepts>
+#include <chrono>
+#include <source_location>
 
 //template<typename T>
 //concept Iempty = std::is_empty<T>::value;
@@ -17,123 +19,75 @@
 //	cout << "it is int" << sp;
 //	return a;
 //}
-template <typename T>
-concept stdstr = std::same_as<T , string> || same_as<T , CString> || same_as<T , char*> || same_as<T , wstring>;
 
-template<typename T >
-void con( T it )
+template<typename FT>
+concept FplusT = std::is_floating_point_v<FT> || std::is_integral_v<FT> || std::is_class_v<FT>;
+
+void kft( FplusT auto t )
 {
 	getcout;
-	cout << "it is (T)" << newl;
-
+	cout << "FT is ok" << newl;
 }
 
-//template<typename T>
-//void con( T* it )
-//{
-//	getcout;
-//	cout << "it is (T*)" << newl;
-//
-//}
+auto l = [ ] ( int x ) { getcout; cout << x << sp; };
 
-template <typename T>
-concept sset = std::is_integral_v<T> || std::is_class_v<T>;//||std::is_pointer<T>::value;
-//concept sset = std::is_integral<T>::value || std::is_class<T>::value;//||std::is_pointer<T>::value;
 
-template <typename T>
-concept ispoint = std::is_pointer<T>::value;
 
-template <typename T > //requires ispoint<T>//ok
-//template <sset T >//ok
-T* con( T* it )
+void test_00( PCDC& cout )
 {
-	getcout;
-	cout << "it is T*" << newl;
-	return it;
+	lscode(
+		cout.printX( 1 , 2.2 , "x" );
+	); lscode(
+
+	);
 }
 
-template <ispoint T >//ok
-//template <sset T >//ok
-T con( T it )
+
+
+
+
+
+void test_01( PCDC& cout )
 {
-	getcout;
-	cout << "it is point concept" << newl;
-	return it;
+	lscode(
+	); lscode(
+	);
 }
 
 
-template <typename T > requires sset<T>//ok
-//template <sset T >//ok
-T con( T it )
-{
-	getcout;
-	cout << "it is sset(int+class)" << newl;
-	return it;
-}
 
-template<typename ...A>
-void prarg( A...args )
-{
-	getcout;
-	((cout << args<<sp),...);
-}
 
-template<typename ...A>
-void parg( A...args )
-{
-	getcout;
-	( cout <<...<< args );
-}
 
-template<typename... Args>
-auto alladd( Args...args )
-{
-	auto  x = ( args +...);
-	return x;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void test00( PCDC& cout )
 {
-	cout << separtor;
-	code(
-		int ia = 1;
-	float fa = 2.2;
-	char ca = 'a';
-	class X {};
-	char* p = &ca;
-	void* vp = p;
-	X xa;
-	vector<int>va { 0,1,2,3,4,5,6,7,8,9,10 };
-	CString cs( "good" );
-	);
-
-	lcode(
-		con( ia );
-	); lcode(
-		con( fa );
-	); lcode(
-		con( ca );
-	); lcode(
-		con( xa );
-	); lcode(
-		con( cs );
-	); lcode(
-		con( p );
-	); lcode(
-		con( vp );
-	); lscode(
-		cout << alladd( 3 , 4 , 5 ) << newl;
-	); lscode(
-		prarg( ia , fa , ca ,  cs );
-		parg( ia , fa , ca ,  cs );
-		cout.ps( ia , fa , ca , cs );
-	);
-
-	//); code(
-	cout << separtor;
+	test_00( cout );
 }
-
-
 
 void test01( PCDC& cout )
 {
@@ -160,7 +114,54 @@ void test05( PCDC& cout )
 
 }
 
-void testx0( PCDC& cout )
+void test_remulti_varexpend( PCDC& cout )
+{
+	//template <typename... T>
+	//auto remulti( T&...args )
+	//{
+	//	return std::make_tuple( args... );
+	//}
+	//
+	//template <typename... T>
+	//auto remulti( T&&...args )
+	//{
+	//	return std::make_tuple( args... );
+	//}
+	//template<typename T , typename... Ts>
+	//auto printf3( T value , Ts... args ) {
+	//	getcout;
+	//	cout << value << endl;
+	//	(void)std::initializer_list<T>
+	//	{( [ &args ] {getcout; cout << args << endl; }( ) , 0 )...};
+	//}
+	//	lscode(
+	//		vector vect { 9,8,7,6,5 };
+	//	vector vects { "goods ","bads ","normal" };
+	//	cout << vect.size( ) << newl;
+	//	cout << vects.size( ) << newl;
+	//	); lscode(
+	//		int x = 100;
+	//	cout << remulti( x , 1 , vects , vect ) << newl;
+	//	); lscode(
+	//		cout << separtor;
+	//	auto [a , b , c , d] = remulti( x , 2 , vect , vects );
+	//	cout << a << semi << b << semi << c << newl;
+	//	); lscode(
+	//		printf3( 3 , 4.4 , "goodprint" );
+	//	);
+
+}
+
+void test_if_definevar( PCDC& cout )
+{
+	//lscode(
+	//	if ( int x = 4 )
+	//		cout <<++x << sp;
+	//); lscode(
+	//);
+}
+
+void test_var_x0( PCDC& cout )
 {
 	//template<typename ...Args>
 	//void ps( Args...args )
@@ -177,6 +178,358 @@ void testx0( PCDC& cout )
 
 }
 
+void test_timetest01( PCDC& cout )
+{
+	//lscode(
+	//	//	multiset mset { 3,4,8,9,5,77,99 };
+	//	//); lscode(
+	//	//	cout << ( mset.find( 4 ) != mset.end( ) ) << newl;
+	//	//); lscode(
+	//	//	cout << ( mset.find( 7 ) != mset.end( ) ) << newl;
+	//	//); lscode(
+	//	//	cout << mset.count( 8 ) << newl;
+	//	//); lscode(
+	//	//	cout << mset.contains( 8 ) << newl;
+	//	//); lscode(
+	//	//	float fa = 4.8;
+	//	//kft( fa );
+	//	//); lscode(
+	//	//	int ia = 1;
+	//	//kft( ia );
+	//	//); lscode(
+	//	//kft(mset );
+	//	//); lscode(
+	//	//	cout.location(std::source_location::current() );
+	//	//int a[ ] = {1,2,3,5,6 };
+	//	//cout << a[3 , 4] << newl;
+	//	NTIME(5100)cout<<separtor;
+	//); lscode(
+	//	cout.timestart( );
+	//NTIME( 2000 )
+	//	cout.mvlogs.erase( cout.mvlogs.begin( ) , cout.mvlogs.begin( ) + 1 );
+	//cout.timeend(2000 );
+	//); lscode(
+	//	cout.timestart( );
+	//NTIME( 2000 )
+	//	std::shift_left( cout.mvlogs.begin( ) , cout.mvlogs.end( ) , 1 );
+	//cout.timeend(2000 );
+	//); lscode(
+	//currlocation;
+	//);
+
+	//consteval 
+	//	auto s = std::source_locatio/*n::current( );
+	//cout << s.file_name()<<sp<<s.function_name()<<sp<<s.line() << newl;*/
+
+}
+
+void test_same_v_for( PCDC& cout )
+{
+	//lscode(
+	//if ( std::is_same_v<decltype( NULL ) , decltype( 0 )> )
+	//	cout << "NULL == 0" << newl;
+	//else
+	//	cout << "NULL != 0" << newl;
+	//); lscode(
+	//vector va { 1,2,3,4 };
+	//cout << va << newl;
+	//); lscode(
+	//for (int c=2;auto& i:va )
+	//{
+	//	i = i + c++;
+	//}
+	//cout << va << newl;
+	//);
+}
+
+void test_NULL_nullptr( PCDC& cout )
+{
+	/*lscode(
+		l( 4 );
+	); lscode(
+		if ( std::is_same<decltype( NULL ) , decltype( 0 )>::value )
+			cout << "NULL == 0" << newl;
+		else cout << "NULL != 0" << newl;
+	); lscode(
+		if ( std::is_same<decltype( NULL ) , decltype( (void*)0 )>::value )
+			cout << "NULL == (void *)0" << endl;
+		else cout << "NULL != void *(0)" << newl;
+	); lscode(
+		if ( std::is_same<decltype( NULL ) , std::nullptr_t>::value )
+			std::cout << "NULL == nullptr" << endl;
+		else cout << "NULL != nullptr_t" << newl;
+	);*/
+}
+
+void test_con_3( PCDC& cout )
+{
+	//template<typename A>
+	//void say( A a )
+	//{
+	//	getcout;
+	//	cout << "A" << sp;
+	//	cout << a << sp;
+	//}
+	//
+	//template<typename A>
+	//void say( A a ) requires requires ( A a ) { a.c_str( ); }
+	//{
+	//	getcout;
+	//	cout << "c_str()" << sp;
+	//	cout << a << sp;
+	//}
+	//	int ia = 0;
+	//	string is = "ok";
+	//	lscode(
+	//		say( ia ); cout << endl;
+	//	); lscode(
+	//		say( is ); cout << endl;
+	//	);
+
+}
+
+void test_lamda( PCDC& cout )
+{
+
+	//int ix = 2;
+	//auto lamda = [ ] ( ) {int ia = 3; getcout; cout << ia; };
+	//cout << separtor;
+	//lamda( );
+
+	//cout << separtor;
+	//auto lamdb = [ ]<typename ...Args>
+	//	( Args ...args ) {
+	//	int ia = 3; getcout; ( ( cout << args << sp ) , ... );
+	//};
+	//lamdb( 3 , 2 , 1 );
+
+}
+
+void test_enum( PCDC& cout )
+{
+	//enum class syscolor {
+	//	red , blue , green
+	//};
+	//
+	//enum class mycolor {
+	//	red = 1 , blue , green , brown
+	//};
+	//
+	//	lscode(
+	//		syscolor c1 { syscolor::red };
+	//	mycolor c2 { mycolor::red };
+	//	); lscode(
+	//		cout.type( c1 );
+	//	); lscode(
+	//		cout.type( c2 );
+	//	); lscode(
+	//		cout << c1 << tab << sizeof( c1 ) << newl;
+	//	); lscode(
+	//		cout << syscolor::red << newl;
+	//	); lscode(
+	//		cout << c2 << tab << sizeof( c2 ) << newl;
+	//	); lscode(
+	//		c1 = syscolor::blue;
+	//	cout << c1 << newl;
+	//	);
+
+}
+
+void test_fact( PCDC& cout )
+{
+//int fact( int n )
+//{
+//	int i = n;
+//	getcout;
+//	n++;
+//	//cout << n << sp;
+//	if ( n <= 3 )
+//		i = fact( fact(n) );
+//	n--;
+//	cout <<star<< i << sp<<n<<tab;
+//	return n;
+//}
+//
+//
+//	lscode(
+//		int n = 0;
+//	); lscode(
+//		fact( n );
+//	); lscode(
+//		cout << ( 1 , 2 , 4 , 5 ) << endl;
+//	);
+
+}
+
+void test_con_02( PCDC& cout )
+{
+	//template <typename T>
+	//concept stdstr = std::same_as<T , string> || same_as<T , CString> || same_as<T , char*> || same_as<T , wstring>;
+	//
+	//template<typename T >
+	//void con( T it )
+	//{
+	//	getcout;
+	//	cout << "it is (T)" << newl;
+	//
+	//}
+	//
+	////template<typename T>
+	////void con( T* it )
+	////{
+	////	getcout;
+	////	cout << "it is (T*)" << newl;
+	////
+	////}
+	//
+	//template <typename T>
+	//concept sset = std::is_integral_v<T> || std::is_class_v<T>;//||std::is_pointer<T>::value;
+	////concept sset = std::is_integral<T>::value || std::is_class<T>::value;//||std::is_pointer<T>::value;
+	//
+	//template <typename T>
+	//concept ispoint = std::is_pointer<T>::value;
+	//
+	//template <typename T>
+	//concept enempty = requires( T t )
+	//{
+	//	t.Empty( );
+	//};
+	//
+	//
+	//template <typename T>
+	//concept isstdstr = requires( T str1 )
+	//{
+	//	str1.c_str( );
+	//};
+	//
+	//
+	//template <typename T>
+	//auto run( T t )
+	//{
+	//	getcout;
+	//	cout << "T";
+	//}
+	//
+	//
+	//template <enempty T>
+	//auto run( T t )
+	//{
+	//	getcout;
+	//	cout << "Empty";
+	//}
+	//
+	//template <isstdstr T>
+	//auto run( T t )
+	//{
+	//	getcout;
+	//	cout << "is stdstr c_str()";
+	//}
+	//	lscode(
+	//		CString Cstr;
+	//	string str;
+	//	wstring wstr;
+	//	); lscode(
+	//		run( Cstr );
+	//	); lscode(
+	//		run( str );
+	//	); lscode(
+	//		run( wstr );
+	//	)
+	//		int a = 100;
+	//	int&& b = std::move( a );
+	//	cout << a << sp << b << newl;
+	//
+
+}
+
+void test_concept( PCDC& cout )
+{
+	//template <typename T > //requires ispoint<T>//ok
+	////template <sset T >//ok
+	//T* con( T* it )
+	//{
+	//	getcout;
+	//	cout << "it is T*" << newl;
+	//	return it;
+	//}
+	//
+	//template <ispoint T >//ok
+	////template <sset T >//ok
+	//T con( T it )
+	//{
+	//	getcout;
+	//	cout << "it is point concept" << newl;
+	//	return it;
+	//}
+	//
+	//template <typename T > requires sset<T>//ok
+	////template <sset T >//ok
+	//T con( T it )
+	//{
+	//	getcout;
+	//	cout << "it is sset(int+class)" << newl;
+	//	return it;
+	//}
+	//
+	//template<typename ...A>
+	//void prarg( A...args )
+	//{
+	//	getcout;
+	//	( ( cout << args << sp ) , ... );
+	//}
+	//
+	//template<typename ...A>
+	//void parg( A...args )
+	//{
+	//	getcout;
+	//	( cout << ... << args );
+	//}
+	//
+	//template<typename... Args>
+	//auto alladd( Args...args )
+	//{
+	//	auto  x = ( args + ... );
+	//	return x;
+	//}
+		//cout << separtor;
+		//code(
+		//	int ia = 1;
+		//float fa = 2.2;
+		//char ca = 'a';
+		//class X {};
+		//char* p = &ca;
+		//void* vp = p;
+		//X xa;
+		//vector<int>va { 0,1,2,3,4,5,6,7,8,9,10 };
+		//CString cs( "good" );
+		//);
+
+		//lcode(
+		//	con( ia );
+		//); lcode(
+		//	con( fa );
+		//); lcode(
+		//	con( ca );
+		//); lcode(
+		//	con( xa );
+		//); lcode(
+		//	con( cs );
+		//); lcode(
+		//	con( p );
+		//); lcode(
+		//	con( vp );
+		//); lscode(
+		//	cout << alladd( 3 , 4 , 5 ) << newl;
+		//); lscode(
+		//	prarg( ia , fa , ca , cs );
+		//parg( ia , fa , ca , cs );
+		//cout.ps( ia , fa , ca , cs );
+		//);
+
+		////); code(
+		//cout << separtor;
+}
+
 void test_for_each( PCDC& cout )
 {
 	/*lcode( BEGINTEST( 1 ) {
@@ -188,6 +541,7 @@ void test_for_each( PCDC& cout )
 
 
 }
+
 void test_funtor( PCDC& cout )
 {
 
@@ -782,7 +1136,6 @@ void test_va_count_if_bigtofuntor( PCDC& cout )
 
 }
 
-
 void test_dc_00( PCDC& cout )
 {
 	//sms( start program )
@@ -816,6 +1169,7 @@ void test_dc_00( PCDC& cout )
 
 
 }
+
 //void test00( PCDC& cout )
 //{
 //	//sms( start program )

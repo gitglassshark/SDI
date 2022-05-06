@@ -451,7 +451,7 @@ void OnTaskRuntimeTest3( PCDC& cout )
 	code( BEGINTEST( 10'000'000 ) { x + sx; }ENDTEST );
 	code( BEGINTEST( 10'000'000 ) { sizeof( int ); }ENDTEST );
 	code( BEGINTEST( 10'000'000 ) { sx* sx; }ENDTEST );
-	code( BEGINTEST( 100 ) { cout<<y; }ENDTEST );
+	code( BEGINTEST( 1000 ) { cout<<y; }ENDTEST );
 
 
 }

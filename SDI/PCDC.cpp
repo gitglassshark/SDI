@@ -61,6 +61,7 @@ PCDC& cl( PCDC& dc )
 }
 
 
+
 PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
 {
 	if ( ( m_pwnd != nullptr ) && ( this != nullptr ) )
@@ -113,7 +114,9 @@ inline bool PCDC::Create( CWnd* pwnd )
 				step = abs( lf.lfHeight + lf.lfHeight / 2 );
 
 				//设置日志记录容量
-				mvlogs.reserve( getmaxline( ) * maxrecode );
+				size_t maxline = getmaxline( );
+				size_t totalmaxline = maxline * maxrecode;
+				mvlogs.reserve( totalmaxline );
 
 				//检查输出位置
 				if ( !dc.PtVisible( p ) ) {
@@ -261,7 +264,7 @@ PCDC& PCDC::displayfile( CString filename )
 	return *this;
 }
 
-void PCDC::status_head( bool ishow , size_t nline )
+void PCDC::status_head( bool ishow , size_t nline , bool ishowtail )
 {
 	static bool ifirst = true;
 	ifirst = ishow;
@@ -282,37 +285,42 @@ void PCDC::status_head( bool ishow , size_t nline )
 	font.GetLogFont( &l );
 	m_pwnd->GetWindowRect( &mrect );
 	theApp.m_pMainWnd->SetWindowText( str );
+	size_t totallength = 0;
+	for ( const auto& i : mvlogs )
+		totallength += i.GetLength( );
 
 	cout << clear;
 	cout.sourcemode( );
 	cout << "XCout纪录状态:" << tab;
-	cout << "当前保存记录 " << cout.mvlogs.size( ) << sp;
+	cout << "当前保存记录行数 " << cout.mvlogs.size( ) << sp;
 	cout << "纪录容量行 " << cout.mvlogs.capacity( ) << sp;
-	cout << "纪录最大内存空间：" << double( maxl * maxc * size * cout.maxrecode ) / ( 1024 * 1024 ) << "M" << sp;
-	cout << "纪录当前内存：" << double( maxl * maxc * size * logsize ) / ( 1024 * 1024 ) << "M" << sp;
+	cout << "纪录最大内存空间" << double( maxl * maxc * size * cout.maxrecode ) / ( 1024 * 1024 ) << "M" << sp;
+	cout << "当前占用内存" << (double)(totallength*size)/( 1024 * 1024 ) << "M" << sp;
+	cout << "字符" << totallength << sp;
+	cout << "单字符占用字节" << size << sp;
 	cout << "实际记录 " << pnstore[2];
 
 	cout << newl << "XCout调用数据:" << tab;
 	cout << "记录调用 " << pnstore[0] << sp;
 	cout << "记录调整 " << pnstore[1] << sp;
 	cout << "空记录调用 " << pnstore[3] - pnstore[2] << sp;
-	cout << "空打印调用 " << pnstore[4] << sp;
-	cout << "行内打印 " << pnstore[5] << sp;
+	cout << "空输出调用 " << pnstore[4] << sp;
+	cout << "行内输出 " << pnstore[5] << sp;
 	cout << "换行 " << pnstore[6] << sp;
 	cout << "满屏 " << pnstore[7] << sp;
 	cout << "分行打印 " << pnstore[8] << sp;
-	cout << "打印总调用 " << pnstore[9] << sp;
+	cout << "输出总调用 " << pnstore[9] << sp;
 	cout << "记录总耗时 " << pnstore[10] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
-	cout << "打印总耗时 " << pnstore[11] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "输出总耗时 " << pnstore[11] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
 	cout << "API总耗时 " << pnstore[12] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
 	cout << "API调用 " << pnstore[13];
 
 	cout << newl << "XCout显示状态:" << tab;
-	cout << "屏显行数 " << cout.getmaxline( ) << sp;
-	cout << "屏显列数 " << cout.getmaxcows( ) << sp;
+	cout << "单屏行数 " << cout.getmaxline( ) << sp;
+	cout << "单屏列数 " << cout.getmaxcows( ) << sp;
 	cout << "字体 " << CString( l.lfFaceName ) << sp;
 	cout << "当前位置（XY) " << p.x << com << p.y << sp;
-	cout << "步进 " << step << sp;
+	cout << "步进/行高 " << step << sp;
 	cout << "左 " << mrect.left << sp;
 	cout << "右 " << mrect.right << sp;
 	cout << "上 " << mrect.top << sp;
@@ -320,16 +328,19 @@ void PCDC::status_head( bool ishow , size_t nline )
 	cout << "剩余行数 " << getmaxline( false ) << sp;
 	cout << "剩余列数 " << getmaxcows( false );
 
-	cout << separtor;
-	str = _T( " [历史记录]-尾部 " );
-	cout << str << newl;
+	if ( ishowtail == true ) {
+		cout << separtor;
+		str = _T( " [历史记录]-尾部 " );
+		cout << str << newl;
+	}
 
 	ifirst = false;
 }
 
 size_t PCDC::showlogn( size_t start , size_t end )
 {
-	if ( ( start < 0 ) || ( end < 0 ) || ( end < start ) || mvlogs.empty( ) || ( end > mvlogs.size( ) - 1 ) )
+	end = min( end , ( mvlogs.size( ) - 1 ) );
+	if ( ( start < 0 ) || ( end < 0 ) || ( end < start ) || mvlogs.empty( ) )
 	{
 		return -1;
 	}
@@ -337,47 +348,56 @@ size_t PCDC::showlogn( size_t start , size_t end )
 	{
 		for ( int i = start; i <= end; i++ )
 			*this << mvlogs[i] << nl;
-		return end - start+1;
+		return end - start + 1;
 	}
 }
 
 void PCDC::status( bool ibshowrecode , size_t nline )
 {
 	static bool ifirst = true;
+	static size_t oldshow = 0;
+	size_t maxline;
+	CString cs;
+
 	auto& cout = *this;
 	cout.stoprecode( );
 
 	if ( ifirst == true )
 		status_head( true , nline );
 
-	size_t maxline;
+	size_t logsize = cout.mvlogs.size( );
+
 	if ( ifirst )
 	{
-		maxline = cout.getmaxline( ) - 12;
+		maxline = cout.getmaxline( false ) - 1;
+		if ( nline <= maxline )maxline = nline;
 	}
 	else
 	{
-		maxline = cout.getmaxline( ) - 1;
+		maxline = cout.getmaxline( );
+		if ( logsize < maxline )maxline = logsize;
 	}
-	size_t logsize = cout.mvlogs.size( );
-	static size_t oldshow = 0;
 
-	CString cs;
-	if ( nline <= maxline )maxline = nline;
-	if ( logsize < maxline )maxline = logsize;
-
-	auto start = logsize - maxline - oldshow;
-	auto end = logsize - 1 - oldshow;
+	auto start = logsize - maxline + 1 - oldshow;
 	start = max( 0 , start );
+	auto end = logsize - 1 - oldshow;
 	end = max( 0 , end );
 	end = max( start , end );
-	end = min( logsize , end );
+	end = min( logsize - 1 , end );
+
 	settcolor( dccr.gteal );
 	if ( ibshowrecode ) {
+		if ( start == 0 && end == 0 )
+		{
+			ifirst = true;
+			oldshow = 0;
+			status( true , getmaxline( ) );
+		}
 		showlogn( start , end );
+		oldshow += end - start + 1;
+		ifirst = false;
 	}
-	oldshow += end - start;
-	ifirst = false;
+
 	if ( oldshow >= logsize - 1 )
 	{
 		ifirst = true;
@@ -613,7 +633,6 @@ PCDC& PCDC::operator <<( std::nullptr_t p )
 	return *this;
 }
 
-
 CString bools( )
 {
 	CString cs;
@@ -651,7 +670,8 @@ CString tasktimestr( clock_t start , clock_t end , size_t itimes )
 	size_t times;
 	CString cs;
 
-	cs = "Totaltimes: ";
+	cs.Format( _T( "%zu's ") , itimes);
+	cs += "Totaltimes: ";
 	cs.AppendFormat( _T( "%8.6f" ) , ( (long double)(end)-(long double)start ) * 1000 / CLOCKS_PER_SEC );
 	cs += "\'ms.  Once: ";
 	cs.AppendFormat( _T( "%8.2lf" ) , long double( ( (long double)end - (long double)start ) * 1000 * 1000 ) / ( CLOCKS_PER_SEC * itimes ) );

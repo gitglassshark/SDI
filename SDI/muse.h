@@ -147,6 +147,7 @@ CString letters( char lc , size_t Ntimes);
 #define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
 					pfunc p=fname;\
 					menumap.insert(make_pair(str,p));}
+#define currlocation cout.location( std::source_location::current( ) );
 
 //²âÊÔ×Ö·û´®ÊÇ·ñÎª¿ÕµÄºê
 #ifndef isempty
@@ -312,6 +313,17 @@ CString letters( char lc , size_t Ntimes);
 	//#define comments(nline) printsource(¡ª__FILE__,__LINE__,nline);
 	//#define endcomment printsourceend((__FILE__,__LINE__);
 
+template <typename... T>
+auto remulti( T&...args )
+{
+	return std::make_tuple( args... );
+}
+
+template <typename... T>
+auto remulti( T&&...args )
+{
+	return std::make_tuple( args... );
+}
 
 template <typename T>
 bool swap( T & a , T & b )
