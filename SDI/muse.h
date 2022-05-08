@@ -2,50 +2,17 @@
 
 #include "PCDC.h"
 
+
 class PCDC;
+class CColor;
 using XCout = PCDC;
+
 extern class CColor dccr;
 extern PCDC* pcout;
-extern int igi;
 
-PCDC& cl( PCDC& dc );
-PCDC& com( PCDC& dc );
-PCDC& semi( PCDC& dc );
-PCDC& dash( PCDC& dc );
-PCDC& star( PCDC& dc );
-PCDC& cut( PCDC& dc );
-PCDC& tab( PCDC& dc );
-PCDC& sp( PCDC& dc );
-PCDC& newl( PCDC& dc );
-PCDC& nl( PCDC& dc );
-PCDC& endl( PCDC& dc );
-PCDC& separtor( PCDC& dc );
-void newl( );
-void cut( );
 
-CString hex( );
-CString HEX( );
-CString oct( );
-CString udec( );
-CString address( );
+using namespace std;
 
-CString bools( );
-CString tab( size_t Ntimes );
-CString sp( size_t Ntimes );
-CString letters( char lc , size_t Ntimes);
-
-#define LOG(objectname)  {\
-		CString strmessage;\
-		static unsigned long icount = 0;\
-		++icount;\
-		strmessage.Format(_T("Run Path in %ldth times,The Class:$"), icount);\
-		strmessage += " @";\
-		strmessage += __func__;\
-		strmessage += "()";\
-		strmessage += " file: *";\
-		strmessage += __FILE__;\
-		objectname##.messagelog.push_back(strmessage);\
-		}
 #define LOGMESSAGE(objectname)  {\
 		CString strmessage;\
 		static unsigned long icount = 0;\
@@ -63,9 +30,9 @@ CString letters( char lc , size_t Ntimes);
 #define SHOWSPLITLWINDOW(objectname)  {\
 		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
 		RECT rect;\
-		rect.left = 1922-12;\
+		rect.left =1918;\
 		rect.top = 0;\
-		rect.right = 1922+18;\
+		rect.right = 1928;\
 		rect.bottom = 2112;\
 		objectname.m_pMainWnd->SetWindowPos(&CWnd::wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);\
 		objectname.m_pMainWnd->UpdateWindow();\
@@ -73,81 +40,14 @@ CString letters( char lc , size_t Ntimes);
 #define SHOWSPLITRWINDOW(objectname)  {\
 		objectname.m_pMainWnd->ShowWindow(SW_SHOW);\
 		RECT rect;\
-		rect.left = 1932;\
+		rect.left =1918;\
 		rect.top = 0;\
-		rect.right = 1932;\
+		rect.right = 1928;\
 		rect.bottom = 2112;\
 		objectname.m_pMainWnd->SetWindowPos(&CWnd::wndTop, rect.left, rect.top, rect.right, rect.bottom, SWP_SHOWWINDOW);\
 		objectname.m_pMainWnd->UpdateWindow();\
 		}
-
-#define TEXTOUTDC(pdc,x,y,strmessage,text) {\
-		CDC* pdc= this->GetWindowDC();\
-		CDC& dc = *pdc;\
-		int ix=x;\
-		int iy=y;\
-		CAtlString strmessage;\
-		strmessage.Format(_T(#text));\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		dc.TextOut(ix, iy, strmessage);\
-		}
-#define TEXTFORMATOUTDC(dc,x,y,ftstr,value) {\
-		int ix=x;\
-		int iy=y;\
-		CAtlString strmessage;\
-		strmessage.Format(_T(#ftstr),value);\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		dc.TextOut(ix, iy, strmessage);\
-		}
-#define TEXTOUTCSTR(pdc,x,y,Cstrmessage) {\
-		CDC* pdc= this->GetWindowDC();\
-		CDC& dc = *pdc;\
-		int ix=x;\
-		int iy=y;\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		dc.TextOut(ix, iy, Cstrmessage);\
-		}
-#define PRINTSCREEN(x,y,strmessage) {\
-		CDC* pdc= this->GetWindowDC();\
-		int ix=x;\
-		int iy=y;\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		pdc->TextOut(ix, iy, CString(_T(#strmessage)));\
-		}
-#define COUTTS(str) {\
-		CDC* pdc= this->GetWindowDC();\
-		CAtlString strmessage;\
-		strmessage=_T(str);\
-		int ix=position.x;\
-		int iy=position.y;\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		pdc->TextOut(ix, iy,strmessage);\
-		}
-#define COUTCS(dc,strmessage) {\
-		int ix=position.x;\
-		int iy=position.y;\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		dc.TextOut(ix, iy,strmessage);\
-		}
-#define SFOUT(dc,ftstr,value) {\
-		int ix=position.x;\
-		int iy=position.y;\
-		CAtlString strmessage;\
-		strmessage.Format(_T(#ftstr),value);\
-		this->ShowWindow(SW_SHOW);\
-		this->UpdateWindow();\
-		dc.TextOut(ix, iy, strmessage);\
-		}
-#define MAKEMENUITEM(fname,menumap)  { string str=#fname;\
-					pfunc p=fname;\
-					menumap.insert(make_pair(str,p));}
-#define currlocation cout.location( std::source_location::current( ) );
+//#define currlocation cout.location( std::source_location::current( ) );
 
 //²âÊÔ×Ö·û´®ÊÇ·ñÎª¿ÕµÄºê
 #ifndef isempty
@@ -326,7 +226,7 @@ auto remulti( T&&...args )
 }
 
 template <typename T>
-bool swap( T & a , T & b )
+bool swap( T& a , T& b )
 {
 	if ( ( a != nullptr ) && ( b != nullptr ) && ( &a != nullptr ) && ( &b != nullptr ) && ( &a != &b ) )
 	{
@@ -403,11 +303,17 @@ auto gmax( A a , X...args )
 }
 
 template<typename T = int , typename ...X>
+auto imin( X...args )
+{
+	initializer_list<T>il { (T)( args )... };
+	return *ranges::min_element(il);
+}
+
+template<typename T = int , typename ...X>
 auto imax( X...args )
 {
 	initializer_list<T>il { (T)( args )... };
-	return il;
-	//return gmax<T>( il );
+	return *ranges::max_element(il);
 }
 
 template<typename T = int>
@@ -423,7 +329,7 @@ bool itisnull( T p )
 }
 
 template<typename T>
-bool itisnull( T * p )
+bool itisnull( T* p )
 {
 	return ( ( nullptr == p ) || ( *p == T( ) ) );
 }
@@ -472,13 +378,13 @@ size_t tpcount( B<A...> a )
 }
 
 template<typename T>
-T& MakeSingleEleRandom( T & r , const int mod )
+T& MakeSingleEleRandom( T& r , const int mod )
 {
 	return r = rand( ) % mod;
 }
 
 template<typename T>
-bool MakeEleRandom( T & v , const int mod )
+bool MakeEleRandom( T& v , const int mod )
 {
 	srand( time( nullptr ) );
 	if ( v.empty( ) )

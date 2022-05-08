@@ -4,10 +4,7 @@
 #include "pch.h"
 #include "SDI.h"
 #include "PCDC.h"
-#include "afxdialogex.h"
-#include "CDialogExDoModal.h"
-#include <typeinfo> 
-#include <bitset> 
+
 
 
 

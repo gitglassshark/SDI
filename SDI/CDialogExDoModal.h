@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "afxdialogex.h"
+#include "pch.h"
 
 
 // CDialogExDoModal 对话框

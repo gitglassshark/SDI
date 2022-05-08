@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "test.h"
-#include "PCDC.h"
+#include "muse.h"
+
 
 
 void OnPCDCFunctionTest1( PCDC& cout )
@@ -368,9 +369,14 @@ void OnPCDCFunctionTest2( PCDC& cout )
 	cout << "英文字符打印功能运行时间测试" << endl;
 	CString cs = _T( "12345678ab123456" );
 	cs.MakeLower( );
+	//using namespace std::chrono_literals;
+	//auto start = std::chrono::high_resolution_clock::now( );
 	lcode( BEGINTEST( 350 ) {
 		cout << cs;
 	}ENDTEST );
+	//auto end = std::chrono::high_resolution_clock::now( );
+	//auto itcount = end - start;
+	//cout << itcount.count( ) << newl;
 
 }
 

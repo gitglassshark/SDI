@@ -1,11 +1,8 @@
 #include "Pch.h"
 #include "PCDC.h"
 #include "test.h"
-#include <functional>
-#include <algorithm>
-#include <concepts>
-#include <chrono>
-#include <source_location>
+
+
 
 //template<typename T>
 //concept Iempty = std::is_empty<T>::value;
@@ -29,60 +26,41 @@ void kft( FplusT auto t )
 	cout << "FT is ok" << newl;
 }
 
-auto l = [ ] ( int x ) { getcout; cout << x << sp; };
-
-
+void test_ranges( PCDC& cout )
+{
+	timestart( );
+	cout.title( "begin ranges test..." );
+	cout.lmod( 30 );
+	code(
+		vector va { 0 };
+	NTIME( 20 )
+		va.push_back( rand( ) % 10 * ix );
+	); lcode(
+		ranges::sort( va );
+	cout << va << newl;
+	); lscode(
+		ranges::reverse( va );
+	cout << va << newl;
+	); lscode(
+		cout << *ranges::begin( va ) << tab << *( ranges::end( va ) - 1 ) << tab << ranges::size( va ) << tab << ranges::ssize( va ) << sp << ranges::empty( va ) << sp << *ranges::min_element( va ) << sp << *ranges::max_element( va ) << newl;
+	); lscode(
+		cout << ( "ok" == "ok" ) << tab << ( "bad" == "good" ) << newl;
+	); lscode(
+		cout << imin( 2 , 3 , 5 ) << tab << imax( 3 , 8 , 9 ) << newl;
+	);
+	cout.title( "end" );
+	timeend( 30 );
+}
 
 void test_00( PCDC& cout )
 {
-	lscode(
-		cout.printX( 1 , 2.2 , "x" );
-	); lscode(
-
-	);
+	test_ranges( cout );
 }
-
-
-
-
-
 
 void test_01( PCDC& cout )
 {
-	lscode(
-	); lscode(
-	);
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void test00( PCDC& cout )
 {
@@ -112,6 +90,100 @@ void test04( PCDC& cout )
 void test05( PCDC& cout )
 {
 
+}
+
+void test_sort_00( PCDC& cout )
+{
+	//timestart( );
+	//lscode(
+	//	vector va { 3,4,8,6,7,1,8,9,10 };
+	//sort( va.begin( ) , va.end( ) , [ ] ( int a , int b )
+	//	{
+	//		if ( a == 7 )
+	//			return true;
+	//		if ( b == 7 )
+	//			return false;
+	//		return a > b;
+	//	} );
+	//cout << va << newl;
+	//); lscode(
+	//	NTIME( 10 )
+	//	va.push_back( ix * 10 % 30 );
+	//cout << va << newl;
+	//); lscode(
+	//	bigto<int > big2small( true );
+	//sort( va.begin( ) , va.end( ) , big2small );
+	//cout << va << newl;
+	//); lscode(
+	//	big2small.up( );
+	//sort( va.begin( ) , va.end( ) , big2small );
+	//cout << va << newl;
+	//); lscode(
+	//	big2small.down( );
+	//sort( va.begin( ) , va.end( ) , big2small );
+	//cout << va << newl;
+	//);
+	//timeend( );
+
+
+}
+
+void test_thread( PCDC& cout )
+{
+	//auto l = [ ] ( ) {
+	//	getcout; 
+	//	int i = 0;
+	//	auto tid = std::this_thread::get_id( );
+	//	cout << tid << " l is start" << newl;
+	//	NTIME( 5 )
+	//	{
+	//		this_thread::sleep_for( 1s );
+	//		cout <<ix<<sp<<"*"<<sp<<i++<<newl;
+	//	}
+	//	tid = std::this_thread::get_id( );
+	//	cout << tid << " l is done" << newl;
+	//};
+	//	std::thread::id tid;// = std::this_thread::get_id( );
+	//	tid = std::this_thread::get_id( );
+	//	cout << tid << " main is start" << newl;
+	//	thread work( l );
+	//	//cout << tid << " main " << newl;
+	//
+	//	this_thread::sleep_for( 6s );
+	//	work.join( );
+	//	tid = std::this_thread::get_id( );
+	//	cout << tid << " main end " << newl;
+
+}
+
+void test_time_tie_vartemp( PCDC& cout )
+{
+	//cout.timestart( );
+	////using namespace std::chrono_literals;
+	////auto start = std::chrono::high_resolution_clock::now( );
+	//timestart( );
+	//lscode(
+	//	cout.printX( 1 , 2.2 , "x" );
+	//); lscode(
+	//	CString ok = L"ok";
+	//string sok = "ok";
+	//const int ic = 100;
+	//cout.printX( ic , 2.2 , ok , sok , &ok , nullptr , &ic , 0 < 2 );
+	//); lscode(
+	//	tuple tuplea { 9,173.34,"Music" };
+	//); lscode(
+	//	
+	//	auto [id , n , name] = tuplea;
+	//NTIME(1000 )
+	//cout << id << sp << n << sp << name << newl;
+	//);
+
+	//cout.sourcemode( ) << separtor;
+	//timeend(1000 );
+	///*auto end = std::chrono::high_resolution_clock::now( );
+	//auto itcount = end - start;
+	////cout << itcount.count( ) << newl;*/
+	//cout.timeend(1000 );
 }
 
 void test_remulti_varexpend( PCDC& cout )
@@ -337,27 +409,27 @@ void test_enum( PCDC& cout )
 
 void test_fact( PCDC& cout )
 {
-//int fact( int n )
-//{
-//	int i = n;
-//	getcout;
-//	n++;
-//	//cout << n << sp;
-//	if ( n <= 3 )
-//		i = fact( fact(n) );
-//	n--;
-//	cout <<star<< i << sp<<n<<tab;
-//	return n;
-//}
-//
-//
-//	lscode(
-//		int n = 0;
-//	); lscode(
-//		fact( n );
-//	); lscode(
-//		cout << ( 1 , 2 , 4 , 5 ) << endl;
-//	);
+	//int fact( int n )
+	//{
+	//	int i = n;
+	//	getcout;
+	//	n++;
+	//	//cout << n << sp;
+	//	if ( n <= 3 )
+	//		i = fact( fact(n) );
+	//	n--;
+	//	cout <<star<< i << sp<<n<<tab;
+	//	return n;
+	//}
+	//
+	//
+	//	lscode(
+	//		int n = 0;
+	//	); lscode(
+	//		fact( n );
+	//	); lscode(
+	//		cout << ( 1 , 2 , 4 , 5 ) << endl;
+	//	);
 
 }
 

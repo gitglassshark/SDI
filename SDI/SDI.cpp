@@ -106,7 +106,7 @@ BOOL CSDIApp::InitInstance()
 	// 唯一的一个窗口已初始化，因此显示它并对其进行更新
 	m_pMainWnd->ShowWindow(SW_SHOWMAXIMIZED);
 	m_pMainWnd->UpdateWindow();
-	{	SHOWSPLITLWINDOW(theApp);	}
+
 	return TRUE;
 }
 
@@ -155,10 +155,3 @@ void CSDIApp::OnAppAbout()
 // CSDIApp 消息处理程序
 
 
-int fun(int)
-{
-	{	LOG(theApp);	}
-	return 100;
-}
-
-int ilook = fun(100);

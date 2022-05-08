@@ -1,8 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "SDI.h"
 #include "muse.h"
-#include <type_traits>
 
 
 class PCDC;
@@ -11,7 +9,6 @@ using XCout = PCDC;
 
 extern class CColor dccr;
 extern PCDC* pcout;
-
 
 PCDC& com( PCDC& dc );
 PCDC& semi( PCDC& dc );
@@ -38,6 +35,8 @@ CString sp( size_t Ntimes = 1 );
 CString letters( char lc , size_t Ntimes = 1 );
 CString tasktimestr( clock_t start , clock_t end , size_t itimes = 1 );
 
+std::chrono::time_point<std::chrono::steady_clock> timestart( bool isstart = true );
+CString timeend( size_t itimes = 1 );
 
 class CColor {
 public:
@@ -265,6 +264,13 @@ public:
 		}
 	};
 
+	PCDC& operator<<( std::thread::id tid )
+	{
+		_Thrd_t t = *(_Thrd_t*)(char*)&tid;
+		unsigned int  nId = t._Id;
+		*this << "ThreadID=[" << nId<<"] ";
+		return *this;
+	}
 public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
@@ -309,10 +315,10 @@ public:
 
 	}
 	inline PCDC& resettcolor( );
-	inline PCDC & printX( auto...x )
+	inline PCDC& printX( auto...x )
 	{
-		(((*this<<"- "),type( x ),(*this << "+" ) ) , ... );
-		((* this << x<<sp ),...);
+		( ( ( *this << "- " ) , type( x ) , ( *this << "+" ) ) , ... );
+		( ( *this << x << sp ) , ... );
 		return *this;
 	}
 	inline void resetmrect( )
@@ -427,14 +433,19 @@ public:
 			start = clock( );
 		}
 		return start;
+		/*	using namespace std::chrono_literals;
+			auto st = std::chrono::high_resolution_clock::now( );
+			auto en = std::chrono::high_resolution_clock::now( );
+			auto itcount = en - st;
+			auto ns=itcount.count( );*/
 	}
 	CString timeend( size_t itimes = 1 )
 	{
 		clock_t static end {};
 		end = clock( );
 		clock_t start = timestart( false );
-		CString strcount=tasktimestr( timestart( false ) , end , itimes );
-		if(itimes!=0 )*this << strcount << newl;
+		CString strcount = tasktimestr( start , end , itimes );
+		if ( itimes != 0 )*this << strcount << newl;
 		return strcount;
 	}
 	//inline size_t showsms( size_t n )
@@ -466,9 +477,9 @@ public:
 		strloc += " º¯Êý£º";
 		strloc += s.function_name( );
 		strloc += " ÐÐºÅ£º";
-		strloc.AppendFormat(_T("%ld" ) ,s.line( ));
+		strloc.AppendFormat( _T( "%ld" ) , s.line( ) );
 		strloc += " } ";
-		return *this << strloc ;
+		return *this << strloc;
 	};
 	inline PCDC& cut( CString t = CString( ) , char c = '-' , bool ib = true )
 	{
@@ -740,6 +751,24 @@ public:
 	//	}
 	//	return *this;
 	//};
+	void showsplitwindow( bool isleft = true , CRect* prect = nullptr )
+	{
+		CRect rect;
+		if ( prect == nullptr )
+		{
+			rect.top = 0;
+			rect.left = 0;
+			rect.right = 1928;
+			rect.bottom = 2112;
+		}
+		else
+		{
+			rect = *prect;
+		}
+		AfxGetApp( )->m_pMainWnd->SetWindowPos( &CWnd::wndTop , rect.left , rect.top , rect.right , rect.bottom , SWP_SHOWWINDOW );
+		AfxGetApp( )->m_pMainWnd->UpdateWindow( );
+		AfxGetApp( )->m_pMainWnd->ShowWindow( SW_SHOW );
+	}
 
 };
 

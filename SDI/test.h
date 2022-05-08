@@ -1,7 +1,6 @@
 #pragma once
-#pragma once
-#include "PCDC.h"
 #include "pch.h"
+#include "PCDC.h"
 
 
 void OnStlSetTest1( PCDC& cout );
@@ -82,14 +81,33 @@ struct bigto
 		else {
 			iret = icomp < ia;
 		}
-		getcout;
+		/*getcout;
 		static int imod = 0;
 		cout << "*" << icomp << sp << "ibig=" << ibig << sp << "iret=" << iret << tab;
 		if ( ( imod + 1 ) % 3 == 0 )
 			cout << "%" << (int)imod << newl;
-		imod++;
+		imod++;*/
 		return iret;
 	}
+	bool operator()( T a , T b )
+	{
+		bool iret = true;
+		if ( ibig ) {
+			iret = a > b;
+		}
+		else {
+			iret = a < b;
+		}
+		return iret;
+	}
+	bool set( bool is = true , T icomp = T( ) )
+	{
+		ibig = is;
+		ia = icomp;
+		return ibig;
+	}
+	bool up( ) { ibig = false; return !ibig; }
+	bool down( ) { ibig = true; return ibig; }
 	bigto& operator >( T icomp )
 	{
 		ia = icomp;

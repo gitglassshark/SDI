@@ -8,7 +8,6 @@
 #include "SDI.h"
 #include "MainFrm.h"
 #endif
-#include <source_location>
 
 #include "SDIDoc.h"
 #include "SDIView.h"
@@ -23,10 +22,6 @@
 #endif
 
 extern int igi;
-extern class CColor dccr;
-extern PCDC* pcout;
-//class CColor dccr;
-//PCDC* pcout = nullptr;
 bool is_show_logmessage = false;
 
 // CSDIView
@@ -727,7 +722,7 @@ void CSDIView::OnStlMapMenu( )
 {
 	SimulationStdCout;
 	map<string , pfunc> menu;
-	MAKEMENUITEM( ntest , menu );
+	//MAKEMENUITEM( ntest , menu );
 	string name = "map second";
 	map<string , pfunc>::iterator itt = menu.begin( );
 	lscode(

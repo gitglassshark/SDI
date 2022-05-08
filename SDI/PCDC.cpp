@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "PCDC.h"
-#include "SDI.h"
 #include "muse.h"
 
 //size_t PCDC::icount = 0;
@@ -284,7 +283,7 @@ void PCDC::status_head( bool ishow , size_t nline , bool ishowtail )
 	size_t logsize = cout.mvlogs.size( );
 	font.GetLogFont( &l );
 	m_pwnd->GetWindowRect( &mrect );
-	theApp.m_pMainWnd->SetWindowText( str );
+	m_pwnd->SetWindowText( str );
 	size_t totallength = 0;
 	for ( const auto& i : mvlogs )
 		totallength += i.GetLength( );
@@ -295,7 +294,7 @@ void PCDC::status_head( bool ishow , size_t nline , bool ishowtail )
 	cout << "当前保存记录行数 " << cout.mvlogs.size( ) << sp;
 	cout << "纪录容量行 " << cout.mvlogs.capacity( ) << sp;
 	cout << "纪录最大内存空间" << double( maxl * maxc * size * cout.maxrecode ) / ( 1024 * 1024 ) << "M" << sp;
-	cout << "当前占用内存" << (double)(totallength*size)/( 1024 * 1024 ) << "M" << sp;
+	cout << "当前占用内存" << (double)( totallength * size ) / ( 1024 * 1024 ) << "M" << sp;
 	cout << "字符" << totallength << sp;
 	cout << "单字符占用字节" << size << sp;
 	cout << "实际记录 " << pnstore[2];
@@ -670,17 +669,52 @@ CString tasktimestr( clock_t start , clock_t end , size_t itimes )
 	size_t times;
 	CString cs;
 
-	cs.Format( _T( "%zu's ") , itimes);
+	cs.Format( _T( "%zu's " ) , itimes );
 	cs += "Totaltimes: ";
-	cs.AppendFormat( _T( "%8.6f" ) , ( (long double)(end)-(long double)start ) * 1000 / CLOCKS_PER_SEC );
+	cs.AppendFormat( _T( "%8.2lf" ) , ( (long double)(end)-(long double)start ) * 1000 / CLOCKS_PER_SEC );
 	cs += "\'ms.  Once: ";
 	cs.AppendFormat( _T( "%8.2lf" ) , long double( ( (long double)end - (long double)start ) * 1000 * 1000 ) / ( CLOCKS_PER_SEC * itimes ) );
-	cs += "\'us ";
+	cs += "\'us     ";
 
 	cs.AppendFormat( _T( "%8.2lf" ) , long double( ( (long double)end - (long double)start ) * 1000 * 1000 * 1000 ) / ( CLOCKS_PER_SEC * itimes ) );
 	cs += "\'ns.   Total clock: ";
 	cs.AppendFormat( _T( "%lu" ) , ( end - start ) );
 	return cs;
 }
+
+std::chrono::time_point<std::chrono::steady_clock> timestart( bool isstart )
+{
+	using namespace std::chrono_literals;
+	decltype( std::chrono::high_resolution_clock::now( ) ) static start = {};
+	if ( isstart == true ) {
+		start = std::chrono::high_resolution_clock::now( );
+	}
+	return start;
+}
+
+CString timeend( size_t itimes )
+{
+	using namespace std::chrono_literals;
+	getcout;
+	decltype( std::chrono::high_resolution_clock::now( ) ) static end = {};
+	end = std::chrono::high_resolution_clock::now( );
+	decltype( std::chrono::high_resolution_clock::now( ) ) start = timestart( false );
+	auto itcount = end - start;
+	auto ns = itcount.count( );
+
+	CString cs;
+	cs.Format( _T( "%zu's " ) , itimes );
+	cs += "Totaltimes: ";
+	cs.AppendFormat( _T( "%ld" ) , ns / ( 1000 * 1000 ));
+	cs += "\'ms.  Once: ";
+	cs.AppendFormat( _T( "%ld" ) , ns / 1000/itimes );
+	cs += "\'us  ";
+	cs.AppendFormat( _T( "%ld" ) , ns/itimes );
+	cs += "\'ns.";//   Total clock: ";
+	if ( itimes != 0 )cout << cs << newl;
+	return cs;
+	//cs.AppendFormat( _T( "%lu" ) , ( end - start ) );
+}
+
 
 

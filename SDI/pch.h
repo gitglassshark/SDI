@@ -10,6 +10,15 @@
 #define _AFXDLL
 // 添加要在此处预编译的标头
 #include "framework.h"
+
+
+#include "afxdialogex.h"
+#include "CDialogExDoModal.h"
+#include "MainFrm.h"
+#include "SDI.h"
+#include "SDIDoc.h"
+
+
 #include <afxwin.h>
 #include <algorithm>
 #include <array>
@@ -18,21 +27,26 @@
 #include <cctype>
 #include <complex>
 #include <chrono>
+#include <concepts>
 #include <deque>
 #include <functional>
+#include <format>
 #include <list>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
 #include <map>
 #include <queue>
+#include <ranges>
 #include <set>
 #include <sstream>
 #include <string>
 #include <stack>
+#include <source_location>
 #include <tuple>
 #include <type_traits>
 #include <typeinfo>
 #include <vector>
+#include <thread>
 
 #endif //PCH_H
