@@ -641,6 +641,7 @@ CString bools( )
 
 CString tab( size_t Ntimes )
 {
+	Ntimes = Ntimes <= 0 ? 1 : Ntimes;
 	CString cs;
 	NTIME( Ntimes )
 		cs += "    ";
@@ -649,6 +650,7 @@ CString tab( size_t Ntimes )
 
 CString sp( size_t Ntimes )
 {
+	Ntimes = Ntimes <= 0 ? 1 : Ntimes;
 	CString cs;
 	NTIME( Ntimes )
 		cs += ' ';
@@ -657,6 +659,7 @@ CString sp( size_t Ntimes )
 
 CString letters( char lc , size_t Ntimes )
 {
+	Ntimes = Ntimes <= 0 ? 1 : Ntimes;
 	CString cs;
 	if ( isprint( lc ) )
 		NTIME( Ntimes )
@@ -666,9 +669,8 @@ CString letters( char lc , size_t Ntimes )
 
 CString tasktimestr( clock_t start , clock_t end , size_t itimes )
 {
-	size_t times;
+	itimes = itimes <= 0 ? 1 : itimes;
 	CString cs;
-
 	cs.Format( _T( "%zu's " ) , itimes );
 	cs += "Totaltimes: ";
 	cs.AppendFormat( _T( "%8.2lf" ) , ( (long double)(end)-(long double)start ) * 1000 / CLOCKS_PER_SEC );
@@ -685,7 +687,7 @@ CString tasktimestr( clock_t start , clock_t end , size_t itimes )
 std::chrono::time_point<std::chrono::steady_clock> timestart( bool isstart )
 {
 	using namespace std::chrono_literals;
-	decltype( std::chrono::high_resolution_clock::now( ) ) static start = {};
+	decltype( std::chrono::high_resolution_clock::now( ) ) static start = std::chrono::high_resolution_clock::now( );
 	if ( isstart == true ) {
 		start = std::chrono::high_resolution_clock::now( );
 	}
@@ -694,27 +696,35 @@ std::chrono::time_point<std::chrono::steady_clock> timestart( bool isstart )
 
 CString timeend( size_t itimes )
 {
+	using namespace std::literals;
+	static bool ic = true;
 	using namespace std::chrono_literals;
 	getcout;
 	decltype( std::chrono::high_resolution_clock::now( ) ) static end = {};
 	end = std::chrono::high_resolution_clock::now( );
-	decltype( std::chrono::high_resolution_clock::now( ) ) start = timestart( false );
+	decltype( std::chrono::high_resolution_clock::now( ) ) start;
+	start = timestart( false );
+
 	auto itcount = end - start;
-	auto ns = itcount.count( );
+	static auto total = itcount - itcount;
+	total += itcount;
+	auto ns = std::chrono::duration_cast<std::chrono::microseconds>( total ).count( );
+	static size_t times = 0;
+	times += itimes >= 1 ? itimes : 1;
 
 	CString cs;
-	cs.Format( _T( "%zu's " ) , itimes );
+	cs.Format( _T( "%zu's " ) , times );
 	cs += "Totaltimes: ";
-	cs.AppendFormat( _T( "%ld" ) , ns / ( 1000 * 1000 ));
+	cs.AppendFormat( _T( "%ld" ) , ns / ( 1000 ) );
 	cs += "\'ms.  Once: ";
-	cs.AppendFormat( _T( "%ld" ) , ns / 1000/itimes );
+	cs.AppendFormat( _T( "%ld" ) , ns / ( times ) );
 	cs += "\'us  ";
-	cs.AppendFormat( _T( "%ld" ) , ns/itimes );
-	cs += "\'ns.";//   Total clock: ";
-	if ( itimes != 0 )cout << cs << newl;
+	cs.AppendFormat( _T( "%ld" ) , ns * 1000 / times );
+	cs += "\'ns.";
+	cout << cs << newl;
 	return cs;
-	//cs.AppendFormat( _T( "%lu" ) , ( end - start ) );
 }
+
 
 
 

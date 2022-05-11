@@ -127,17 +127,17 @@ using namespace std;
 #define getI(name)  gett(name.begin())
 #define getCI(name)  gett(name)::const_iterator
 #define ALL(V)  V.begin(),V.end()
-#define FORALL(V,iterator)  for(getCI(V) iterator = V.begin(); iterator != V.end();++iterator)
-#define FORALLW(V,iterator)  for(getCI(V) V##iterator = V.begin(); V##iterator != V.end();++V##iterator)
+#define FORALL(V,iterator)  for(getI(V) iterator = V.begin(); iterator != V.end();++iterator)
+#define FORALLW(V,iterator)  for(getCI(V) iterator = V.begin(); iterator != V.end();++iterator)
 #define FORN(N,icountn)  for(size_t icountn=0;icountn<(N);++icountn)
 #define FORV(ielement,V)  for(const auto &ielement:V)
 #define FORW(ielement,V)  for(auto &ielement:V)
 
 #define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>((CWnd*)this); PCDC & cout=*me_unique_dc;
 #define makemedc(DC)  unique_ptr<PCDC> pdcxxx(new PCDC(this));PCDC& DC = *pdcxxx;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;pcout=&*cout_me_ptr;cout.resettcolor();
-#define coutExtSetSimulation  SimulationStdCout;pcout=&cout;
-#define getcout PCDC &cout=*pcout;
+#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;(PCDC::pXCout)=&cout;cout.resettcolor();
+#define coutExtSetSimulation  SimulationStdCout;(PCDC::pXCout)=&cout;
+#define getcout PCDC &cout=*PCDC::pXCout;
 
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
