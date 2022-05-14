@@ -263,7 +263,7 @@ void OnPCDCFunctionTest6( PCDC& cout )
 	cout << lp << sp << *lp << semi;
 	cout << llp << sp << *llp << semi;
 	cout << dp << sp << *dp << tab;
-	); lscode(
+	); lcode(
 		cout << nullptr << com << sizeof( nullptr ) << tab << NULL << tab << 0 << sp << NULL( 0 ) << sp << std::nullptr_t( 0 ) << sp << (void*)0 << newl;
 	);
 };

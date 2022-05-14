@@ -1463,16 +1463,14 @@ void CSDIView::OnMacroTest( )
 			cout << *it << tab;
 		}
 		cout << cut;
-		lcode( ilt.erase( ilt.begin( ) ); cout( ilt ) );
-		lcode( ilt.pop_back( ); cout( ilt ) );
-		lcode( ilt.pop_front( ); cout( ilt ) );
-		lcode( ilt.insert( ilt.begin( ) , 666 ); cout( ilt ) );
-		lcode( ilt.insert( ilt.begin( ) , 666 ); ilt.insert( ilt.begin( ) , 666 ); cout( ilt ) );
-		lcode( ilt.remove( *ilt.begin( ) ); cout << ilt );
+		lcode( ilt.erase( ilt.begin( ) ); );
+		lcode( ilt.pop_back( );  );
+		lcode( ilt.pop_front( ); );
+		lcode( ilt.insert( ilt.begin( ) , 666 ); );
+		lcode( ilt.insert( ilt.begin( ) , 666 ); ilt.insert( ilt.begin( ) , 666 ); );
 		lcode( ilt.reverse( ); cout << ilt );
-		lcode( cout( l2 ) << tab << ilt;);
-		lcode( ilt.swap( l2 ); cout( ilt ); cout( l2 ) );
-		lcode( ilt.sort( ); ilt.reverse( ); cout( ilt ););
+		lcode( ilt.swap( l2 ); );
+		lcode( ilt.sort( ); ilt.reverse( )); 
 	}
 	if ( imod == 3 )
 	{

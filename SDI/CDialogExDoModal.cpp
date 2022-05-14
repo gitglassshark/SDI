@@ -121,7 +121,7 @@ void CDialogExDoModal::OnBnClickedButtonDectobitD2()
 	CAtlString csmessage;
 
 	static CHAR CHAR64BIT[256] = { 0 };
-	LONGLONG long64bit = 256 * 256 * 256 * 256 - 1;
+	LONGLONG long64bit = 256 * 256 * 256 - 1;
 	Long64ToChar(long64bit, CHAR64BIT);
 
 	bitset<64> bit64a = this->m_int_decnum;

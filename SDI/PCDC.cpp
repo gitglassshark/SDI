@@ -715,8 +715,10 @@ CString timeend( size_t itimes )
 	CString cs;
 	cs.Format( _T( "%zu's " ) , times );
 	cs += "Totaltimes: ";
-	cs.AppendFormat( _T( "%ld" ) , ns / ( 1000 ) );
+	cs.AppendFormat( _T( "%5ld" ) , ns / ( 1000 ) );
 	cs += "\'ms.  Once: ";
+	cs.AppendFormat( _T( "%ld" ) , ns / 1000 / times );
+	cs += "\'ms  ";
 	cs.AppendFormat( _T( "%ld" ) , ns / ( times ) );
 	cs += "\'us  ";
 	cs.AppendFormat( _T( "%ld" ) , ns * 1000 / times );
@@ -724,7 +726,5 @@ CString timeend( size_t itimes )
 	cout << cs << newl;
 	return cs;
 }
-
-
 
 
