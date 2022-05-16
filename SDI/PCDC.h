@@ -251,11 +251,11 @@ public:
 	}
 	inline size_t getmaxcows( bool getmax = true )
 	{
-		ms = "1234567890abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST";
-		size_t cslen = ms.GetLength( );
+		CString cs = L"1234567890abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST";
+		size_t cslen = cs.GetLength( );
 
 		m_pwnd->GetClientRect( &mrect );
-		msize = this->GetOutputTextExtent( ms );
+		msize = this->GetOutputTextExtent( cs );
 
 		auto acharsize = msize.cx / cslen;
 		auto linelength = mrect.right - mrect.left - 2 * initalpos;
@@ -267,8 +267,8 @@ public:
 		}
 		else
 		{
-			size_t retn = maxcows - ( p.x - mrect.left - initalpos ) * cslen / msize.cx;
-			return retn;
+			size_t reline = maxcows - ( p.x - mrect.left - initalpos ) * cslen / msize.cx;
+			return reline;
 		}
 	}
 	inline CRect& resetmrect( )
@@ -454,11 +454,11 @@ public:
 		size_t rwords = getmaxcows( false );
 		size_t currentwords = maxwords - rwords;
 		size_t mtab = currentwords % mtabs;
-		size_t ptabs = mtab ? mtabs - mtab : mtabs;
+		size_t ptabs = mtab ? ( mtabs - mtab ) : mtabs;
 		ptabs = min( ptabs , rwords );
-		ms = "";
-		NTIME( ptabs )ms += " ";
-		imresizeout( ms );
+		CString cs;
+		NTIME( ptabs )cs += ' ';
+		imresizeout( cs );
 		return *this;
 	}
 

@@ -47,10 +47,10 @@ void OnPCDCFunctionTest1( PCDC& cout )
 		for ( char i = c0; i <= ce; ++i )
 		{
 			cout << i << tab;
-			if ( ( i + 1 - c0 ) % 15 == 0 )
+			if ( ( i + 1 - c0 ) % 30 == 0 )
 				cout << newl;
 		}
-	cout << ca << tab << cca << sp << 'a' << sp << 'z' << endl;
+	cout << nl;
 	);
 
 	// "打印浮点型数据：" 

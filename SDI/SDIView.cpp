@@ -1269,6 +1269,7 @@ void CSDIView::OnStlStackTest( )
 	}
 	stack<int> skt;
 	queue<int>qut;
+
 	if ( imod == 1 )
 	{
 		RUNTEST( STACK EQUEUE TEST );
@@ -1297,25 +1298,27 @@ void CSDIView::OnStlStackTest( )
 		cout << ieq.back( ) << newl;
 
 	}
+
 	if ( imod == 2 )
 	{
 		NTIME( 100 )
 			skt.push( ix * 8 );
-		cout << st( stack size is : ) << sp << skt.size( ) << tab << st( stack top elements is : ) << sp << "stack is empty? answer is : " << skt.empty( ) << cut;
+		cout << st( stack size is : ) << sp << skt.size( ) << tab << "stack is empty? answer is : " << skt.empty( ) << cut;
 		if ( skt.empty( ) == false )
-			cout << skt.top( );
+			cout << skt.top( ) << nl;
 		NTIME( 100 )
 		{
-			cout << 1 + ix << "# : " << skt.top( ) << tab;
+			cout <<"  "<< 1 + ix << "#: " << skt.top( ) << tab;
 			skt.pop( );
-			if ( ix % 8 == 7 )
-				cout << cut;
+			if ( ix % 10 == 9 )
+				cout << separtor;
 		}
-		cout << cut;
-		cout << st( stack size is : ) << sp << skt.size( ) << tab << st( stack top elements is : ) << sp << "stack is empty? answer is : " << skt.empty( );
+		cout << separtor;
+		cout << st( stack size is : ) << sp << skt.size( ) << tab << "stack is empty? answer is : " << skt.empty( );
 		if ( skt.empty( ) == false )
 			cout << skt.top( );
 	}
+
 	if ( imod == 3 )
 	{
 		NTIME( 100 )
@@ -1323,7 +1326,7 @@ void CSDIView::OnStlStackTest( )
 		cout << st( queue size is : ) << qut.size( ) << sp << st( first element is : ) << qut.front( ) << sp << st( end element is : ) << qut.back( ) << sp << st( is empty ? : ) << qut.empty( ) << cut;
 		NTIME( 100 )
 		{
-			cout << 1 + ix << "# : " << qut.front( ) << sp;
+			cout << 1 + ix << "# : " << qut.front( ) << tab;
 			qut.pop( );
 			if ( ix % 8 == 7 )
 				cout << cut;
@@ -1332,7 +1335,6 @@ void CSDIView::OnStlStackTest( )
 		lscode(
 			cout << st( size if ) << sp << qut.size( ) << tab << st( queue is empty ? : ) << qut.empty( ) << cut;
 		);
-
 	}
 }
 
@@ -1464,13 +1466,13 @@ void CSDIView::OnMacroTest( )
 		}
 		cout << cut;
 		lcode( ilt.erase( ilt.begin( ) ); );
-		lcode( ilt.pop_back( );  );
+		lcode( ilt.pop_back( ); );
 		lcode( ilt.pop_front( ); );
 		lcode( ilt.insert( ilt.begin( ) , 666 ); );
 		lcode( ilt.insert( ilt.begin( ) , 666 ); ilt.insert( ilt.begin( ) , 666 ); );
 		lcode( ilt.reverse( ); cout << ilt );
 		lcode( ilt.swap( l2 ); );
-		lcode( ilt.sort( ); ilt.reverse( )); 
+		lcode( ilt.sort( ); ilt.reverse( ) );
 	}
 	if ( imod == 3 )
 	{
