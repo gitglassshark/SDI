@@ -158,6 +158,7 @@ public:
 	char mmarkchar = '=';
 	CString spchar = _T( "  " );
 	CString ms = _T( "" );
+	size_t mtabs = 4;
 	inline static vector<CString>mvlogs;
 	inline static CString sms = _T( "" );
 	CString opstr = _T( "" );
@@ -168,7 +169,6 @@ public:
 	inline bool Release( );
 	~PCDC( );
 
-	//explicit operator char *() const;
 
 public:
 	PCDC& operator<<( const char c );
@@ -179,51 +179,11 @@ public:
 	PCDC& operator<<( signed char const* p ) { return *this << (char const*)p; };
 	PCDC& operator<<( unsigned char const* p ) { return *this << (char const*)p; };
 	PCDC& operator<<( LPCTSTR s );
-
-	//template<typename S>
-	//requires requires (S s )
-	//{
-	//	s.length( );
-	//	s.at( );
-	//	s.c_str( );
-	//}
-	//PCDC& operator<<( const S& s ) 
-	//{
-	//	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
-	//		ms = s.c_str( );
-	//	}
-	//	else
-	//	{
-	//		ms = "null(0)";
-	//	}
-	//	imresizeout( ms );
-	//	return *this;
-	//}
-
-	//template<typename S>
-	//requires PS<S>
-	//PCDC& operator<<(const S& s )
-	//{
-	//	if ( ( s.length( ) ) && ( s.at( 0 ) != '\0' ) ) {
-	//		ms = s.c_str( );
-	//	}
-	//	else
-	//	{
-	//		ms = "null(0)";
-	//	}
-	//	imresizeout( ms );
-	//	return *this;
-	//}
 	PCDC& operator<<( const std::string& s );
 	PCDC& operator<<( const std::wstring& s );
 	PCDC& operator<<( const CString& s );
 	PCDC& operator<<( const CString&& s );
 	PCDC& operator<<( const CAtlString& s );
-	//template<enumc E>
-	//PCDC& operator<<( enumc auto s )
-	//{
-	//	return *this << (int)s;
-	//};
 	PCDC& operator<<( const bool b );
 	PCDC& operator<<( const int n );
 	PCDC& operator<<( const unsigned int n );
@@ -235,6 +195,25 @@ public:
 	PCDC& operator<<( const long double n );
 	PCDC& operator<<( const size_t n );
 	template <typename A , typename ...X , typename R> PCDC& operator<<( R( A::* p )( X... ) );
+	PCDC& operator<<( std::nullptr_t p );
+	PCDC& operator<<( std::thread::id tid )
+	{
+		_Thrd_t t = *(_Thrd_t*)(char*)&tid;
+		unsigned int  nId = t._Id;
+		*this << "ThreadID=[" << nId << "] ";
+		return *this;
+	}
+	PCDC& operator<<( PCDC& dc ) {
+		if ( this == &dc )
+		{
+			return *this;
+		}
+		else
+		{
+			return dc;
+		}
+	};
+
 	//template <typename P> PCDC& operator <<( P p )
 	//{
 	//	if ( std::is_member_pointer<decltype( p )>::value )
@@ -252,25 +231,6 @@ public:
 	//	}
 	//	return *this;
 	//};
-	PCDC& operator<<( std::nullptr_t p );
-	PCDC& operator<<( PCDC& dc ) {
-		if ( this == &dc )
-		{
-			return *this;
-		}
-		else
-		{
-			return dc;
-		}
-	};
-
-	PCDC& operator<<( std::thread::id tid )
-	{
-		_Thrd_t t = *(_Thrd_t*)(char*)&tid;
-		unsigned int  nId = t._Id;
-		*this << "ThreadID=[" << nId << "] ";
-		return *this;
-	}
 public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
@@ -291,39 +251,30 @@ public:
 	}
 	inline size_t getmaxcows( bool getmax = true )
 	{
-		CString cs;
-		cs = "abcdefgABCDEFG";
-		size_t cslen = cs.GetLength( );
+		ms = "1234567890abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRST";
+		size_t cslen = ms.GetLength( );
 
 		m_pwnd->GetClientRect( &mrect );
-		msize = this->GetOutputTextExtent( cs );
+		msize = this->GetOutputTextExtent( ms );
 
 		auto acharsize = msize.cx / cslen;
 		auto linelength = mrect.right - mrect.left - 2 * initalpos;
 		auto maxcows = linelength * cslen / msize.cx;
 
-		size_t retn = 0;
 		if ( getmax == true )
 		{
-			retn = maxcows;
+			return maxcows;
 		}
 		else
 		{
-			retn = ( mrect.right - mrect.left - initalpos - p.x ) / acharsize;
+			size_t retn = maxcows - ( p.x - mrect.left - initalpos ) * cslen / msize.cx;
+			return retn;
 		}
-		return retn;
-
 	}
-	inline PCDC& resettcolor( );
-	inline PCDC& printX( auto...x )
-	{
-		( ( ( *this << "- " ) , type( x ) , ( *this << "+" ) ) , ... );
-		( ( *this << x << sp ) , ... );
-		return *this;
-	}
-	inline void resetmrect( )
+	inline CRect& resetmrect( )
 	{
 		m_pwnd->GetClientRect( &mrect );
+		return mrect;
 	}
 	inline void rinitx( bool initset = true , long x = 0 )
 	{
@@ -366,11 +317,6 @@ public:
 			p.y = max( y , initalpos );
 			p.y = min( y , ( mrect.bottom - initalpos ) );
 		}
-	};
-	inline PCDC& sourcemode( )
-	{
-		this->settcolor( dccr.smokewhite );
-		return *this;
 	};
 	inline bool recode( const CString& cs )
 	{
@@ -448,25 +394,23 @@ public:
 		if ( itimes != 0 )*this << strcount << newl;
 		return strcount;
 	}
-	//inline size_t showsms( size_t n )
-	//{
-	//	size_t maxn = getmaxline( );
-	//	size_t logsize = mvlogs.size( );
-	//	size_t nshow = gmin( n , maxn , logsize );
-	//	auto itend = mvlogs.end( );
-	//	auto itstart = itend - nshow;
-
-	//	isurerecode = false;
-	//	for ( ; itstart != mvlogs.end( ); itstart++ )
-	//		*this << *itstart << endl;
-	//	isurerecode = true;
-	//	return nshow;
-	//}
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& lmod( unsigned char imod = 30 );
 	template <typename T = CString>inline PCDC& title( T t , bool ib = true );
 	char setlinechar( const char& c = '=' );
+	inline PCDC& resettcolor( );
+	inline PCDC& printX( auto...x )
+	{
+		( ( ( *this << "- " ) , type( x ) , ( *this << "+" ) ) , ... );
+		( ( *this << x << sp ) , ... );
+		return *this;
+	}
+	inline PCDC& sourcemode( )
+	{
+		this->settcolor( dccr.smokewhite );
+		return *this;
+	};
 	inline PCDC& flushscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
 	inline PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
 	inline PCDC& location( auto s )
@@ -500,10 +444,25 @@ public:
 		storesms( );
 		return *this;
 	};
+	void inline settab( size_t n )
+	{
+		mtabs = n;
+	}
+	PCDC& tabs( size_t n = 1 )
+	{
+		size_t maxwords = getmaxcows( true );
+		size_t rwords = getmaxcows( false );
+		size_t currentwords = maxwords - rwords;
+		size_t mtab = currentwords % mtabs;
+		size_t ptabs = mtab ? mtabs - mtab : mtabs;
+		ptabs = min( ptabs , rwords );
+		ms = "";
+		NTIME( ptabs )ms += " ";
+		imresizeout( ms );
+		return *this;
+	}
 
-	//requires Xstring<S>
-	template<typename S>
-	inline void imresizeout( S& cs ) //requires Xstring<S&>
+	template<typename S> inline void imresizeout( S& cs ) //requires Xstring<S&>
 	{
 		auto start = clock( );
 		static size_t* pnstore = storesms( false );
@@ -555,10 +514,7 @@ public:
 		auto end = clock( );
 		pnstore[11] += end - start;
 	}
-
-	//requires Xstring<S>
-	template<typename S>
-	inline void imresizeout( S&& cs ) //requires Xstring<S&>
+	template<typename S> inline void imresizeout( S&& cs ) //requires Xstring<S&>
 	{
 		auto start = clock( );
 		static size_t* pnstore = storesms( false );
@@ -628,57 +584,22 @@ public:
 	template <typename T> PCDC& operator [] ( const tuple<T>& tupa );
 	template <typename... Args> PCDC& operator [] ( const tuple<Args...>& tupa );
 
-	template<typename T> T lstraits( T t )
+	template <typename M>
+	PCDC& operator <<( typename M it ) requires requires ( M m ) { m._Ptr; }
 	{
-		auto& cout = *this;
-#define showtrait(type)  cout<<"is "#type"? : "<<tab(2)<<is_##type<T>::value<<nl;
-#define showtraits(type)  cout<<#type"? : "<<tab(2)<<type<T>::value<<nl;
-		showtrait( void );
-		showtrait( null_pointer );
-		showtrait( integral );
-		showtrait( floating_point );
-		showtrait( array );
-		showtrait( enum );
-		showtrait( union );
-		showtrait( class );
-		showtrait( function );
-		showtrait( pointer );
-		showtrait( lvalue_reference );
-		showtrait( rvalue_reference );
-		showtrait( member_object_pointer );
-		showtrait( member_function_pointer );
-		showtrait( fundamental );
-		showtrait( arithmetic );
-		showtrait( scalar );
-		showtrait( object );
-		showtrait( compound );
-		showtrait( reference );
-		showtrait( member_pointer );
-		showtrait( const );
-		showtrait( volatile );
-		showtrait( trivial );
-		showtrait( trivially_copyable );
-		showtrait( standard_layout );
-		showtrait( empty );
-		showtrait( polymorphic );
-		showtrait( abstract );
-		showtrait( final );
-		showtrait( aggregate );
-		showtrait( signed );
-		showtrait( unsigned );
-		showtrait( bounded_array );
-		showtrait( unbounded_array );
-		showtrait( constructible );
-		showtrait( default_constructible );
-		showtrait( copy_constructible );
-		showtrait( move_constructible );
-		showtrait( copy_assignable );
-		showtrait( move_assignable );
-		showtrait( destructible );
-		showtraits( has_virtual_destructor );
-		showtraits( has_unique_object_representations );
-		showtraits( alignment_of );
-		return T( );
+		return *this << it._Ptr;
+	};
+	template <typename X> PCDC& operator <<( const unique_ptr<X>& ptr )
+	{
+		return *this << ptr.get( ) << "<-(s)";
+	};
+	template <typename X> PCDC& operator <<( const shared_ptr<X>& ptr )
+	{
+		return *this << ptr.get( ) << "<-(s): " << ptr.use_count( );
+	};
+	template <typename X> PCDC& operator <<( const weak_ptr<X>& ptr )
+	{
+		return *this << ptr.lock( ) << "<-(w): " << ptr.use_count( );
 	};
 	template <typename T> PCDC& operator ()( T t , string name )
 	{
@@ -697,7 +618,6 @@ public:
 		return *this;
 	}
 	template <>	PCDC& operator<<( tuple<> tup ) { ibegin = true; return ( *this ) << " }"; }
-	//template <typename X> PCDC& operator <<( const unique_ptr<X>& unptr );
 	template <typename T> PCDC& operator <<( const complex<T>& z );
 	template <typename P> PCDC& operator <<( P* p );
 	template <typename P> PCDC& operator <<( const P* p );
@@ -796,7 +716,6 @@ public:
 	template <typename T , size_t N = std::tuple_size<T>::value> PCDC& disptup( T t );
 	template <typename A , typename B> bool comp( A a , B b ) { return a > b; };
 
-	//template <typename T> PCDC& forprintr( const T* b , const T* e );
 	template <typename T> inline PCDC& forprintv( const T& v );
 	template <typename T> inline PCDC& forprinta( const T* arr , size_t len );
 
@@ -810,6 +729,58 @@ public:
 	template <typename X> PCDC& value( X* a );
 	template <typename T , typename ...X> PCDC& value( T* a , X*...args );
 
+	template<typename T> T lstraits( T t )
+	{
+		auto& cout = *this;
+#define showtrait(type)  cout<<"is "#type"? : "<<tab(2)<<is_##type<T>::value<<nl;
+#define showtraits(type)  cout<<#type"? : "<<tab(2)<<type<T>::value<<nl;
+		showtrait( void );
+		showtrait( null_pointer );
+		showtrait( integral );
+		showtrait( floating_point );
+		showtrait( array );
+		showtrait( enum );
+		showtrait( union );
+		showtrait( class );
+		showtrait( function );
+		showtrait( pointer );
+		showtrait( lvalue_reference );
+		showtrait( rvalue_reference );
+		showtrait( member_object_pointer );
+		showtrait( member_function_pointer );
+		showtrait( fundamental );
+		showtrait( arithmetic );
+		showtrait( scalar );
+		showtrait( object );
+		showtrait( compound );
+		showtrait( reference );
+		showtrait( member_pointer );
+		showtrait( const );
+		showtrait( volatile );
+		showtrait( trivial );
+		showtrait( trivially_copyable );
+		showtrait( standard_layout );
+		showtrait( empty );
+		showtrait( polymorphic );
+		showtrait( abstract );
+		showtrait( final );
+		showtrait( aggregate );
+		showtrait( signed );
+		showtrait( unsigned );
+		showtrait( bounded_array );
+		showtrait( unbounded_array );
+		showtrait( constructible );
+		showtrait( default_constructible );
+		showtrait( copy_constructible );
+		showtrait( move_constructible );
+		showtrait( copy_assignable );
+		showtrait( move_assignable );
+		showtrait( destructible );
+		showtraits( has_virtual_destructor );
+		showtraits( has_unique_object_representations );
+		showtraits( alignment_of );
+		return T( );
+	};
 	PCDC& type( ) { return *this; };
 	//template <typename T > PCDC& type( T a );
 	template <typename T > PCDC& type( T& a );
@@ -841,6 +812,26 @@ public:
 	template <typename T , typename ...X> PCDC& prints( T a , X...args );
 
 public:
+	void showsplitwindow( bool isleft = true , CRect* prect = nullptr )
+	{
+		CRect rect;
+		if ( prect == nullptr )
+		{
+			rect.top = 0;
+			rect.left = 0;
+			rect.right = 1928;
+			rect.bottom = 2112;
+		}
+		else
+		{
+			rect = *prect;
+		}
+		AfxGetApp( )->m_pMainWnd->SetWindowPos( &CWnd::wndTop , rect.left , rect.top , rect.right , rect.bottom , SWP_SHOWWINDOW );
+		AfxGetApp( )->m_pMainWnd->UpdateWindow( );
+		AfxGetApp( )->m_pMainWnd->ShowWindow( SW_SHOW );
+	}
+
+
 	//template<typename A>
 //concept Xstring = requires( A s) {
 //	s.IsEmpty( );
@@ -864,45 +855,7 @@ public:
 	//	}
 	//	return *this;
 	//};
-	void showsplitwindow( bool isleft = true , CRect* prect = nullptr )
-	{
-		CRect rect;
-		if ( prect == nullptr )
-		{
-			rect.top = 0;
-			rect.left = 0;
-			rect.right = 1928;
-			rect.bottom = 2112;
-		}
-		else
-		{
-			rect = *prect;
-		}
-		AfxGetApp( )->m_pMainWnd->SetWindowPos( &CWnd::wndTop , rect.left , rect.top , rect.right , rect.bottom , SWP_SHOWWINDOW );
-		AfxGetApp( )->m_pMainWnd->UpdateWindow( );
-		AfxGetApp( )->m_pMainWnd->ShowWindow( SW_SHOW );
-	}
-
-	template <typename M>
-	PCDC& operator <<( typename M it ) requires requires ( M m ) { m._Ptr; }
-	{
-		return *this << it._Ptr;
-	};
-	template <typename X> PCDC& operator <<( const unique_ptr<X>& ptr )
-	{
-		return *this << ptr.get( ) << "<-(s)";
-	};
-	template <typename X> PCDC& operator <<( const shared_ptr<X>& ptr )
-	{
-		return *this << ptr.get( ) << "<-(s): " << ptr.use_count( );
-	};
-	template <typename X> PCDC& operator <<( const weak_ptr<X>& ptr )
-	{
-		return *this << ptr.lock( ) << "<-(w): " << ptr.use_count( );
-	};
-
 };
-
 
 template <typename A , typename B>
 PCDC& PCDC::operator||( const tuple<A , B>& tup )
@@ -988,14 +941,6 @@ PCDC& PCDC::operator <<( P* p )
 	imresizeout( ms );
 	return *this;
 }
-
-//template <typename X>
-//PCDC& PCDC::operator <<( const unique_ptr<X>& unptr )
-//{
-//	ms.Format( _T( "%p" ) , unptr.get( ) );
-//	imresizeout( ms );
-//	return *this;
-//}
 
 template <typename A , typename B>
 PCDC& PCDC::operator <<( const pair<A , B>& i )

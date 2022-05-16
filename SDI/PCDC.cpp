@@ -546,7 +546,7 @@ PCDC& PCDC::operator <<( const char c )
 	}
 	if ( c == '\t' )
 	{
-		ms = "    ";
+		tabs( );
 	}
 	if ( isprint( c ) ) {
 		ms = c;

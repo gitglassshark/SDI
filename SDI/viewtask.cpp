@@ -6,7 +6,7 @@
 
 void OnPCDCFunctionTest1( PCDC& cout )
 {
-	//打印整型数据
+	////打印整型数据
 	cout.flushscreen( );
 	cout << "打印整型数据" << newl;
 	code(
@@ -47,7 +47,7 @@ void OnPCDCFunctionTest1( PCDC& cout )
 		for ( char i = c0; i <= ce; ++i )
 		{
 			cout << i << tab;
-			if ( ( i + 1 - c0 ) % 25 == 0 )
+			if ( ( i + 1 - c0 ) % 15 == 0 )
 				cout << newl;
 		}
 	cout << ca << tab << cca << sp << 'a' << sp << 'z' << endl;
