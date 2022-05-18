@@ -96,11 +96,11 @@ BOOL CSDIView::PreCreateWindow( CREATESTRUCT& cs ) {
 void CSDIView::OnDraw( CDC* pDC ) {
 	{ LOGMESSAGE( theApp ); }
 	CSDIDoc* pDoc = GetDocument( );
+
 	ASSERT_VALID( pDoc );
 	if ( !pDoc )
 		return;
 	// TODO: 在此处为本机数据添加绘制代码
-
 
 }
 

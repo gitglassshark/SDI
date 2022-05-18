@@ -302,18 +302,60 @@ auto gmax( A a , X...args )
 	return gmax<T>( il );
 }
 
+template<typename T,typename ...A >
+auto gmax( vector<T,A...> v )
+{
+	if ( v.empty( ) )
+		return A( );
+	A imax = *v.begin( );
+	for ( auto it = v.begin( ) + 1; it != v.end( ); ++it )
+	{
+		if ( imax < *it )
+			imax = *it;
+	}
+	return imax;
+}
+
+template<template<typename A , typename ...B >typename C , typename T , typename ...X>
+auto gmax( C<T , X...> c )
+{
+	if ( c.empty( ) )
+		return T( );
+	T imax = *c.begin( );
+	for ( auto& i : c )
+	{
+		if ( imax < i )
+			imax = i;
+	}
+	return imax;
+}
+
+template<template<typename A , typename ...B >typename C , typename T , typename ...X>
+auto gmin( C<T , X...> c )
+{
+	if ( c.empty( ) )
+		return T( );
+	T imin = *c.begin( );
+	for ( auto& i : c )
+	{
+		if ( imin > i )
+			imin = i;
+	}
+	return imin;
+}
+
 template<typename T = int , typename ...X>
 auto imin( X...args )
 {
 	initializer_list<T>il { (T)( args )... };
-	return *ranges::min_element(il);
+	return *ranges::min_element( il );
 }
 
 template<typename T = int , typename ...X>
 auto imax( X...args )
 {
 	initializer_list<T>il { (T)( args )... };
-	return *ranges::max_element(il);
+	return *ranges::max_element( il );
 }
 
 template<typename T = int>

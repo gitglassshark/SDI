@@ -49,6 +49,7 @@ void test_ranges( PCDC& cout )
 		cout << imin( 2 , 3 , 5 ) << tab << imax( 3 , 8 , 9 ) << newl;
 	);
 	cout.title( "end" );
+	cout.clearlog( );
 	timeend( 30 );
 }
 

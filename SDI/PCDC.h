@@ -339,6 +339,15 @@ public:
 		}
 		return maxrecode;
 	}
+	inline void clearlog( size_t max = 0 )
+	{
+		if ( max >= 0 ) {
+			maxrecode = max;
+		}
+		mvlogs.clear( );
+		mvlogs.resize( getmaxline( ) * maxrecode );
+		mvlogs.shrink_to_fit( );
+	}
 	inline bool stoprecode( ) { return isurerecode = false; }
 	inline bool startrecode( ) { return isurerecode = true; }
 	inline size_t* storesms( bool isstorecomand = true )
@@ -1384,7 +1393,7 @@ inline PCDC& PCDC::forprintv( const T& v )
 	unsigned char il = 0;
 	for ( const auto& i : v )
 	{
-		*this << i << spchar;
+		*this << i << tab;// spchar;
 		linemod( ++il , ilinemod );
 	}
 	return *this;
@@ -1396,7 +1405,7 @@ inline PCDC& PCDC::forprinta( const T* arr , size_t len )
 	unsigned char il = 0;
 	for ( size_t i = 0; i < len; ++i )
 	{
-		*this << *( arr + i ) << spchar;
+		*this << *( arr + i ) << tab;// spchar;
 		linemod( ++il , ilinemod );
 	}
 	return *this;

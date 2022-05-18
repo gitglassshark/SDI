@@ -81,12 +81,6 @@ struct bigto
 		else {
 			iret = icomp < ia;
 		}
-		/*getcout;
-		static int imod = 0;
-		cout << "*" << icomp << sp << "ibig=" << ibig << sp << "iret=" << iret << tab;
-		if ( ( imod + 1 ) % 3 == 0 )
-			cout << "%" << (int)imod << newl;
-		imod++;*/
 		return iret;
 	}
 	bool operator()( T a , T b )
