@@ -260,6 +260,43 @@ auto gsum( A a , X...args )
 	return gsum<T>( il );
 }
 
+template<template<typename A , typename ...B >typename C , typename T , typename ...X>
+auto gsum( C<T , X...> c )
+{
+	if ( c.empty( ) )
+		return T( );
+	T isum = *c.begin( );
+	for ( auto& i : c )
+	{
+		isum += i;
+	}
+	return isum;
+}
+
+template<typename T >
+auto sum( vector<T> c )
+{
+	T isum = *c.begin( ) - *c.begin( );
+	for ( auto i : c )
+		isum += i;
+	return isum;
+}
+
+template<typename T >
+auto sum( initializer_list<T> c )
+{
+	T isum = *c.begin( ) - *c.begin( );
+	for ( auto i : c )
+		isum += i;
+	return isum;
+}
+
+template<typename ...A , template<typename ...T> typename B>
+size_t tpcount( B<A...> a )
+{
+	return  sizeof...( A );
+}
+
 template<typename T>
 T gmin( initializer_list<T> v )
 {
@@ -395,29 +432,29 @@ T lexzero( T a = T( ) )
 	return T( );
 }
 
-template<typename T >
-auto sum( vector<T> c )
-{
-	T isum = *c.begin( ) - *c.begin( );
-	for ( auto i : c )
-		isum += i;
-	return isum;
-}
+//template<typename T >
+//auto sum( vector<T> c )
+//{
+//	T isum = *c.begin( ) - *c.begin( );
+//	for ( auto i : c )
+//		isum += i;
+//	return isum;
+//}
 
-template<typename T >
-auto sum( initializer_list<T> c )
-{
-	T isum = *c.begin( ) - *c.begin( );
-	for ( auto i : c )
-		isum += i;
-	return isum;
-}
+//template<typename T >
+//auto sum( initializer_list<T> c )
+//{
+//	T isum = *c.begin( ) - *c.begin( );
+//	for ( auto i : c )
+//		isum += i;
+//	return isum;
+//}
 
-template<typename ...A , template<typename ...T> typename B>
-size_t tpcount( B<A...> a )
-{
-	return  sizeof...( A );
-}
+//template<typename ...A , template<typename ...T> typename B>
+//size_t tpcount( B<A...> a )
+//{
+//	return  sizeof...( A );
+//}
 
 template<typename T>
 T& MakeSingleEleRandom( T& r , const int mod )

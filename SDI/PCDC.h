@@ -198,9 +198,14 @@ public:
 	PCDC& operator<<( std::nullptr_t p );
 	PCDC& operator<<( std::thread::id tid )
 	{
-		_Thrd_t t = *(_Thrd_t*)(char*)&tid;
-		unsigned int  nId = t._Id;
-		*this << "ThreadID=[" << nId << "] ";
+	//_Thrd_t t = *(_Thrd_t*)(char*)&tid;
+	//unsigned int  nId = t._Id;
+	//*this << "ThreadID=[" << nId << "] ";
+	//*this << "ThreadID=[" << std::hash<std::thread::id>( )( tid ) << "] ";
+		std::stringstream sin;
+		sin << tid;
+		string sidstr = sin.str( );
+		*this << "ThreadID=[" << sidstr << "] ";
 		return *this;
 	}
 	PCDC& operator<<( PCDC& dc ) {
@@ -235,6 +240,11 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
+	inline PCDC& printid( )
+	{
+		*this <<  this_thread::get_id( ) << tab << "PID:[" << _getpid( ) << "] ";
+		return *this;
+	}
 	inline size_t getmaxline( bool getmax = true )
 	{
 		m_pwnd->GetClientRect( &mrect );
@@ -422,7 +432,7 @@ public:
 	};
 	inline PCDC& flushscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
 	inline PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
-	inline PCDC& location( auto s )
+	inline PCDC& location( auto s)//s=source_location::current( )
 	{
 		CString strloc;
 		strloc += "当前位置{ 文件：";
