@@ -20,6 +20,14 @@ void OnPCDCFunctionTest1( PCDC& cout )
 	long long lla = 256;
 	); lcode(
 		cout << icount << com << ia << sp << 999 << sp << -1 << sp << 0 << sp << cia << sp << ria << sp << rra << sp << INT_MIN << com << INT_MAX << semi << cla << sp << la << sp << LONG_MAX << com << LONG_MIN << semi << lla << sp << LONGLONG_MAX << com << LONGLONG_MIN << separtor;
+	); lcode(
+		cout.lmod( 30 );
+	vector<int> intvec {};
+	for ( size_t i = 0; i < 270; ++i )
+	{
+		intvec.push_back( i );
+	}
+	cout << intvec << nl;
 	);
 
 	//打印布尔数据
@@ -70,8 +78,8 @@ void OnPCDCFunctionTest3( PCDC& cout )
 	cout << L"中文常量字符串打印指针型字符串功能测试:" << endl;
 	lcode(
 		CString cs = L"壹贰叁肆伍陆柒捌玖拾";
-	BEGINTEST( 280 ) {
-		cout << cs;
+	BEGINTEST( 200 ) {
+		cout << cs << sp( 5 );
 	}ENDTEST );
 
 };
@@ -366,13 +374,18 @@ void OnPCDCFunctionTest8( PCDC& cout )
 void OnPCDCFunctionTest2( PCDC& cout )
 {
 	cout << clear;
-	cout << "英文字符打印功能运行时间测试" << endl;
-	CString cs = _T( "12345678ab123456" );
+	cout << "英文数字打印功能运行时间测试" << endl;
+	CString cs = _T( "1234567890#" );
+	CString cs2 = _T( "abcdefghij#" );
 	cs.MakeLower( );
 	//using namespace std::chrono_literals;
 	//auto start = std::chrono::high_resolution_clock::now( );
-	lcode( BEGINTEST( 350 ) {
-		cout << cs;
+	lcode( BEGINTEST( 150 ) {
+		cout << cs << tab << tab;
+	}ENDTEST );
+	cout << "英文字符打印功能运行时间测试" << endl;
+	lcode( BEGINTEST( 150 ) {
+		cout << cs2 << tab << tab;
 	}ENDTEST );
 	//auto end = std::chrono::high_resolution_clock::now( );
 	//auto itcount = end - start;
@@ -457,7 +470,7 @@ void OnTaskRuntimeTest3( PCDC& cout )
 	code( BEGINTEST( 10'000'000 ) { x + sx; }ENDTEST );
 	code( BEGINTEST( 10'000'000 ) { sizeof( int ); }ENDTEST );
 	code( BEGINTEST( 10'000'000 ) { sx* sx; }ENDTEST );
-	code( BEGINTEST( 1000 ) { cout<<y; }ENDTEST );
+	code( BEGINTEST( 1000 ) { cout << y; }ENDTEST );
 
 
 }

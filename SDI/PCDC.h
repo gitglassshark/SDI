@@ -136,7 +136,7 @@ public:
 	inline static POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
-	unsigned char ilinemod = 20;
+	size_t ilinemod = 20;
 	//bool icutline = false;
 
 public:
@@ -198,10 +198,10 @@ public:
 	PCDC& operator<<( std::nullptr_t p );
 	PCDC& operator<<( std::thread::id tid )
 	{
-	//_Thrd_t t = *(_Thrd_t*)(char*)&tid;
-	//unsigned int  nId = t._Id;
-	//*this << "ThreadID=[" << nId << "] ";
-	//*this << "ThreadID=[" << std::hash<std::thread::id>( )( tid ) << "] ";
+		//_Thrd_t t = *(_Thrd_t*)(char*)&tid;
+		//unsigned int  nId = t._Id;
+		//*this << "ThreadID=[" << nId << "] ";
+		//*this << "ThreadID=[" << std::hash<std::thread::id>( )( tid ) << "] ";
 		std::stringstream sin;
 		sin << tid;
 		string sidstr = sin.str( );
@@ -242,7 +242,7 @@ public:
 public:
 	inline PCDC& printid( )
 	{
-		*this <<  this_thread::get_id( ) << tab << "PID:[" << _getpid( ) << "] ";
+		*this << this_thread::get_id( ) << tab << "PID:[" << _getpid( ) << "] ";
 		return *this;
 	}
 	inline size_t getmaxline( bool getmax = true )
@@ -391,11 +391,12 @@ public:
 	void status_head( bool ishow = true , size_t nline = 0 , bool ishowtail = true );
 	void status( bool ibshowrecode = true , size_t nline = 45 );
 	size_t showlogn( size_t start , size_t end );
-	clock_t timestart( bool isstart = true )
+	auto timestart( bool isstart = true )
 	{
-		clock_t static start {};
+		auto static start = std::chrono::steady_clock::now( );
+		//clock_t static start {};
 		if ( isstart == true ) {
-			start = clock( );
+			start = std::chrono::steady_clock::now( );
 		}
 		return start;
 		/*	using namespace std::chrono_literals;
@@ -406,13 +407,34 @@ public:
 	}
 	CString timeend( size_t itimes = 1 )
 	{
-		clock_t static end {};
-		end = clock( );
-		clock_t start = timestart( false );
-		CString strcount = tasktimestr( start , end , itimes );
-		if ( itimes != 0 )*this << strcount << newl;
-		return strcount;
+		auto static end = std::chrono::steady_clock::now( );
+		static size_t times = 0;
+		end = std::chrono::steady_clock::now( );
+		auto start = timestart( false );
+		static auto dtime = end - start;
+		dtime += end - start;
+
+		times += itimes >= 1 ? itimes : 1;
+		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>( dtime ).count( );
+		auto us = std::chrono::duration_cast<std::chrono::microseconds>( dtime ).count( );
+		auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>( dtime ).count( );
+
+		CString cs;
+		cs.Format( _T( "%zu's " ) , times );
+		cs += "Totaltimes: ";
+		cs.AppendFormat( _T( "%5ld" ) , ms );
+		cs += "\'ms.  Once: ";
+		cs.AppendFormat( _T( "%ld" ) , ms / times );
+		cs += "\'ms  ";
+		cs.AppendFormat( _T( "%ld" ) , us / times );
+		cs += "\'us  ";
+		cs.AppendFormat( _T( "%ld" ) , ns / times );
+		cs += "\'ns.";
+		*this << cs << newl;
+
+		return cs;
 	}
+
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& lmod( unsigned char imod = 30 );
@@ -432,7 +454,7 @@ public:
 	};
 	inline PCDC& flushscreen( const CRect* r = nullptr , const COLORREF* cr = nullptr );
 	inline PCDC& tb( size_t t = 1 , char c = '\t' ) { NTIME( t )* this << c; return *this; }
-	inline PCDC& location( auto s)//s=source_location::current( )
+	inline PCDC& location( auto s )//s=source_location::current( )
 	{
 		CString strloc;
 		strloc += "当前位置{ 文件：";
@@ -1400,7 +1422,7 @@ inline void PCDC::linemod( S l , S linemod , PCDC& ( *op )( PCDC& ) , char* stai
 template<typename T>
 inline PCDC& PCDC::forprintv( const T& v )
 {
-	unsigned char il = 0;
+	size_t il = 0;
 	for ( const auto& i : v )
 	{
 		*this << i << tab;// spchar;
@@ -1412,7 +1434,7 @@ inline PCDC& PCDC::forprintv( const T& v )
 template<typename T>
 inline PCDC& PCDC::forprinta( const T* arr , size_t len )
 {
-	unsigned char il = 0;
+	size_t il = 0;
 	for ( size_t i = 0; i < len; ++i )
 	{
 		*this << *( arr + i ) << tab;// spchar;
