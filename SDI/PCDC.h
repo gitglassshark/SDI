@@ -503,58 +503,58 @@ public:
 		return *this;
 	}
 
-	template<typename S> inline void imresizeout( S& cs ) //requires Xstring<S&>
-	{
-		auto start = clock( );
-		static size_t* pnstore = storesms( false );
-		pnstore[9]++;//打印调用次数统计
-		if ( cs.IsEmpty( ) ) {
-			pnstore[4]++;//空打印输出次数统计 
-			return;
-		}
-		m_pwnd->GetClientRect( &mrect );
-		msize = this->GetOutputTextExtent( cs );
-		auto linelen = mrect.right - initalpos - p.x;
-		auto strlen = msize.cx;
+	//template<typename S> inline void imresizeout( S& cs ) //requires Xstring<S&>
+	//{
+	//	auto start = clock( );
+	//	static size_t* pnstore = storesms( false );
+	//	pnstore[9]++;//打印调用次数统计
+	//	if ( cs.IsEmpty( ) ) {
+	//		pnstore[4]++;//空打印输出次数统计 
+	//		return;
+	//	}
+	//	m_pwnd->GetClientRect( &mrect );
+	//	msize = this->GetOutputTextExtent( cs );
+	//	auto linelen = mrect.right - initalpos - p.x;
+	//	auto strlen = msize.cx;
 
-		if ( strlen <= linelen ) {
-			if ( p.y >= mrect.bottom - mrect.top - initalpos ) {
-				pnstore[7]++;//满屏打印输出次数统计
-				flushscreen( );
-			}
-			pnstore[5]++;//小行打印输出次数统计
-			//need recalc position***
-			if ( p.x == mrect.left + initalpos ) {
-				storesms( );
-			}
-			auto tstart = clock( );
-			this->TextOutW( p.x , p.y , cs );
-			pnstore[13]++;//系统API调用次数
-			auto tend = clock( );
-			pnstore[12] += tend - tstart;
-			recode( cs );
-			p.x += msize.cx;
+	//	if ( strlen <= linelen ) {
+	//		if ( p.y >= mrect.bottom - mrect.top - initalpos ) {
+	//			pnstore[7]++;//满屏打印输出次数统计
+	//			flushscreen( );
+	//		}
+	//		pnstore[5]++;//小行打印输出次数统计
+	//		//need recalc position***
+	//		if ( p.x == mrect.left + initalpos ) {
+	//			storesms( );
+	//		}
+	//		auto tstart = clock( );
+	//		this->TextOutW( p.x , p.y , cs );
+	//		pnstore[13]++;//系统API调用次数
+	//		auto tend = clock( );
+	//		pnstore[12] += tend - tstart;
+	//		recode( cs );
+	//		p.x += msize.cx;
 
-			//need check position***
-			if ( p.x >= ( mrect.right - initalpos * 2 ) ) {
-				pnstore[6]++;//换行打印输出次数统计
-				storesms( );
-				rinitx( );
-				//p.x = mrect.left + initalpos;
-				p.y += step;
-			}
+	//		//need check position***
+	//		if ( p.x >= ( mrect.right - initalpos * 2 ) ) {
+	//			pnstore[6]++;//换行打印输出次数统计
+	//			storesms( );
+	//			rinitx( );
+	//			//p.x = mrect.left + initalpos;
+	//			p.y += step;
+	//		}
 
-		}
-		else {
-			pnstore[8]++;//分行打印输出次数统计
-			auto cslen = cs.GetLength( );
-			auto tkpos = linelen * cslen / strlen;
-			imresizeout( (S&&)cs.Mid( 0 , tkpos ) );
-			imresizeout( (S&&)cs.Mid( tkpos , cslen - tkpos ) );
-		}
-		auto end = clock( );
-		pnstore[11] += end - start;
-	}
+	//	}
+	//	else {
+	//		pnstore[8]++;//分行打印输出次数统计
+	//		auto cslen = cs.GetLength( );
+	//		auto tkpos = linelen * cslen / strlen;
+	//		imresizeout( (S&&)cs.Mid( 0 , tkpos ) );
+	//		imresizeout( (S&&)cs.Mid( tkpos , cslen - tkpos ) );
+	//	}
+	//	auto end = clock( );
+	//	pnstore[11] += end - start;
+	//}
 	template<typename S> inline void imresizeout( S&& cs ) //requires Xstring<S&>
 	{
 		auto start = clock( );
@@ -872,6 +872,21 @@ public:
 		AfxGetApp( )->m_pMainWnd->ShowWindow( SW_SHOW );
 	}
 
+	template<typename T>
+	PCDC& operator<<( const std::ranges::min_max_result<T>& mm )
+	{
+		return *this << "[max]: " << *mm.max << sp << "[min]: " << *mm.min << sp;
+	}
+	PCDC& modline( size_t n , PCDC& ( *op ) ( PCDC& ) = nullptr )
+	{
+		static size_t nline = 0;
+		nline++;
+		if ( nline % n == 0 )
+			*this << nl;
+		else
+			*this << op;
+		return *this;
+	}
 
 	//template<typename A>
 //concept Xstring = requires( A s) {
