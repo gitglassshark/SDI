@@ -409,11 +409,11 @@ void PCDC::status( bool ibshowrecode , size_t nline )
 
 PCDC& PCDC::operator << ( PCDC& ( *op ) ( PCDC& ) )
 {
-	if ( op == nl || op == cl )
-	{
-		if ( p.x == mrect.left + initalpos )
-			return *this;
-	}
+	//if ( op == nl || op == cl )
+	//{
+	//	if ( p.x == mrect.left + initalpos )
+	//		return *this;
+	//}
 	return ( *op ) ( *this );
 }
 

@@ -888,6 +888,24 @@ public:
 		return *this;
 	}
 
+	PCDC& circle( size_t mod , bool isclear = false , PCDC& ( *tp )( PCDC& ) = tab , PCDC& ( *op )( PCDC& ) = nl , size_t ntimes = 1 ) {
+		static size_t mark = 0;
+		if ( isclear == true ) {
+			mark = 0;
+		}
+		else {
+			++mark;
+			if ( mark % mod == 0 )
+				*this << op;
+			else
+			{
+				NTIME( ntimes )
+					* this << tp;
+			}
+		}
+		return *this;
+	}
+
 	//template<typename A>
 //concept Xstring = requires( A s) {
 //	s.IsEmpty( );
