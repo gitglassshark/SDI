@@ -120,9 +120,9 @@ concept PS = requires ( S s )
 class PCDC : public CDC
 {
 public:
+	unsigned short maxrecode = 100;
 	bool isurerecode = true;
 	bool icreate = false;
-	unsigned short maxrecode = 100;
 	//size_t id = 0;
 	//inline static size_t icount = 0;
 	//int iargs = 0;
@@ -130,23 +130,23 @@ public:
 
 public:
 	//inline static const LONG wbar = 8;
-	LONG step = 36;
-	inline static const LONG initalpos = 40;
-	//const LONG initalstep = 20;
-	inline static POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
 	size_t ilinemod = 20;
+	LONG step = 36;
+	inline static const LONG initalpos = 40;
+	inline static POINT p = { initalpos, initalpos };
+	//const LONG initalstep = 20;
 	//bool icutline = false;
 
 public:
+	CFont font , * pfont = nullptr;
 	COLORREF m_bk = dccr.grey;
 	COLORREF m_tk = dccr.chocolate;
 	COLORREF m_tksource = dccr.smokewhite;
 	COLORREF m_bark = dccr.lteal;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 118;
-	CFont font , * pfont = nullptr;
 
 public:
 	//CDC* m_cdc = nullptr;
@@ -154,14 +154,14 @@ public:
 	CWnd* m_pwnd = nullptr;
 
 public:
-	char mlinechar = _T( '-' );
-	char mmarkchar = '=';
 	CString spchar = _T( "  " );
 	CString ms = _T( "" );
-	size_t mtabs = 4;
 	inline static vector<CString>mvlogs;
 	inline static CString sms = _T( "" );
 	CString opstr = _T( "" );
+	size_t mtabs = 4;
+	char mlinechar = _T( '-' );
+	char mmarkchar = '=';
 
 public:
 	PCDC( CWnd* pwnd = nullptr );
@@ -929,6 +929,11 @@ public:
 	//	}
 	//	return *this;
 	//};
+
+	template <typename ...Args> PCDC& format( std::string_view str , Args&&... args )
+	{
+		return *this << std::vformat( str , std::make_format_args( args... ) );
+	}
 };
 
 template <typename A , typename B>
