@@ -118,40 +118,42 @@ void OnPCDCFunctionTest4( PCDC& cout )
 {
 	//容器打印测试
 	cout << clear << st( 容器打印测试 ) << endl;
-	code(
+	lscode(
+		pair<int , string>paone { 100,"pair" };
+	cout << "对组（pair)" << tab( 2 ) << paone << tab( 4 );
+	); lscode(
+		complex <int>complexa( 2 , 5 );
+	cout << "复数（complex)" << tab( 2 ) << complexa << newl;
+	); lscode(
 		array<int , 10>arrone = { 88,77,66,44,33,22,11,01,99,43 };
-	initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
-	vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
-	deque<int>dqa { 13, 24, 25, 86,12,23,82,918,883,898,1 };
-	list<int>lista { 123,456,789,000,444,213, 24, 25, 86,1 };
-	vector<int>va = { 12,234,56,78,892,8,235,86 ,18,998,888,999,928 };
-	map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.788},{233,839.81392},{238,8.9399} };
-	multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.788},{23,839.8192},{28,8.999} };
-	auto tuplea = tuple<int , float , string , string , string>( 10 , 10.24 , "good" , "bad" , "normal" );
-	pair<int , string>paone { 100,"pair" };
-	complex <int>complexa( 2 , 5 );
-	set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,888,1024,338,8999,0 };
-	multiset<int>mseta { 13 ,84 ,15 , 336 , 22,19880,2282,888,10824,3838,88999,0 };
+	cout << "数组(array)" << tab( 3 ) << arrone << newl;
 	); lscode(
-		cout << "对组（pair)" << tab( 2 ) << paone << tab( 4 );
-	); lscode(
-		cout << "复数（complex)" << tab( 2 ) << complexa << newl;
-	); lscode(
-		cout << "数组(array)" << tab( 3 ) << arrone << newl;
+		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
 	cout << "vector:" << tab( 4 ) << vecta << newl;
 	); lscode(
-		cout << "列表(list)：" << tab( 6 ) << lista << newl;
+		list<int>lista { 123,456,789,000,444,213, 24, 25, 86,1 };
+	cout << "列表(list)：" << tab( 6 ) << lista << newl;
+	); lscode(
+		deque<int>dqa { 13, 24, 25, 86,12,23,82,918,883,898,1 };
 	cout << "双端列表(deque)：" << tab( 5 ) << dqa << newl;
 	); lscode(
-		cout << "初始化列表(initializer_list)" << tab << v << newl;
+		initializer_list<int> v = { 3,4,5,6 ,0,9,8,7,2,1 };
+	cout << "初始化列表(initializer_list)" << tab << v << nl;
 	); lscode(
-		cout << "图(map)" << tab( 4 ) << mif << newl;
-	cout << "图(multimap)" << tab( 2 ) << mmif << newl;
+		map<int , float>mif = { {2,34.3},{234,8.40},{536,10324.78},{233,839.81392},{238,8.9} };
+	cout << "图(map)" << tab( 4 ) << mif << nl;
 	); lscode(
-		cout << "tuple:" << tab( 4 ) << tuplea << tab << tab;
+		multimap<int , float>mmif = { {2,4.3},{234,8.90},{56,1024.7},{23,839.8192},{28,8.9} };
+	cout << "图(multimap)" << tab( 2 ) << mmif << nl;
 	); lscode(
-		cout << "集合 (set)" << tab( 4 ) << seta << newl;
-	cout << "集合 (multiset)" << tab( 2 ) << mseta << newl;
+		auto tuplea = tuple<int , float , string , string>( 10 , 10.24 , "good" , "bad" );
+	cout << "tuple:" << tab( 4 ) << tuplea << tab << tab;
+	); lscode(
+		set<int>seta { 3 , 4 , 5 , 6 , 2,980,222,1024,338,899,0 };
+	cout << "集合 (set)" << tab( 4 ) << seta << nl;
+	); lscode(
+		multiset<int>mseta { 13 ,84 ,15 , 336 , 22,16880,2282,3838,8599 };
+	cout << "集合 (multiset)" << tab( 2 ) << mseta << nl;
 	);
 };
 void OnPCDCFunctionTest5( PCDC& cout )
@@ -498,6 +500,17 @@ void OnTaskRuntimeTest5( PCDC& cout )
 	code( BEGINTEST( 100'000 ) { wstring cs = _T( " " ); }ENDTEST );
 	code( BEGINTEST( 1'000'000 ) { cout.m_pwnd->GetClientRect( &rm ); }ENDTEST );
 	code( BEGINTEST( 1'000 ) { cout.TextOutW( 50 , 1000 , _T( "a textout string " ) ); }ENDTEST );
+}
+void OnTaskRuntimeTest6( PCDC& cout )
+{
+	cout << clear;
+	cout << "API功能运行时间测试" << newl;
+	cout.timestart( );
+	code(
+		string str( 128 * 48 , 'r' );
+	cout << str;
+	);
+	cout.timeend( );
 }
 
 

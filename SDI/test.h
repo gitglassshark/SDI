@@ -36,6 +36,7 @@ void OnTaskRuntimeTest2( PCDC& dc );
 void OnTaskRuntimeTest3( PCDC& dc );
 void OnTaskRuntimeTest4( PCDC& dc );
 void OnTaskRuntimeTest5( PCDC& dc );
+void OnTaskRuntimeTest6( PCDC& dc );
 
 void test00( PCDC& dc );
 void test01( PCDC& dc );

@@ -117,12 +117,145 @@ concept PS = requires ( S s )
 	s.c_str( );
 };
 
+class RIN {
+public:
+	inline static vector<string> rin;
+	inline static bool rein = true;
+	inline static int llocation = 0;
+	inline static bool commandmod = false;
+	RIN( size_t size = 50 ) { }
+	int getlocation( ) {
+		return llocation;
+	}
+	RIN command( char c ) {
+		size_t nstring = rin.size( );
+		size_t ntail = 0;
+		static char prvec { };
+		if ( c == 13 )
+		{
+			rein = true;
+			return *this;
+		}
+		if ( c == 8 )
+		{
+			if ( nstring > 0 )
+			{
+				ntail = rin.at( llocation ).size( );
+				if ( ntail > 1 )
+				{
+					--ntail;
+					rin.at( llocation ).resize( ntail );
+				}
+				else
+				{
+					--nstring;
+					rin.resize( nstring );
+				}
+			}
+		}
+		if ( ( c == 'd' ) && ( prvec == 'd' ) )
+			//if ( c == 12 )
+		{
+			if ( nstring >= 1 )
+				rin.erase( rin.begin( ) + llocation );
+			--llocation;
+			prvec = 0;
+		}
+		else {
+			prvec = c;
+		}
+		if ( c == 'j' )
+			++llocation;
+		if ( c == 'k' )
+			--llocation;
+
+		if ( llocation < 0 )
+			llocation = rin.size( ) - 1;
+		if ( llocation > ( rin.size( ) - 1 ) )
+			llocation = 0;
+		if ( c == 74 && ( llocation < nstring ) ) {
+			rin.at( llocation ) += ' ' + rin.at( llocation + 1 );
+			rin.erase( rin.begin( ) + llocation + 1 );
+			--llocation;
+			prvec = { 0 };
+		}
+
+		return *this;
+	}
+	RIN input( char c ) {
+		if ( isprint( c ) )
+		{
+			if ( rein == true )
+			{
+				rein = false;
+				rin.push_back( string( ) );
+				llocation = rin.size( ) - 1;
+			}
+			else {
+				if ( rin.size( ) == 0 )
+				{
+					rin.push_back( string( ) );
+					llocation = rin.size( ) - 1;
+				}
+			}
+			rin.at( llocation ) += c;
+		}
+		else {
+			command( c );
+		}
+		return *this;
+	}
+	RIN operator<<( char c )
+	{
+		if ( c == 27 )
+			commandmod = !commandmod;
+		if ( commandmod )
+		{
+			command( c );
+		}
+		else
+		{
+			input( c );
+		}
+		return *this;
+	}
+	size_t wordcount( string str )
+	{
+		size_t icount = 0;
+		size_t i = 0;
+		bool issp = true;
+		while ( i < str.length( ) )
+		{
+			if ( !isspace( str[i] ) )
+			{
+				if ( issp ) {
+					++icount;
+					issp = false;
+				}
+			}
+			else {
+				issp = true;
+			}
+			++i;
+		}
+		return icount;
+	}
+	pair<size_t , size_t> count( )
+	{
+		size_t word = 0;
+		size_t line = rin.size( );
+		for ( auto& i : rin )
+			word += wordcount( i );
+		return { line,word };
+	}
+};
+
 class PCDC : public CDC
 {
 public:
-	unsigned short maxrecode = 100;
 	bool isurerecode = true;
 	bool icreate = false;
+	unsigned short maxrecode = 100;
 	//size_t id = 0;
 	//inline static size_t icount = 0;
 	//int iargs = 0;
@@ -130,23 +263,23 @@ public:
 
 public:
 	//inline static const LONG wbar = 8;
+	LONG step = 36;
+	inline static const LONG initalpos = 40;
+	//const LONG initalstep = 20;
+	inline static POINT p = { initalpos, initalpos };
 	CRect mrect;
 	CSize msize;
 	size_t ilinemod = 20;
-	LONG step = 36;
-	inline static const LONG initalpos = 40;
-	inline static POINT p = { initalpos, initalpos };
-	//const LONG initalstep = 20;
 	//bool icutline = false;
 
 public:
-	CFont font , * pfont = nullptr;
 	COLORREF m_bk = dccr.grey;
 	COLORREF m_tk = dccr.chocolate;
 	COLORREF m_tksource = dccr.smokewhite;
 	COLORREF m_bark = dccr.lteal;
 	COLORREF m_linek = dccr.azure;
 	int mfontsize = 118;
+	CFont font , * pfont = nullptr;
 
 public:
 	//CDC* m_cdc = nullptr;
@@ -154,14 +287,15 @@ public:
 	CWnd* m_pwnd = nullptr;
 
 public:
-	CString spchar = _T( "  " );
-	CString ms = _T( "" );
-	inline static vector<CString>mvlogs;
-	inline static CString sms = _T( "" );
-	CString opstr = _T( "" );
-	size_t mtabs = 4;
 	char mlinechar = _T( '-' );
 	char mmarkchar = '=';
+	CString spchar = _T( "  " );
+	CString ms = _T( "" );
+	size_t mtabs = 4;
+	inline static vector<CString>mvlogs;
+	inline static CString sms = _T( "" );
+	inline static RIN r;
+	CString opstr = _T( "" );
 
 public:
 	PCDC( CWnd* pwnd = nullptr );
@@ -169,8 +303,22 @@ public:
 	inline bool Release( );
 	~PCDC( );
 
-
 public:
+	PCDC& operator<<( const RIN c )
+	{
+		auto colorn = c.llocation;
+		size_t il = 0;
+		for ( const auto& i : c.rin )
+		{
+			if ( il == colorn )
+				this->settcolor( dccr.mainwhite );
+			*this << i << nl;
+			if ( il == colorn )
+				this->settcolor( m_tk );
+			++il;
+		}
+		return *this;
+	};
 	PCDC& operator<<( const char c );
 	PCDC& operator<<( signed char c ) { return ( *this ) << (const char)c; };
 	PCDC& operator<<( unsigned char c ) { return ( *this ) << (const char)c; };
@@ -180,7 +328,15 @@ public:
 	PCDC& operator<<( unsigned char const* p ) { return *this << (char const*)p; };
 	PCDC& operator<<( LPCTSTR s );
 	PCDC& operator<<( const std::string& s );
+	PCDC& operator<<( const std::string_view& s )
+	{
+		return *this << string( s.data( ) );
+	};
 	PCDC& operator<<( const std::wstring& s );
+	PCDC& operator<<( const std::wstring_view& s )
+	{
+		return *this << wstring( s.data( ) );
+	};
 	PCDC& operator<<( const CString& s );
 	PCDC& operator<<( const CString&& s );
 	PCDC& operator<<( const CAtlString& s );
@@ -366,7 +522,7 @@ public:
 		size_t totalmaxline = maxline * maxrecode;
 		auto start = clock( );
 		static size_t nstore[14] {};
-		nstore[0]++;//×Üµ÷ÓÃ´ÎÊý
+		nstore[0]++;//ï¿½Üµï¿½ï¿½Ã´ï¿½ï¿½ï¿½
 		if ( !isstorecomand )
 			return nstore;
 		if ( isurerecode )
@@ -376,13 +532,13 @@ public:
 				{
 					mvlogs.erase( mvlogs.begin( ) , mvlogs.begin( ) + totalmaxline / 2 );
 					mvlogs.reserve( totalmaxline );
-					nstore[1]++;//µ÷Õû´ÎÊý
+					nstore[1]++;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				}
 				mvlogs.push_back( sms );
 				sms.Empty( );
-				nstore[2]++;//´æ´¢´ÎÊý
+				nstore[2]++;//ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½
 			}
-			nstore[3]++;//×Ö·û´®Îª¿Õµ÷ÓÃ´ÎÊý
+			nstore[3]++;//ï¿½Ö·ï¿½ï¿½ï¿½Îªï¿½Õµï¿½ï¿½Ã´ï¿½ï¿½ï¿½
 		}
 		auto end = clock( );
 		nstore[10] += end - start;
@@ -457,11 +613,11 @@ public:
 	inline PCDC& location( auto s )//s=source_location::current( )
 	{
 		CString strloc;
-		strloc += "µ±Ç°Î»ÖÃ{ ÎÄ¼þ£º";
+		strloc += "ï¿½ï¿½Ç°Î»ï¿½ï¿½{ ï¿½Ä¼ï¿½ï¿½ï¿½";
 		strloc += s.file_name( );
-		strloc += " º¯Êý£º";
+		strloc += " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
 		strloc += s.function_name( );
-		strloc += " ÐÐºÅ£º";
+		strloc += " ï¿½ÐºÅ£ï¿½";
 		strloc.AppendFormat( _T( "%ld" ) , s.line( ) );
 		strloc += " } ";
 		return *this << strloc;
@@ -507,9 +663,9 @@ public:
 	//{
 	//	auto start = clock( );
 	//	static size_t* pnstore = storesms( false );
-	//	pnstore[9]++;//´òÓ¡µ÷ÓÃ´ÎÊýÍ³¼Æ
+	//	pnstore[9]++;//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 	//	if ( cs.IsEmpty( ) ) {
-	//		pnstore[4]++;//¿Õ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ 
+	//		pnstore[4]++;//ï¿½Õ´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ 
 	//		return;
 	//	}
 	//	m_pwnd->GetClientRect( &mrect );
@@ -519,17 +675,17 @@ public:
 
 	//	if ( strlen <= linelen ) {
 	//		if ( p.y >= mrect.bottom - mrect.top - initalpos ) {
-	//			pnstore[7]++;//ÂúÆÁ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+	//			pnstore[7]++;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 	//			flushscreen( );
 	//		}
-	//		pnstore[5]++;//Ð¡ÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+	//		pnstore[5]++;//Ð¡ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 	//		//need recalc position***
 	//		if ( p.x == mrect.left + initalpos ) {
 	//			storesms( );
 	//		}
 	//		auto tstart = clock( );
 	//		this->TextOutW( p.x , p.y , cs );
-	//		pnstore[13]++;//ÏµÍ³APIµ÷ÓÃ´ÎÊý
+	//		pnstore[13]++;//ÏµÍ³APIï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½
 	//		auto tend = clock( );
 	//		pnstore[12] += tend - tstart;
 	//		recode( cs );
@@ -537,7 +693,7 @@ public:
 
 	//		//need check position***
 	//		if ( p.x >= ( mrect.right - initalpos * 2 ) ) {
-	//			pnstore[6]++;//»»ÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+	//			pnstore[6]++;//ï¿½ï¿½ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 	//			storesms( );
 	//			rinitx( );
 	//			//p.x = mrect.left + initalpos;
@@ -546,7 +702,7 @@ public:
 
 	//	}
 	//	else {
-	//		pnstore[8]++;//·ÖÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+	//		pnstore[8]++;//ï¿½ï¿½ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 	//		auto cslen = cs.GetLength( );
 	//		auto tkpos = linelen * cslen / strlen;
 	//		imresizeout( (S&&)cs.Mid( 0 , tkpos ) );
@@ -559,9 +715,9 @@ public:
 	{
 		auto start = clock( );
 		static size_t* pnstore = storesms( false );
-		pnstore[9]++;//´òÓ¡µ÷ÓÃ´ÎÊýÍ³¼Æ
+		pnstore[9]++;//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 		if ( cs.IsEmpty( ) ) {
-			pnstore[4]++;//¿Õ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ 
+			pnstore[4]++;//ï¿½Õ´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ 
 			return;
 		}
 		m_pwnd->GetClientRect( &mrect );
@@ -571,17 +727,17 @@ public:
 
 		if ( strlen <= linelen ) {
 			if ( p.y >= mrect.bottom - mrect.top - initalpos ) {
-				pnstore[7]++;//ÂúÆÁ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+				pnstore[7]++;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 				flushscreen( );
 			}
-			pnstore[5]++;//Ð¡ÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+			pnstore[5]++;//Ð¡ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 			//need recalc position***
 			if ( p.x == mrect.left + initalpos ) {
 				storesms( );
 			}
 			auto tstart = clock( );
 			this->TextOutW( p.x , p.y , cs );
-			pnstore[13]++;//ÏµÍ³APIµ÷ÓÃ´ÎÊý
+			pnstore[13]++;//ÏµÍ³APIï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½
 			auto tend = clock( );
 			pnstore[12] += tend - tstart;
 			recode( cs );
@@ -589,7 +745,7 @@ public:
 
 			//need check position***
 			if ( p.x >= ( mrect.right - initalpos * 2 ) ) {
-				pnstore[6]++;//»»ÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+				pnstore[6]++;//ï¿½ï¿½ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 				storesms( );
 				rinitx( );
 				//p.x = mrect.left + initalpos;
@@ -598,7 +754,7 @@ public:
 
 		}
 		else {
-			pnstore[8]++;//·ÖÐÐ´òÓ¡Êä³ö´ÎÊýÍ³¼Æ
+			pnstore[8]++;//ï¿½ï¿½ï¿½Ð´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
 			auto cslen = cs.GetLength( );
 			auto tkpos = linelen * cslen / strlen;
 			imresizeout( (S&&)cs.Mid( 0 , tkpos ) );
@@ -632,11 +788,11 @@ public:
 	};
 	template <typename X> PCDC& operator <<( const unique_ptr<X>& ptr )
 	{
-		return *this << ptr.get( ) << "<-(s)";
+		return *this << ptr.get( ) << "<-<U>";
 	};
 	template <typename X> PCDC& operator <<( const shared_ptr<X>& ptr )
 	{
-		return *this << ptr.get( ) << "<-(s): " << ptr.use_count( );
+		return *this << ptr.get( ) << "<-<"<<ptr.use_count( ) <<"> " ;
 	};
 	template <typename X> PCDC& operator <<( const weak_ptr<X>& ptr )
 	{
@@ -760,6 +916,10 @@ public:
 	template <typename T> inline PCDC& forprintv( const T& v );
 	template <typename T> inline PCDC& forprinta( const T* arr , size_t len );
 
+	void outinput( )
+	{
+		*this << r;
+	}
 	PCDC& adress( )
 	{
 		*this << st( address( ) ) << sp;
@@ -929,7 +1089,6 @@ public:
 	//	}
 	//	return *this;
 	//};
-
 	template <typename ...Args> PCDC& format( std::string_view str , Args&&... args )
 	{
 		return *this << std::vformat( str , std::make_format_args( args... ) );
@@ -1270,7 +1429,6 @@ PCDC& PCDC::type( T&& a )
 	*this << "  HASH: " << typeid( a ).hash_code( ) << newl;
 	return *this;
 };
-
 template<typename ...A , template<typename ...T> typename B>
 PCDC& PCDC::TypeCount( B<A...>& a )
 {

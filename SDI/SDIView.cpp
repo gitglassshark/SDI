@@ -1676,12 +1676,13 @@ void CSDIView::OnTaskRuntimeTest( )
 	coutExtSetSimulation;
 	static size_t imod = 0;
 	++imod;
-	if ( imod == 6 ) imod = 1;
+	if ( imod == 7 ) imod = 1;
 	if ( imod == 1 ) { OnTaskRuntimeTest1( cout ); }
 	if ( imod == 2 ) { OnTaskRuntimeTest2( cout ); }
 	if ( imod == 3 ) { OnTaskRuntimeTest3( cout ); }
 	if ( imod == 4 ) { OnTaskRuntimeTest4( cout ); }
 	if ( imod == 5 ) { OnTaskRuntimeTest5( cout ); }
+	if ( imod == 6 ) { OnTaskRuntimeTest6( cout ); }
 
 }
 
