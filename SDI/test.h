@@ -334,6 +334,106 @@ public:
 	}
 };
 
+inline bool sleep( size_t ms )
+{
+	std::this_thread::sleep_for( std::chrono::milliseconds( ms ) );
+	return true;
+}
+
+inline bool wait( size_t ms )
+{
+	return sleep( ms );
+}
+
+template<typename T>
+auto makector( int n , int mod , int base )
+{
+	T va {};
+	srand( time( NULL ) );
+	NTIME( n )
+		va.insert( va.begin( ) , ix * rand( ) % mod + base );
+	return std::move( va );
+}
+
+template<typename T>
+string osgetstr( T s )
+{
+	ostringstream ss;
+	ss << s;
+	return ss.str( );
+}
+
+
+template<typename T>
+concept SS = requires ( T s )
+{
+	s.str( );
+};
+
+bool clearstr( SS auto& s )
+{
+	s.str( "" );
+	return s.str( ).empty( );
+}
+
+template<typename T>
+bool resetstr( T& s ) requires SS<T>
+{
+	s.str( "" );
+	return s.str( ).empty( );
+}
+
+template<typename T>
+bool nullstr( T& s ) requires requires ( T s ) { s.str( ); }
+{
+	s.str( "" );
+	return s.str( ).empty( );
+}
+
+template <typename T>
+class Item {
+public:
+	vector<pair<T , string>> fi;
+	inline static int index = 0;
+	Item( T function , string functionname )
+	{
+		add( function , functionname );
+	}
+	void add( T function , string functionname )
+	{
+		fi.push_back( pair<T , string>{function , functionname} );
+	}
+	void insert( T function , string functionname )
+	{
+		fi.insert( fi.begin( ) , pair<T , string>{function , functionname} );
+	}
+	~Item( ) { }
+	template <typename A>
+	void operator ()( size_t ni , A& os , string name = string( ) ) {
+		if ( ni >= 1 )
+		{
+			auto [menu , title] = fi[ni - 1];
+			CString name = title.c_str( );
+			os.title( name );
+			menu( os );
+		}
+		else
+		{
+			auto [menu , title] = fi[index];
+			CString name = title.c_str( );
+			os.title( name );
+			menu( os );
+		}
+		if ( ++index == fi.size( ) )
+			index = 0;
+	}
+};
+
+inline bool sleep( size_t ms );
+
+inline bool wait( size_t ms );
+
+shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> RunProgram( wchar_t* name );
 /*
 */
 

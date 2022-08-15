@@ -19,6 +19,8 @@ PCDC& com( PCDC& dc ) { return dc << ','; }
 PCDC& tab( PCDC& dc ) { return dc << '\t'; }
 PCDC& semi( PCDC& dc ) { return dc << ';'; }
 
+
+
 PCDC& nl( PCDC& dc ) {
 	if ( dc.p.x == dc.mrect.left + dc.initalpos )
 		return dc;
@@ -727,5 +729,769 @@ CString timeend( size_t itimes )
 	cout << cs << newl;
 	return cs;
 }
+
+inline bool sleep( size_t ms )
+{
+	std::this_thread::sleep_for( std::chrono::milliseconds( ms ) );
+	return true;
+}
+inline bool wait( size_t ms )
+{
+	return sleep( ms );
+}
+
+shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> RunProgram( wchar_t* name )
+{
+	LPWSTR filee = name;
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory( &si , sizeof( si ) );
+	si.cb = sizeof( si );
+	ZeroMemory( &pi , sizeof( pi ) );
+
+	pair<STARTUPINFO , PROCESS_INFORMATION>* p = new pair<STARTUPINFO , PROCESS_INFORMATION>( si , pi );
+	shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> ret( p );
+
+	auto t = CreateProcess(
+		nullptr ,
+		filee ,
+		nullptr ,
+		nullptr ,
+		false ,
+		0 ,
+		nullptr ,
+		nullptr ,
+		&( p->first ) ,
+		&( p->second )
+	);
+	return ret;
+}
+
+//
+//namespace netsocket
+//{
+//	class iSocket {
+//	public:
+//		WSADATA ws;
+//		WORD ver = MAKEWORD( 2 , 2 );
+//		SOCKET sersock = INVALID_SOCKET , clientsock = INVALID_SOCKET , sock = INVALID_SOCKET;
+//		string ipstr = "127.0.0.1";
+//		string strdata;
+//		vector<string> vectData;
+//		IPPROTO proto = IPPROTO_TCP;
+//		inline static const int size = 1024;
+//		char recvbuf[size + 1] = { 0 };
+//		char sendbuf[size + 1] = { 0 };
+//		int recvbyte = 0;
+//		int sendbyte = 0;
+//
+//
+//		SOCKADDR_IN seradd , clientadd;
+//		int addrsize = sizeof( SOCKADDR_IN );
+//		int ninlog = 20;
+//		int isserver = 0;
+//
+//	public:
+//		iSocket( )
+//		{
+//			initsocket( );
+//		}
+//		bool initsocket( )
+//		{
+//			strdata.reserve( size * 2 );
+//			int ret = WSAStartup( ver , &ws );
+//			noequalerr( 0 , ret , "WSAstartup error:" );
+//			sock = socket( AF_INET , SOCK_STREAM , proto );
+//			return equalerr( sock , INVALID_SOCKET , "socket create error(INVALID_SOCKET):" );
+//		}
+//		iSocket( const char* ip , int port = 9999 , bool isServer = false )
+//		{
+//			initsocket( );
+//			if ( isServer )
+//				createServer( ip , port );
+//			else
+//				createClient( ip , port );
+//		}
+//		void createClient( const char* ip = nullptr , int port = 9999 )
+//		{
+//			noequalerr( 0 , isserver , "socket already create error(double_create_SOCKET):" );
+//			isserver = 2;
+//			ipstr = ip;
+//			sersock = sock;
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip == nullptr )
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//			else
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ip );
+//			int ret = connect( sersock , (sockaddr*)&seradd , addrsize );
+//		}
+//		void createServer( const char* ip = nullptr , int port = 9999 )
+//		{
+//			noequalerr( 0 , isserver , "socket already create error(double_create_SOCKET):" );
+//			isserver = 1;
+//			ipstr = ip;
+//			sersock = sock;
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip == nullptr )
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//			else
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ip );
+//			int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
+//			equalerr( ret , SOCKET_ERROR , "socket bind is error(SOCKET_ERROR):" );
+//		}
+//		int listen( int nlog = 0 )
+//		{
+//			if ( nlog )
+//				ninlog = nlog;
+//			int nlisten = ::listen( sersock , ninlog );
+//			return nlisten;
+//		}
+//		SOCKET closeclientsocket( )
+//		{
+//			closesocket( clientsock );
+//			return clientsock = INVALID_SOCKET;
+//		}
+//		SOCKET accept( )
+//		{
+//			clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
+//			equalerr( clientsock , INVALID_SOCKET , "socket accept error(INVALID_SOCKET):" );
+//			return clientsock;
+//		}
+//		int senddata( const char* ibuf = nullptr , int len = size )
+//		{
+//			int iret;
+//			char* buf = nullptr;
+//			if ( ibuf == nullptr ) buf = sendbuf;
+//			if ( isserver == 1 )
+//			{
+//				iret = send( clientsock , buf , len , 0 );
+//			}
+//			else
+//			{
+//				iret = send( sersock , buf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				sendbuf[size] = 0;
+//				sendbyte += iret;
+//			}
+//			return iret;
+//		}
+//		int recvdata( char* buf = nullptr , int len = size )
+//		{
+//			int iret;
+//			if ( buf == nullptr ) buf = recvbuf;
+//			if ( isserver == 1 )
+//			{
+//				iret = recv( clientsock , buf , len , 0 );
+//			}
+//			else
+//			{
+//				iret = recv( sersock , buf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				CString message;
+//				recvbyte += iret;
+//				buf[iret] = 0;
+//				strdata = buf;
+//				vectData.push_back( strdata );
+//				memset( buf , 0 , size + 1 );
+//				message.Format( _T( "%ld %ld %ld %ld" ) , iret , recvbyte , size , len );
+//			}
+//			return iret;
+//		}
+//		string getRecvData( )
+//		{
+//			return strdata;
+//		}
+//		bool circlerecv( int n = 5 )
+//		{
+//			int iret = 0;
+//			return true;
+//		}
+//		bool noequalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode != retcode )
+//			{
+//				message.AppendFormat( _T( " %ld != %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//		}
+//		bool equalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode == retcode )
+//			{
+//				message.AppendFormat( _T( " %ld == %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//
+//		}
+//		~iSocket( )
+//		{
+//			if ( isserver == 1 )
+//				::closesocket( sersock );
+//			clientsock = sersock = sock = INVALID_SOCKET;
+//			int ret = WSACleanup( );
+//			noequalerr( 0 , ret , "WSACleanup error:" );
+//		}
+//	};
+//}
+//
+//
+//namespace WindowsBar
+//{
+//	template<typename T>
+//	struct ret
+//	{
+//		bool ok;
+//		T rvalue;
+//		T& value = rvalue;
+//		T& returnvalue = rvalue;
+//	};
+//	using llong = long long;
+//	template<typename T>
+//	T sort( T& a , T& b )
+//	{
+//		if ( a > b )
+//		{
+//			T c = a;
+//			a = b;
+//			b = c;
+//		}
+//		return a;
+//	}
+//	auto fact( llong n , llong m )
+//	{
+//		long double sum = 1;
+//		sort( n , m );
+//		getcout;
+//		for ( size_t i = n; i <= m; i++ )
+//		{
+//			cout << sum << '*' << i;
+//			sum *= i;
+//			cout << " = " << sum << semi << tab;
+//			cout.circle( 4 );
+//		}
+//		return ret<long double>{true , sum};
+//	}
+//	bool IsPrime( llong x )
+//	{
+//		for ( size_t i = 2; i < x; ++i )
+//		{
+//			if ( x % i == 0 )
+//				return false;
+//		}
+//		return true;
+//	}
+//
+//	inline bool sleep( size_t ms )
+//	{
+//		std::this_thread::sleep_for( std::chrono::milliseconds( ms ) );
+//		return true;
+//	}
+//	inline bool wait( size_t ms )
+//	{
+//		return sleep( ms );
+//	}
+//
+//	template<typename T>
+//	T getMiddle( T up , T down , T m )
+//	{
+//		sort( down , up );
+//		if ( m >= up )
+//			return up;
+//		if ( m <= down )
+//			return down;
+//		return m;
+//	}
+//
+//	CPoint GetRandomPoint( CRect& WindowsRectLimitRect )
+//	{
+//		CPoint t;
+//		getcout;
+//		auto& r = WindowsRectLimitRect;
+//		t.x = cout.initalpos + rand( ) % ( r.right - cout.initalpos * 2 );
+//		t.x = getMiddle( r.right - cout.initalpos , r.left + cout.initalpos , t.x );
+//		t.y = cout.initalpos + rand( ) % ( r.bottom - cout.initalpos * 2 );
+//		t.y = getMiddle( r.bottom - cout.initalpos , r.top + cout.initalpos , t.y );
+//		return t;
+//	}
+//
+//	void drawLineP2P( CDC& dc , CPoint& startPoint , CPoint& endPoint )
+//	{
+//		dc.MoveTo( startPoint );
+//		dc.LineTo( endPoint );
+//	}
+//
+//	COLORREF randomColor( )
+//	{
+//		return COLORREF( RGB( rand( ) % 255 , rand( ) % 255 , rand( ) % 255 ) );
+//	}
+//
+//	template<typename T>
+//	T tplround( T t )
+//	{
+//		return static_cast<long long>( t + 0.5 );
+//	}
+//
+//	auto _randomColor( )
+//	{
+//		CColor c;
+//		auto cc = c.chocolate;
+//		vector <decltype( cc )> crv;
+//		auto* pc = &c.red;
+//		size_t numcc = sizeof( c ) / sizeof( cc );
+//		for ( size_t i = 0; i < numcc; ++i )
+//		{
+//			crv.push_back( *( pc + i ) );
+//		}
+//		static size_t cindex = 0;
+//		cindex = rand( ) % numcc;
+//		return crv.at( cindex );
+//	}
+//
+//	void DrawTriangleCircle( size_t numTriangle , size_t numCircle , size_t sleepTriangle , size_t sleepCircle )
+//	{
+//		getcout;
+//		CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//		CPoint startPoint;
+//		CPoint secondPoint;
+//		CPoint endPoint;
+//
+//		CBrush Brush;
+//
+//		linePen.CreatePen( PS_SOLID , 1 , randomColor( ) );
+//		auto oldPen = cout.SelectObject( Brush );
+//		startPoint = GetRandomPoint( WindowsRect );
+//		secondPoint = GetRandomPoint( WindowsRect );
+//		for ( size_t j = 1; j <= numCircle; ++j )
+//		{
+//			for ( size_t i = 1; i <= numTriangle; ++i )
+//			{
+//				Brush.DeleteObject( );
+//				auto clor = randomColor( );
+//				Brush.CreateSolidBrush( clor );
+//				cout.SelectObject( Brush );
+//				endPoint = GetRandomPoint( WindowsRect );
+//				CPoint pt[3] = { startPoint,secondPoint,endPoint };
+//				cout.Polygon( pt , 3 );
+//				startPoint = secondPoint;
+//				secondPoint = endPoint;
+//				sleep( sleepTriangle );
+//			}
+//
+//			sleep( sleepCircle );
+//			cout << clear;
+//		}
+//		cout.SelectObject( oldPen );
+//		Brush.DeleteObject( );
+//	}
+//
+//	void DrawLineCircle( size_t numline , size_t numCircle , size_t sleepLine , size_t sleepCircle )
+//	{
+//		getcout;
+//		CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//		CPoint startPoint;
+//		CPoint endPoint;
+//
+//		CPen linePen;
+//
+//		linePen.CreatePen( PS_SOLID , 1 , randomColor( ) );
+//		auto oldPen = cout.SelectObject( linePen );
+//		startPoint = GetRandomPoint( WindowsRect );
+//		for ( size_t j = 1; j <= numCircle; ++j )
+//		{
+//			for ( size_t i = 1; i <= numline; ++i )
+//			{
+//				linePen.CreatePen( PS_SOLID , 5 , randomColor( ) );
+//				cout.SelectObject( linePen );
+//				endPoint = GetRandomPoint( WindowsRect );
+//
+//				drawLineP2P( cout , startPoint , endPoint );
+//				startPoint = endPoint;
+//				sleep( sleepLine );
+//			}
+//
+//			sleep( sleepCircle );
+//			cout << clear;
+//		}
+//		cout.SelectObject( oldPen );
+//		linePen.DeleteObject( );
+//	}
+//
+//	void DrawEllipseCircle( size_t numEllipse , size_t numCircle , size_t sleepEllipse , size_t sleepCircle )
+//	{
+//		getcout;
+//		CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//		CPoint startPoint;
+//		CPoint endPoint;
+//
+//		CBrush Brush;
+//
+//		linePen.CreatePen( PS_SOLID , 1 , randomColor( ) );
+//		auto oldPen = cout.SelectObject( Brush );
+//		startPoint = GetRandomPoint( WindowsRect );
+//		for ( size_t j = 1; j <= numCircle; ++j )
+//		{
+//			for ( size_t i = 1; i <= numEllipse; ++i )
+//			{
+//				Brush.CreateSolidBrush( randomColor( ) );
+//				cout.SelectObject( Brush );
+//				endPoint = GetRandomPoint( WindowsRect );
+//				cout.Ellipse( startPoint.x , startPoint.y , endPoint.x , endPoint.y );
+//				startPoint = endPoint;
+//				sleep( sleepEllipse );
+//			}
+//			sleep( sleepCircle );
+//			cout << clear;
+//		}
+//		cout.SelectObject( oldPen );
+//		Brush.DeleteObject( );
+//	}
+//	void DrawRectangleCircle( size_t numRectangle , size_t numCircle , size_t sleepRectangle , size_t sleepCircle )
+//	{
+//		getcout;
+//		CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//		CPoint startPoint;
+//		CPoint endPoint;
+//
+//		CBrush Brush;
+//
+//		auto oldPen = cout.SelectObject( Brush );
+//		startPoint = GetRandomPoint( WindowsRect );
+//		for ( size_t j = 1; j <= numCircle; ++j )
+//		{
+//			for ( size_t i = 1; i <= numRectangle; ++i )
+//			{
+//				auto clor = randomColor( );
+//				Brush.CreateSolidBrush( clor );
+//				cout.SelectObject( Brush );
+//				endPoint = GetRandomPoint( WindowsRect );
+//				cout.Rectangle( startPoint.x , startPoint.y , endPoint.x , endPoint.y );
+//				startPoint = endPoint;
+//				sleep( sleepRectangle );
+//			}
+//			sleep( sleepCircle );
+//			cout << clear;
+//		}
+//		cout.SelectObject( oldPen );
+//		Brush.DeleteObject( );
+//	}
+//
+//	void DrawSnakeCircle( size_t numRectangle , size_t numCircle , size_t sleepRectangle , size_t sleepCircle )
+//	{
+//		getcout;
+//		CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//		auto width = 50;
+//
+//		CPoint startPoint;
+//		CPoint endPoint;
+//
+//		CBrush Brush;
+//
+//		linePen.CreatePen( PS_SOLID , 1 , randomColor( ) );
+//		auto oldPen = cout.SelectObject( Brush );
+//		startPoint = GetRandomPoint( WindowsRect );
+//		for ( size_t j = 1; j <= numCircle; ++j )
+//		{
+//			for ( size_t i = 1; i <= numRectangle; ++i )
+//			{
+//				Brush.CreateSolidBrush( randomColor( ) );
+//				cout.SelectObject( Brush );
+//				endPoint = GetRandomPoint( WindowsRect );
+//				sort( startPoint.x , endPoint.x );
+//				sort( startPoint.y , endPoint.y );
+//				cout.Rectangle( startPoint.x , startPoint.y , startPoint.x + width , endPoint.y );
+//				cout.Rectangle( startPoint.x , endPoint.y - width , endPoint.x , endPoint.y );
+//				startPoint = endPoint;
+//				sleep( sleepRectangle );
+//			}
+//			sleep( sleepCircle );
+//			cout << clear;
+//		}
+//		cout.SelectObject( oldPen );
+//		Brush.DeleteObject( );
+//	}
+//
+//	CRect SortWindowsRect( CRect WindowsRect )
+//	{
+//		sort( WindowsRect.top , WindowsRect.bottom );
+//		sort( WindowsRect.left , WindowsRect.right );
+//		return WindowsRect;
+//	}
+//
+//	CRect MoveWindowsRect( CRect WindowsRect , int xMove , int yMove )
+//	{
+//		SortWindowsRect( WindowsRect );
+//
+//		auto h = WindowsRect.bottom - WindowsRect.top;
+//		auto v = WindowsRect.right - WindowsRect.left;
+//
+//		WindowsRect.top += yMove;
+//		WindowsRect.bottom += yMove;
+//		WindowsRect.left += xMove;
+//		WindowsRect.right += xMove;
+//		return WindowsRect;
+//	}
+//
+//	CRect ZoomWindowsRect( CRect WindowsRect , int vZoomRate , int hZoomRate )
+//	{
+//		SortWindowsRect( WindowsRect );
+//		auto h = WindowsRect.bottom - WindowsRect.top;
+//		auto v = WindowsRect.right - WindowsRect.left;
+//
+//		WindowsRect.top = WindowsRect.top + h * ( 100 - hZoomRate ) / 200;
+//		WindowsRect.bottom = WindowsRect.bottom - h * ( 100 - hZoomRate ) / 200;
+//		WindowsRect.left = WindowsRect.left + v * ( 100 - vZoomRate ) / 200;
+//		WindowsRect.right = WindowsRect.right - v * ( 100 - vZoomRate ) / 200;
+//		return WindowsRect;
+//	}
+//	CRect vaildWindowRect( CRect rect , CRect WindowsRect )
+//	{
+//		SortWindowsRect( WindowsRect );
+//		SortWindowsRect( rect );
+//		rect.bottom = min( rect.bottom , WindowsRect.bottom );
+//		rect.top = min( rect.bottom , rect.top );
+//		rect.right = min( rect.right , WindowsRect.right );
+//		rect.left = min( rect.left , rect.right );
+//		return rect;
+//	}
+//
+//	CRect PutWindowsRect( CRect WindowsRect , int xMove , int yMove , int vZoomRate , int hZoomRate )
+//	{
+//		CRect rect;
+//		rect = ZoomWindowsRect( WindowsRect , vZoomRate , hZoomRate );
+//		rect = MoveWindowsRect( rect , xMove , yMove );
+//		rect = vaildWindowRect( rect , WindowsRect );
+//		return rect;
+//	}
+//
+//	template<typename DT>
+//	void DrawDataBarCircle( PCDC& dc , CRect DrawRect , const vector<DT>& data , size_t BarWidth = 0 )
+//	{
+//		auto width = BarWidth;
+//
+//		auto drawWidth = DrawRect.right - DrawRect.left;
+//		auto drawHeight = DrawRect.bottom - DrawRect.top;
+//
+//		auto dataItems = data.size( );
+//		auto itemWidth = drawWidth / ( dataItems * 2 + 1 );
+//		auto maxhight = gmax( data );
+//		if ( BarWidth )
+//			itemWidth = BarWidth;
+//
+//		CBrush Brush;
+//		Brush.CreateSolidBrush( randomColor( ) );
+//		auto saveoldBrush = dc.SelectObject( Brush );
+//		for ( size_t i = 0; i < dataItems; ++i )
+//		{
+//			auto itemData = data.at( i );
+//			double size = drawHeight - itemData * drawHeight / maxhight;
+//
+//			dc.Rectangle( DrawRect.left + 2 * i * itemWidth , DrawRect.top + size , DrawRect.left + ( 2 * i + 1 ) * itemWidth , DrawRect.bottom );
+//			Brush.DeleteObject( );
+//			Brush.CreateSolidBrush( randomColor( ) );
+//			dc.SelectObject( Brush );
+//			sleep( 30 );
+//		}
+//		dc.SelectObject( saveoldBrush );
+//		Brush.DeleteObject( );
+//	}
+//
+//	template<typename DT>
+//	void VDrawDataBarCircle( PCDC& dc , CRect DrawRect , const vector<DT>& data , size_t BarWidth = 0 )
+//	{
+//		auto width = BarWidth;
+//
+//		auto drawWidth = DrawRect.right - DrawRect.left;
+//		auto drawHeight = DrawRect.bottom - DrawRect.top;
+//
+//		auto dataItems = data.size( );
+//		auto itemHeight = drawHeight / ( dataItems * 2 + 1 );
+//		auto maxWidth = gmax( data );
+//		if ( BarWidth )
+//			itemHeight = BarWidth;
+//
+//		CBrush Brush;
+//		Brush.CreateSolidBrush( randomColor( ) );
+//		auto saveoldBrush = dc.SelectObject( Brush );
+//		for ( size_t i = 0; i < dataItems; ++i )
+//		{
+//			auto itemData = data.at( i );
+//			double size = drawWidth - itemData * drawWidth / maxWidth;
+//
+//			dc.Rectangle( DrawRect.left , DrawRect.top + 2 * i * itemHeight , DrawRect.left + size , DrawRect.top + ( 2 * i + 1 ) * itemHeight );
+//			Brush.DeleteObject( );
+//			Brush.CreateSolidBrush( randomColor( ) );
+//			dc.SelectObject( Brush );
+//			sleep( 30 );
+//		}
+//		dc.SelectObject( saveoldBrush );
+//		Brush.DeleteObject( );
+//	}
+//
+//	string colorValue( COLORREF c )
+//	{
+//		string ret;
+//		ret = "R:";
+//		int r = (int)GetRValue( c );
+//		int g = (int)GetGValue( c );
+//		int b = (int)GetBValue( c );
+//		ret.append( std::to_string( r ) );
+//		ret += " G:";
+//		ret.append( std::to_string( g ) );
+//		ret += " B:";
+//		ret.append( std::to_string( b ) );
+//		return ret;
+//	}
+//
+//	template<typename T>
+//	struct axset
+//	{
+//		bool ok = false;
+//		T value;
+//	};
+//
+//	template<typename T , size_t N = 1>
+//	struct axsetn
+//	{
+//		bool ok = false;
+//		size_t size = N;
+//		T value[N];
+//		T& operator []( size_t pos )
+//		{
+//			return value[limit( pos )];
+//		}
+//		T& valuen( size_t pos )
+//		{
+//			return value[limit( pos )];
+//		}
+//		size_t limit( size_t pos )
+//		{
+//			if ( pos > N )
+//				pos = N;
+//			if ( pos < 0 )
+//				pos = 0;
+//			return pos;
+//		}
+//	};
+//
+//	template<typename T>
+//	T iFset( axset<T> a , T o )
+//	{
+//		if ( a.ok )
+//			return a.value;
+//		else
+//			return o;
+//	}
+//
+//	template<typename T , size_t n = 1>
+//	T iFset( axsetn<T , n> a , T o , size_t pos = 0 )
+//	{
+//		getcout;
+//		cout << '*' << n << star;
+//		if ( a.ok )
+//			return a.value[pos];
+//		else
+//			return o;
+//	}
+//
+//	void DrawRectangleAText( CPoint start , CPoint end , string text , axset<COLORREF> c = { false,0 } , axset<COLORREF> tc = { false,0 } )
+//	{
+//		getcout;
+//		CSize t = cout.GetTextExtent( CString( text.c_str( ) ) );
+//
+//		CBrush Brush;
+//		auto clor = randomColor( );
+//		Brush.CreateSolidBrush( iFset( c , clor ) );
+//		auto old = cout.SelectObject( Brush );
+//		cout.Rectangle( start.x , start.y , end.x , end.y );
+//		cout.SetBkColor( iFset( c , clor ) );
+//		cout.SetTextColor( iFset( tc , randomColor( ) ) );
+//		auto width = end.x - start.x;
+//		auto hight = end.y - start.y;
+//		auto midwidth = ( width - t.cx ) / 2;
+//		auto midhight = ( hight - t.cy ) / 2;
+//		auto posx = start.x + midwidth;
+//		auto posy = start.y + midhight;
+//		cout.TextOut( posx , posy , text.c_str( ) );
+//		cout.SelectObject( old );
+//		Brush.DeleteObject( );
+//	}
+//
+//	class WinPos
+//	{
+//	public:
+//		CRect me;
+//		CPoint start , end;
+//		LONG& xs = start.x;
+//		LONG& ys = start.y;
+//		LONG& xe = end.x;
+//		LONG& ye = end.y;
+//		WinPos( ) = default;
+//		WinPos( const WinPos& ) = default;
+//		WinPos& operator =( const WinPos& r )
+//		{
+//			me = r.me;
+//			start = r.start;
+//			end = r.end;
+//			return *this;
+//		};
+//		WinPos( CPoint x , CPoint y ) :start( x ) , end( y ) , me( start , end ) {}
+//		CRect setrect( CPoint x , CPoint y ) {
+//			start = x;
+//			end = y;
+//			me = { start , end };
+//			return me;
+//		}
+//		WinPos( CPoint istart , CSize size ) :start( istart ) , end( CPoint { istart.x + size.cx,istart.y + size.cy } ) {		}
+//		CRect setrect( CPoint istart , CSize size )
+//		{
+//			start = istart;
+//			end = CPoint { istart.x + size.cx,istart.y + size.cy };
+//			me = { start , end };
+//			return me;
+//		}
+//		WinPos( LONG x1 , LONG y1 , LONG x2 , LONG y2 ) :start( CPoint { x1,y1 } ) , end( CPoint { x2 ,y2 } ) , me( CRect { start , end } ) {}
+//		CPoint getstart( ) { return start; }
+//		CPoint getend( ) { return end; }
+//		CPoint getcore( ) { return CPoint { xs + ( xe - xs ) / 2, ye - ( ye - ys ) / 2 }; }
+//		CPoint getmidtop( ) { return CPoint { xs + ( xe - xs ) / 2, ys }; }
+//		CPoint getmidbottom( ) { return CPoint { xs + ( xe - xs ) / 2,ye }; }
+//		CPoint getmidleft( ) { return CPoint { xs,ys + ( ye - ys ) / 2 }; }
+//		CPoint getmidright( ) { return CPoint { xe , ye - ( ye - ys ) / 2 }; }
+//		CRect  getrect( ) { return me; }
+//		CSize  getsize( ) { return me.Size( ); }
+//		LONG   getwidth( ) { return me.Size( ).cx; }
+//		LONG   gethight( ) { return me.Size( ).cy; }
+//		pair<CPoint , CPoint>getPointPair( ) { return pair { start,end }; }
+//	};
+//
+//	void drawLineR2R( CDC& dc , WinPos& up , WinPos& down , int line = 3 , COLORREF c = randomColor( ) )
+//	{
+//		CPen linePen;
+//
+//		linePen.CreatePen( PS_SOLID , line , c );
+//		auto oldPen = dc.SelectObject( linePen );
+//
+//		dc.MoveTo( up.getmidbottom( ) );
+//		dc.LineTo( down.getmidtop( ) );
+//
+//		dc.SelectObject( oldPen );
+//		linePen.DeleteObject( );
+//	}
+//
+//}
+//
 
 

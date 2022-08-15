@@ -1,7 +1,9 @@
 #include "Pch.h"
 #include "PCDC.h"
 #include "test.h"
-
+#include <WinSock2.h>
+#include <ws2tcpip.h>
+#pragma comment (lib,"ws2_32.lib")
 
 
 //template<typename T>
@@ -53,11 +55,82 @@ void test_ranges( PCDC& cout )
 	timeend( 30 );
 }
 
-void test_00( PCDC& cout )
+//inline bool sleep( size_t ms )
+//{
+//	std::this_thread::sleep_for( std::chrono::milliseconds( ms ) );
+//	return true;
+//}
+
+void tclient( )
 {
-	test_ranges( cout );
+	getcout;
+	using namespace std::chrono;
+	WSADATA ws;
+	WORD ver = MAKEWORD( 2 , 2 );
+	SOCKET sersock;
+	auto ipaddress = "127.0.0.1";
+
+	SOCKADDR_IN add;
+	int addlen = sizeof( add );
+	int ncount = 20;
+
+	add.sin_family = AF_INET;
+	add.sin_port = htons( 9999 );
+	add.sin_addr.S_un.S_addr = inet_addr( ipaddress );
+
+	const size_t size = 1024;
+	char readbuf[size] { };
+	char writebuf[size] { };
+	memset( readbuf , '0' , size - 1 );
+	memset( writebuf , 'c' , size - 1 );
+
+	auto is = WSAStartup( ver , &ws );
+	CString err = _T( "socket is error" );
+	sersock = socket( AF_INET , SOCK_STREAM , IPPROTO_TCP );
+	if ( INVALID_SOCKET == sersock )
+	{
+		TextOut( GetWindowDC( ::AfxGetApp( )->GetMainWnd( )->m_hWnd ) , 100 , 200 , err , 0 );
+	}
+	int iretbind = connect( sersock , (sockaddr*)&add , addlen );
+	if ( iretbind == SOCKET_ERROR )
+		TextOut( GetWindowDC( ::AfxGetApp( )->GetMainWnd( )->m_hWnd ) , 100 , 200 , err , 0 );
+	string helloword = "hello server!";
+	auto nows = steady_clock::now( );
+	auto mills = duration_cast<std::chrono::milliseconds>( nows.time_since_epoch( ) ).count( );
+	auto nowe = steady_clock::now( );
+	auto mille = duration_cast<std::chrono::milliseconds>( nowe.time_since_epoch( ) ).count( );
+
+	int sec = send( sersock , helloword.c_str( ) , helloword.size( ) + 1 , 0 );
+
+	while ( true )
+	{
+		nowe = steady_clock::now( );
+		mille = duration_cast<std::chrono::milliseconds>( nowe.time_since_epoch( ) ).count( );
+		int rec = recv( sersock , readbuf , size , 0 );
+		if ( mille - mills >= 1000 )
+		{
+			cout << "+++" << tab;
+			mills = mille;
+			if ( rec > 0 )
+			{
+				readbuf[rec] = 0;
+				cout << string( readbuf ) << nl;
+				cout << "->" << sp;
+			}
+			sec = send( sersock , helloword.c_str( ) , helloword.size( ) + 1 , 0 );
+		}
+		sleep( 800 );
+	}
+
+	closesocket( sersock );
+	WSACleanup( );
 }
 
+void test_00( PCDC& cout )
+{
+	thread t( tclient );
+	t.join( );
+}
 void test_01( PCDC& cout )
 {
 
