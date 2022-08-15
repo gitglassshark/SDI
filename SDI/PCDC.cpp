@@ -20,7 +20,6 @@ PCDC& tab( PCDC& dc ) { return dc << '\t'; }
 PCDC& semi( PCDC& dc ) { return dc << ';'; }
 
 
-
 PCDC& nl( PCDC& dc ) {
 	if ( dc.p.x == dc.mrect.left + dc.initalpos )
 		return dc;
