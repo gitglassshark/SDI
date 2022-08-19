@@ -907,7 +907,7 @@ void CSDIView::OnInitalListTest( )
 
 void CSDIView::OnStlStdForwardTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 	cout << cl;
 	lscode(
 		int i = 1;
@@ -1085,7 +1085,7 @@ void CSDIView::OnLvalRvalTest( )
 
 void CSDIView::OnPtrUniqueTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 
 	lscode(
 		Mptr( iua , int );
@@ -1140,7 +1140,7 @@ void CSDIView::OnPtrUniqueTest( )
 
 void CSDIView::OnSTLFuncTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 	int ia = 10 , ib = 20;
 	float	fa = 1.1 , fb = 11.0;
 	CAtlString strout;
@@ -1340,7 +1340,7 @@ void CSDIView::OnStlStackTest( )
 
 void CSDIView::OnStlFunctorTypereloadTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 
 	static int imod = 0;
 	++imod;
@@ -1502,7 +1502,7 @@ void CSDIView::OnStlSetTest( )
 
 void CSDIView::OnGroundTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 
 	test00( cout );
 	test01( cout );
@@ -1524,14 +1524,14 @@ void CSDIView::OnVectorTest( )
 
 	if ( imod == 1 )
 	{
-		coutExtSetSimulation;
+		SimulationStdCout;
 		test_build_vector( );
 		test_build_container( );
 	}
 
 	if ( imod == 2 )
 	{
-		coutExtSetSimulation;
+		SimulationStdCout;
 		cout.flushscreen( );
 		vector<int>vecta { 3, 4, 5, 6,33,89,992,8192,8282,1 };
 		vector<int>intvec( 20 );
@@ -1673,7 +1673,7 @@ void CSDIView::OnVectorTest( )
 
 void CSDIView::OnTaskRuntimeTest( )
 {
-	coutExtSetSimulation;
+	SimulationStdCout;
 	static size_t imod = 0;
 	++imod;
 	if ( imod == 7 ) imod = 1;

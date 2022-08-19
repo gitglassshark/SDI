@@ -61,7 +61,578 @@ void test_ranges( PCDC& cout )
 //	return true;
 //}
 
+//namespace netsocket
+//{
+//	class iSocket {
+//	public:
+//		WSADATA ws;
+//		WORD ver = MAKEWORD( 2 , 2 );
+//		SOCKET sersock = INVALID_SOCKET , clientsock = INVALID_SOCKET , sock = INVALID_SOCKET;
+//		string ipstr = "127.0.0.1";
+//		string strdata;
+//		vector<string> vectData;
+//		IPPROTO proto = IPPROTO_TCP;
+//		int port = 27015;
+//		inline static const int size = 1024;
+//		char recvbuf[size + 1] = { 0 };
+//		char sendbuf[size + 1] = { 0 };
+//		int recvbyte = 0;
+//		int sendbyte = 0;
+//		string log;
+//		pair<STARTUPINFO , PROCESS_INFORMATION>* plocalclient;
+//
+//
+//		SOCKADDR_IN seradd , clientadd;
+//		int addrsize = sizeof( SOCKADDR_IN );
+//		int nlog = 0;
+//		int isserver = 0;
+//
+//	public:
+//		iSocket( )
+//		{
+//			strdata.reserve( size * 2 );
+//			int ret = WSAStartup( ver , &ws );
+//			noequalerr( 0 , ret , st( "WSAstartup error:" ) );
+//
+//			initsocket( );
+//		}
+//		bool initsocket( )
+//		{
+//			sersock = socket( AF_INET , SOCK_STREAM , proto );
+//			equalerr( sersock , INVALID_SOCKET , st( "socket create error(INVALID_SOCKET):" ) );
+//			return true;
+//		}
+//		iSocket( const char* ip , int port = 27015 , bool isServer = true ) :iSocket( )
+//		{
+//			if ( isServer )
+//				createServer( ip , port );
+//			else
+//				createClient( ip , port );
+//
+//			resetbuf( );
+//		}
+//		string createClient( const char* ip = nullptr , int port = 27015 )
+//		{
+//			noequalerr( 0 , isserver , st( "socket already create error(double_create_SOCKET):" ) );
+//			isserver = 2;
+//
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip != nullptr ) {
+//				ipstr = ip;
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ipstr.c_str( ) );
+//			}
+//			else
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//
+//			int ret = connect( sersock , (sockaddr*)&seradd , addrsize );
+//			return log = "createclent";
+//		}
+//		string createServer( const char* ip = nullptr , int port = 27015 )
+//		{
+//			noequalerr( 0 , isserver , st( "socket already create error(double_create_SOCKET):" ) );
+//			isserver = 1;
+//
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip != nullptr ) {
+//				ipstr = ip;
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ipstr.c_str( ) );
+//			}
+//			else
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//
+//			int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
+//			equalerr( ret , SOCKET_ERROR , st( "socket bind is error(SOCKET_ERROR):" ) );
+//
+//			return log = "createServer";
+//		}
+//		int listen( int log = 128 )
+//		{
+//			nlog = log;
+//			return ::listen( sersock , nlog );
+//		}
+//		SOCKET accept( )
+//		{
+//			clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
+//			equalerr( clientsock , INVALID_SOCKET , st( "socket accept error(INVALID_SOCKET):" ) );
+//
+//			return clientsock;
+//		}
+//		int senddata( const char* ibuf = nullptr , int len = size )
+//		{
+//			int iret;
+//			setsendbuf( ibuf , size );
+//
+//			if ( isserver == 1 )
+//			{
+//				iret = send( clientsock , sendbuf , len , 0 );
+//			}
+//			else
+//			{
+//				iret = send( sersock , sendbuf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				memset( sendbuf , 0 , size + 1 );
+//				sendbyte += iret;
+//			}
+//			return iret;
+//		}
+//		int sendmessage( string str )
+//		{
+//			return senddata( str.c_str( ) , str.size( ) );
+//		}
+//		int printmessage( )
+//		{
+//			getcout;
+//			string str = getRecvData( );
+//			if ( !str.empty( ) )
+//				cout << str << nl;
+//			return str.size( );
+//		}
+//		void resetbuf( )
+//		{
+//			memset( sendbuf , 0 , sizeof( sendbuf ) );
+//			memset( recvbuf , 0 , sizeof( recvbuf ) );
+//		}
+//		int setsendbuf( const char* p , int size )
+//		{
+//			memset( sendbuf , 0 , sizeof( sendbuf ) );
+//			return strcpy_s( sendbuf , size , p );
+//		}
+//		int setrecvbuf( const char* p , int size )
+//		{
+//			memset( recvbuf , 0 , sizeof( recvbuf ) );
+//			return strcpy_s( recvbuf , size , p );
+//		}
+//		int recvdata( char* buf = nullptr , size_t len = size )
+//		{
+//			int iret = 0;
+//			memset( recvbuf , 0 , sizeof( recvbuf ) );
+//			if ( isserver == 1 )
+//			{
+//				iret = recv( clientsock , recvbuf , len , 0 );
+//			}
+//			else
+//			{
+//				iret = recv( sersock , recvbuf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				strdata.assign( recvbuf , iret );
+//				recvbyte += iret;
+//				vectData.push_back( strdata );
+//				CString message;
+//				message.Format( _T( "%ld %ld %ld %ld" ) , iret , recvbyte , size , len );
+//			}
+//			return iret;
+//		}
+//		string getRecvData( )
+//		{
+//			return strdata;
+//		}
+//		string getlog( )
+//		{
+//			return log;
+//		}
+//		bool circlerecv( int n = 5 )
+//		{
+//			return true;
+//		}
+//		bool noequalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode != retcode )
+//			{
+//				message.AppendFormat( _T( " %ld != %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//		}
+//		bool equalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode == retcode )
+//			{
+//				message.AppendFormat( _T( " %ld == %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//
+//		}
+//		SOCKET closeclientsocket( )
+//		{
+//			::closesocket( clientsock );
+//			return clientsock = INVALID_SOCKET;
+//		}
+//		~iSocket( )
+//		{
+//			if ( isserver == 1 )
+//				::closesocket( sersock );
+//			clientsock = sersock = closeclientsocket( );
+//			int ret = WSACleanup( );
+//			noequalerr( 0 , ret , st( "WSACleanup error:" ) );
+//		}
+//		shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> wakeupLocalClinet( const wchar_t* name )
+//		{
+//			wchar_t fname[256];
+//			wsprintf( fname , L"%s" , name );
+//
+//			LPWSTR filee = fname;
+//			STARTUPINFO si;
+//			PROCESS_INFORMATION pi;
+//			ZeroMemory( &si , sizeof( si ) );
+//			si.cb = sizeof( si );
+//			ZeroMemory( &pi , sizeof( pi ) );
+//
+//			plocalclient = new pair<STARTUPINFO , PROCESS_INFORMATION>( si , pi );
+//			shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> ret( plocalclient );
+//
+//			auto t = CreateProcess(
+//				fname ,
+//				fname ,
+//				nullptr ,
+//				nullptr ,
+//				false ,
+//				0 ,
+//				nullptr ,
+//				nullptr ,
+//				&( plocalclient->first ) ,
+//				&( plocalclient->second )
+//			);
+//			return ret;
+//		}
+//		bool closeLocalClient( ) {
+//			return TerminateProcess( plocalclient->second.hProcess , -1 );
+//		}
+//	};
+//}
+
+namespace netsocket
+{
+	class iSocket {
+
+	public:
+		WORD ver = MAKEWORD( 2 , 2 );
+		WSADATA ws;
+		SOCKADDR_IN seradd , clientadd;
+		int addrsize = sizeof( SOCKADDR_IN );
+		string ipstr = "127.0.0.1";
+		int port = 27015;
+		IPPROTO proto = IPPROTO_TCP;
+
+	public:
+		inline static const int size = 1024;
+		char recvbuf[size + 1] = { 0 };
+		char sendbuf[size + 1] = { 0 };
+		int recvbyte = 0;
+		int sendbyte = 0;
+
+	public:
+		SOCKET sersock = INVALID_SOCKET , clientsock = INVALID_SOCKET , sock = INVALID_SOCKET;
+		int nlog = 0;
+		int isserver = 0;
+
+	public:
+		string strRecv;
+		string log;
+		vector<string> vectData;
+		pair<STARTUPINFO , PROCESS_INFORMATION>* plocalclient;
+
+	public:
+		iSocket( )
+		{
+			strRecv.reserve( size * 2 );
+			int ret = WSAStartup( ver , &ws );
+			noequalerr( 0 , ret , st( "WSAstartup error:" ) );
+
+			initsocket( );
+		}
+		bool initsocket( )
+		{
+			sersock = socket( AF_INET , SOCK_STREAM , proto );
+			equalerr( sersock , INVALID_SOCKET , st( "socket create error(INVALID_SOCKET):" ) );
+			return true;
+		}
+		iSocket( const char* ip , int port = 27015 , bool isServer = true ) :iSocket( )
+		{
+			if ( isServer )
+				createServer( ip , port );
+			else
+				createClient( ip , port );
+
+			resetbuf( );
+		}
+
+	public:
+		string createClient( const char* ip = nullptr , int port = 27015 )
+		{
+			noequalerr( 0 , isserver , st( "socket already create error(double_create_SOCKET):" ) );
+			isserver = 2;
+
+			seradd.sin_family = AF_INET;
+			seradd.sin_port = htons( port );
+			if ( ip != nullptr ) {
+				ipstr = ip;
+				seradd.sin_addr.S_un.S_addr = inet_addr( ipstr.c_str( ) );
+			}
+			else
+				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+
+			int ret = connect( sersock , (sockaddr*)&seradd , addrsize );
+			return log = "createclent";
+		}
+		string createServer( const char* ip = nullptr , int port = 27015 )
+		{
+			noequalerr( 0 , isserver , st( "socket already create error(double_create_SOCKET):" ) );
+			isserver = 1;
+
+			seradd.sin_family = AF_INET;
+			seradd.sin_port = htons( port );
+			if ( ip != nullptr ) {
+				ipstr = ip;
+				seradd.sin_addr.S_un.S_addr = inet_addr( ipstr.c_str( ) );
+			}
+			else
+				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+
+			int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
+			equalerr( ret , SOCKET_ERROR , st( "socket bind is error(SOCKET_ERROR):" ) );
+
+			return log = "createServer";
+		}
+		int listen( int log = 128 )
+		{
+			nlog = log;
+			return ::listen( sersock , nlog );
+		}
+		SOCKET accept( )
+		{
+			clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
+			equalerr( clientsock , INVALID_SOCKET , st( "socket accept error(INVALID_SOCKET):" ) );
+
+			return clientsock;
+		}
+		int senddata( const char* ibuf = nullptr , int len = size )
+		{
+			int iret;
+			setsendbuf( ibuf , size );
+
+			if ( isserver == 1 )
+			{
+				iret = send( clientsock , sendbuf , len , 0 );
+			}
+			else
+			{
+				iret = send( sersock , sendbuf , len , 0 );
+			}
+			if ( iret > 0 ) {
+				memset( sendbuf , 0 , size + 1 );
+				sendbyte += iret;
+			}
+			return iret;
+		}
+		int sendmessage( string str )
+		{
+			return senddata( str.c_str( ) , str.size( ) );
+		}
+		int printmessage( )
+		{
+			getcout;
+			string str = getRecvMessageStr( );
+			if ( !str.empty( ) )
+				cout << str << nl;
+			return str.size( );
+		}
+
+	public:
+		void resetbuf( )
+		{
+			memset( sendbuf , 0 , sizeof( sendbuf ) );
+			memset( recvbuf , 0 , sizeof( recvbuf ) );
+		}
+		int setsendbuf( const char* p , int size )
+		{
+			memset( sendbuf , 0 , sizeof( sendbuf ) );
+			return strcpy_s( sendbuf , size , p );
+		}
+		int setrecvbuf( const char* p , int size )
+		{
+			memset( recvbuf , 0 , sizeof( recvbuf ) );
+			return strcpy_s( recvbuf , size , p );
+		}
+		int recvtobuf( char* buf = nullptr , size_t len = size )
+		{
+			int iret = 0;
+			memset( recvbuf , 0 , sizeof( recvbuf ) );
+			if ( isserver == 1 )
+			{
+				iret = recv( clientsock , recvbuf , len , 0 );
+			}
+			else
+			{
+				iret = recv( sersock , recvbuf , len , 0 );
+			}
+			return iret;
+		}
+		int buftostring( int ret )
+		{
+			if ( ret > 0 ) {
+				strRecv.assign( recvbuf , ret );
+				recvbyte += ret;
+				vectData.push_back( strRecv );
+			}
+			else
+				strRecv.clear( );
+			return strRecv.length( );
+		}
+		int recvdata( char* buf = nullptr , size_t len = size )
+		{
+			int  iret = recvtobuf( );
+			iret = buftostring( iret );
+			return iret;
+		}
+		int recvtofile( const char* filename , const char* openmode )
+		{
+			errno_t err;
+			FILE* recvfile;
+			int iret = 0;
+			iret = recvtobuf( );
+			if ( iret > 0 )
+			{
+				err = fopen_s( &recvfile , filename , openmode );
+				noequalerr( err , 0 , _T( "file was not opened\n" ) );
+				iret = fwrite( recvbuf , sizeof( char ) , iret , recvfile );
+			}
+			if ( recvfile )
+			{
+				err = fclose( recvfile );
+				noequalerr( err , 0 , _T( "file was not close\n" ) );
+			}
+			return iret;
+		}
+
+
+	public:
+		string getRecvMessageStr( )
+		{
+			return strRecv;
+		}
+		string getlog( )
+		{
+			return log;
+		}
+
+
+	public:
+		bool noequalerr( int errcode , int retcode , CString message )
+		{
+			if ( errcode != retcode )
+			{
+				message.AppendFormat( _T( " %ld != %ld" ) , errcode , retcode );
+				AfxMessageBox( message );
+				return false;
+			}
+			return true;
+		}
+		bool equalerr( int errcode , int retcode , CString message )
+		{
+			if ( errcode == retcode )
+			{
+				message.AppendFormat( _T( " %ld == %ld" ) , errcode , retcode );
+				AfxMessageBox( message );
+				return false;
+			}
+			return true;
+
+		}
+
+	public:
+		SOCKET closeclientsocket( )
+		{
+			::closesocket( clientsock );
+			return clientsock = INVALID_SOCKET;
+		}
+		shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> wakeupLocalClinet( const wchar_t* name )
+		{
+			wchar_t fname[256];
+			wsprintf( fname , L"%s" , name );
+
+			LPWSTR filee = fname;
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+			ZeroMemory( &si , sizeof( si ) );
+			si.cb = sizeof( si );
+			ZeroMemory( &pi , sizeof( pi ) );
+
+			plocalclient = new pair<STARTUPINFO , PROCESS_INFORMATION>( si , pi );
+			shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> ret( plocalclient );
+
+			auto t = CreateProcess(
+				fname ,
+				fname ,
+				nullptr ,
+				nullptr ,
+				false ,
+				0 ,
+				nullptr ,
+				nullptr ,
+				&( plocalclient->first ) ,
+				&( plocalclient->second )
+			);
+			return ret;
+		}
+		bool closeLocalClient( ) {
+			return TerminateProcess( plocalclient->second.hProcess , -1 );
+		}
+
+	public:
+		~iSocket( )
+		{
+			if ( isserver == 1 )
+				::closesocket( sersock );
+			clientsock = sersock = closeclientsocket( );
+			int ret = WSACleanup( );
+			noequalerr( 0 , ret , st( "WSACleanup error:" ) );
+		}
+	};
+}
+
+
 void tclient( )
+{
+	using namespace netsocket;
+	getcout;
+	cout << "client is start......" << nl;
+
+	iSocket client( "127.0.0.1" , 27015 , false );
+	string message = "client:hello ,this is clinet aquest...";
+	client.sendmessage( message );
+	client.recvdata( );
+	client.printmessage( );
+
+	NTIME( 10 )
+	{
+		message = string( to_string( rand( ) * ix + 1 ) );
+		cout << "Clinet:  " << message << nl;
+		client.sendmessage( message );
+
+		client.recvdata( );
+
+		cout << "Server:  ";
+		client.printmessage( );
+		sleep( 1000 );
+	}
+	message = "this is last one message ,bye!have a nice day...";
+	client.sendmessage( message );
+	client.recvdata( );
+	client.printmessage( );
+	auto t = GetCommandLine( );
+	wstring str = t;
+	cout << t << tab << str << nl;
+}
+
+
+void tclient1( )
 {
 	getcout;
 	using namespace std::chrono;
@@ -75,7 +646,7 @@ void tclient( )
 	int ncount = 20;
 
 	add.sin_family = AF_INET;
-	add.sin_port = htons( 9999 );
+	add.sin_port = htons( 27015 );
 	add.sin_addr.S_un.S_addr = inet_addr( ipaddress );
 
 	const size_t size = 1024;
@@ -86,7 +657,7 @@ void tclient( )
 
 	auto is = WSAStartup( ver , &ws );
 	CString err = _T( "socket is error" );
-	sersock = socket( AF_INET , SOCK_STREAM , IPPROTO_TCP );
+	sersock = socket( AF_INET , SOCK_STREAM , 0 );
 	if ( INVALID_SOCKET == sersock )
 	{
 		TextOut( GetWindowDC( ::AfxGetApp( )->GetMainWnd( )->m_hWnd ) , 100 , 200 , err , 0 );
@@ -128,9 +699,9 @@ void tclient( )
 
 void test_00( PCDC& cout )
 {
-	thread t( tclient );
-	t.join( );
+	tclient( );
 }
+
 void test_01( PCDC& cout )
 {
 

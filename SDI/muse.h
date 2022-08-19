@@ -133,11 +133,8 @@ using namespace std;
 #define FORV(ielement,V)  for(const auto &ielement:V)
 #define FORW(ielement,V)  for(auto &ielement:V)
 
-#define makedc(cout)  unique_ptr<PCDC> me_unique_dc=make_unique<PCDC>((CWnd*)this); PCDC & cout=*me_unique_dc;
-#define makemedc(DC)  unique_ptr<PCDC> pdcxxx(new PCDC(this));PCDC& DC = *pdcxxx;
-#define SimulationStdCout  auto cout_me_ptr=make_unique<PCDC>((CWnd*)this);auto& cout= *cout_me_ptr;(PCDC::pXCout)=&cout;cout.resettcolor();
-#define coutExtSetSimulation  SimulationStdCout;(PCDC::pXCout)=&cout;
-#define getcout PCDC &cout=*PCDC::pXCout;
+#define SimulationStdCout  if(PCDC::pXCout==nullptr){PCDC::pXCout=new PCDC((CWnd*)this);};PCDC& cout=*PCDC::pXCout;
+#define getcout PCDC& cout=*PCDC::pXCout;
 
 #define sst(code,...)  #code##","#__VA_ARGS__;
 
@@ -339,8 +336,8 @@ auto gmax( A a , X...args )
 	return gmax<T>( il );
 }
 
-template<typename T,typename ...A >
-auto gmax( vector<T,A...> v )
+template<typename T , typename ...A >
+auto gmax( vector<T , A...> v )
 {
 	if ( v.empty( ) )
 		return A( );

@@ -1,6 +1,254 @@
 #include "pch.h"
+/*int iret = 0;
+		memset( recvbuf , 0 , sizeof( recvbuf ) );
+		if ( isserver == 1 )
+		{
+			iret = recv( clientsock , recvbuf , len , 0 );
+		}
+		else
+		{
+			iret = recv( sersock , recvbuf , len , 0 );
+		}
+		if ( iret > 0 ) {
+			strdata.assign( recvbuf , iret );
+			recvbyte += iret;
+			vectData.push_back( strdata );
+			CString message;
+			message.Format( _T( "%ld %ld %ld %ld" ) , iret , recvbyte , size , len );
+		}
+		else
+			strdata.clear( );*/
+//
+//namespace netsocket
+//{
+//	class iSocket {
+//	public:
+//		WSADATA ws;
+//		WORD ver = MAKEWORD( 2 , 2 );
+//		SOCKET sersock = INVALID_SOCKET , clientsock = INVALID_SOCKET;
+//		string ipstr = "127.0.0.1";
+//		string strdata;
+//		vector<string> vectData;
+//		IPPROTO proto = IPPROTO_TCP;
+//		inline static const int size = 1024;
+//		char recvbuf[size + 1] = { 0 };
+//		char sendbuf[size + 1] = { 0 };
+//		int recvbyte = 0;
+//		int sendbyte = 0;
+//		string log;
+//
+//
+//		SOCKADDR_IN seradd , clientadd;
+//		int addrsize = sizeof( SOCKADDR_IN );
+//		int ninlog = 20;
+//		int isserver = 0;
+//
+//	public:
+//		iSocket( )
+//		{
+//			initsocket( );
+//		}
+//		bool initsocket( )
+//		{
+//			strdata.reserve( size * 2 );
+//			int ret = WSAStartup( ver , &ws );
+//			noequalerr( 0 , ret , "WSAstartup error:" );
+//			sersock = socket( AF_INET , SOCK_STREAM , 0 );
+//			equalerr( sersock , INVALID_SOCKET , "socket create error(INVALID_SOCKET):" );
+//			return true;
+//		}
+//		iSocket( const char* ip = nullptr , int port = 9999 , bool isServer = true )
+//		{
+//			if ( initsocket( ) ) {
+//				if ( isServer )
+//					createServer( ip , port );
+//				else
+//					createClient( ip , port );
+//			}
+//			else
+//			{
+//				AfxMessageBox( CString( st( initsocket error ) ) );
+//			}
+//		}
+//		string getlog( )
+//		{
+//			return log;
+//		}
+//		string createClient( const char* ip = nullptr , int port = 9999 )
+//		{
+//			noequalerr( 0 , isserver , "socket already create error(double_create_SOCKET):" );
+//			isserver = 2;
+//			//ipstr = ip;
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip == nullptr )
+//			{
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//				getcout;
+//				cout << "ip==nullptr creatClinet" << nl;
+//			}
+//			else
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ip );
+//			int ret = connect( sersock , (sockaddr*)&seradd , addrsize );
+//			return log = "createclent";
+//		}
+//		string createServer( const char* ip = nullptr , int port = 9999 )
+//		{
+//			noequalerr( 0 , isserver , "socket already create error(double_create_SOCKET):" );
+//			isserver = 1;
+//			//ipstr = ip;
+//			seradd.sin_family = AF_INET;
+//			seradd.sin_port = htons( port );
+//			if ( ip == nullptr )
+//				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
+//			else
+//				seradd.sin_addr.S_un.S_addr = inet_addr( ipstr.c_str( ) );
+//			int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
+//			equalerr( ret , SOCKET_ERROR , "socket bind is error(SOCKET_ERROR):" );
+//			return log = "createServer";
+//		}
+//		int listen( int nlog = 0 )
+//		{
+//			return ::listen( sersock , nlog );
+//		}
+//		SOCKET accept( )
+//		{
+//			AfxMessageBox( CString( st( accept ) ) );
+//			equalerr( sersock , INVALID_SOCKET , "socket accept error(INVALID_SOCKET):" );
+//			clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
+//
+//			equalerr( clientsock , INVALID_SOCKET , "socket accept error(INVALID_SOCKET):" );
+//			return clientsock;
+//		}
+//		int senddata( const char* ibuf = nullptr , int len = size )
+//		{
+//			int iret;
+//			char* buf = nullptr;
+//			if ( ibuf == nullptr ) buf = sendbuf;
+//			if ( isserver == 1 )
+//			{
+//				iret = send( clientsock , buf , len , 0 );
+//				getcout;
+//				cout << "send" << nl;
+//			}
+//			else
+//			{
+//				iret = send( sersock , buf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				memset( sendbuf , 0 , size + 1 );
+//				sendbyte += iret;
+//			}
+//			return iret;
+//		}
+//		int recvdata( char* buf = nullptr , int len = size )
+//		{
+//			int iret = 0;
+//			if ( buf == nullptr ) buf = recvbuf;
+//			if ( isserver == 1 )
+//			{
+//				iret = recv( clientsock , buf , len , 0 );
+//				getcout;
+//				cout << "recvdata" << nl;
+//			}
+//			else
+//			{
+//				iret = recv( sersock , buf , len , 0 );
+//			}
+//			if ( iret > 0 ) {
+//				recvbyte += iret;
+//				buf[iret] = 0;
+//				string str;
+//				str = buf;
+//				strdata += str;
+//				vectData.push_back( strdata );
+//				memset( buf , 0 , size + 1 );
+//				CString message;
+//				message.Format( _T( "%ld %ld %ld %ld" ) , iret , recvbyte , size , len );
+//			}
+//			return iret;
+//		}
+//		string getRecvData( )
+//		{
+//			return strdata;
+//		}
+//		bool circlerecv( int n = 5 )
+//		{
+//			return true;
+//		}
+//		bool noequalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode != retcode )
+//			{
+//				message.AppendFormat( _T( " %ld != %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//		}
+//		bool equalerr( int errcode , int retcode , CString message )
+//		{
+//			if ( errcode == retcode )
+//			{
+//				message.AppendFormat( _T( " %ld == %ld" ) , errcode , retcode );
+//				AfxMessageBox( message );
+//				return false;
+//			}
+//			return true;
+//
+//		}
+//		SOCKET closeclientsocket( )
+//		{
+//			::closesocket( clientsock );
+//			return clientsock = INVALID_SOCKET;
+//		}
+//		~iSocket( )
+//		{
+//			if ( isserver == 1 )
+//				::closesocket( sersock );
+//			clientsock = sersock = closeclientsocket( );
+//			int ret = WSACleanup( );
+//			noequalerr( 0 , ret , "WSACleanup error:" );
+//		}
+//	};
+//}
 
+void test_08( PCDC& cout )
+{
+	using namespace netsocket;
 
+	cout << clear;
+	cout << "server is start...... " << nl;
+
+	iSocket aserver( "127.0.0.1" , 27015 , true );
+	int ret = aserver.listen( 128 );
+
+	auto rp = aserver.wakeupLocalClinet( L"../SDI3/SDI/x64/Debug/SDI.exe" );
+	auto client = aserver.accept( );
+	string message = "server: hello client! welcome...";
+	aserver.sendmessage( message );
+	aserver.recvdata( );
+	aserver.printmessage( );
+	message = "server: please translate some data to me,thanks...";
+	aserver.sendmessage( message );
+	aserver.recvdata( );
+	aserver.printmessage( );
+	NTIME( 10 )
+	{
+		cout << "send message to clinet: " << message << nl;;
+		aserver.sendmessage( message );
+		aserver.recvdata( );
+		cout << "get message form clinet: ";
+		aserver.printmessage( );
+		sleep( 1000 );
+	}
+	message = "this is last one message ,bye!have a nice day...";
+	aserver.sendmessage( message );
+	aserver.recvdata( );
+	aserver.printmessage( );
+	//sleep( 2000 );
+	//aserver.closeLocalClient( );
+}
 
 //namespace metapro {
 //	template<size_t N>
@@ -5126,3 +5374,51 @@ void test_VA01( PCDC& cout )
 //	cout << nl;
 //	);
 //}
+
+
+//
+//void test_06( PCDC& cout )
+//{
+//	using namespace WindowsBar;
+//	//axsetn<int , 3> an { true,3,{3,4,5 } };
+//	//cout << an[0] << sp<<an.valuen(0 );
+//	//cout << an[1] << sp<<an.valuen(1 );
+//	//cout << an[2] << sp<<an.valuen(2 );
+//	//cout << iFset( an , 8 , 2 );
+//	//cout << colorValue( color ) << nl;
+//
+//	CRect rect { 50,500,1850,1200 };
+//	CRect WindowsRect = cout.GetDCWindowsRect( );
+//
+//	int ncData = 20;
+//	cout.lmod( ncData + 5 );
+//	auto vectorBarData = makector<vector<int>>( ncData , 58 , 6 );
+//	auto color = randomColor( );
+//	string outstring = "WindowsBar Text String OUT";
+//	int istartx = 100;
+//	int istarty = 150;
+//	int istep = 50;
+//	int iwidth = 1700;
+//	CPoint start { istartx,istarty };
+//	CPoint end { istartx + iwidth,istarty + istep };
+//	DrawRectangleAText( start , end , outstring );
+//	start.y += istep; end.y += istep;
+//	DrawRectangleAText( start , end , "this is a test" );
+//	start.y += istep; end.y += istep;
+//	axset<COLORREF> c { true,dccr.fgreen };
+//	axset<COLORREF> tc { true,dccr.black };
+//	DrawRectangleAText( CPoint { 100 , 300 } , CPoint { 1800,350 } , "this is a green clor test" , c );
+//	start.y += istep; end.y += istep;
+//	DrawRectangleAText( CPoint { 100 , 350 } , CPoint { 1800,400 } , "this is a black clor test" , c , tc );
+//	start.y += istep; end.y += istep;
+//	//NTIME( 3 )
+//	//{
+//	//	VDrawDataBarCircle( cout , PutWindowsRect( WindowsRect , -500 , 200 , 30 , 70 ) , vectorBarData , 0 );
+//	//	DrawDataBarCircle( cout , PutWindowsRect( WindowsRect , 800 , 200 , 80 , 40 ) , vectorBarData , 0 ); ;
+//	//	//sleep( 300 );
+//	//}
+//	NTIME( 5 )cout << sp << nl;
+//	cout << st( 数值集为： ) << vectorBarData << tab << st( 柱图形： ) << nl;
+//
+//}
+

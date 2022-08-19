@@ -2,10 +2,8 @@
 #include "PCDC.h"
 #include "muse.h"
 
-//size_t PCDC::icount = 0;
 
 class CColor dccr;
-PCDC* pcout = nullptr;
 
 CString hex( ) { return CString( ); }
 CString HEX( ) { return CString( ); }
@@ -76,7 +74,6 @@ PCDC::PCDC( CWnd* pwnd ) :m_pwnd( pwnd )
 
 PCDC::~PCDC( )
 {
-	//--icount;
 	if ( ( this != nullptr ) && ( icreate != false ) )
 	{
 		bool iret = this->Release( );
@@ -87,12 +84,13 @@ PCDC::~PCDC( )
 
 inline bool PCDC::Create( CWnd* pwnd )
 {
-	if ( ( pwnd != nullptr ) && ( icreate != true ) && ( this != nullptr ) )
+	count( );
+	if ( ( pwnd != nullptr ) && ( icreate != true ) && ( this != nullptr ) && ( pXCout == nullptr ) )
 	{
 		m_pwnd = pwnd;
 		CDC* pdc = m_pwnd->GetWindowDC( );
 		if ( pdc != nullptr ) {
-			m_hDC = pdc->m_hDC;
+			m_hDC = m_hAttribDC = pdc->m_hDC;
 			CDC& dc = *this;
 
 			//设置缺省字体
@@ -107,7 +105,6 @@ inline bool PCDC::Create( CWnd* pwnd )
 				dc.SetBkColor( m_bk );
 				//设置字体颜色
 				dc.SetTextColor( m_tk );
-				flushscreen( );
 
 				//根据字体大小调整步长
 				font.GetLogFont( &lf );
@@ -125,7 +122,10 @@ inline bool PCDC::Create( CWnd* pwnd )
 				}
 
 				icreate = true;
-				pXCout = this;
+				if ( pXCout == nullptr )
+					pXCout = this;
+
+				flushscreen( );
 				return true;
 			}
 			else
@@ -153,8 +153,12 @@ inline bool PCDC::Release( )
 			dc.SelectObject( pfont );
 		if ( m_pwnd != nullptr )
 		{
+			if ( m_hDC != nullptr ) {
+				Detach( );
+			}
 			m_pwnd->ReleaseDC( this );
 		}
+		m_hDC = m_hAttribDC = nullptr;
 		font.DeleteObject( );
 		m_pwnd = nullptr;
 		pfont = nullptr;
@@ -172,8 +176,10 @@ inline bool PCDC::Release( )
 PCDC& PCDC::resettcolor( )
 {
 	SetTextColor( m_tk );
+	SetBkColor( m_bk );
 	return *this;
 }
+
 
 PCDC& PCDC::settcolor( COLORREF tk )
 {

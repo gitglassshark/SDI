@@ -8,7 +8,7 @@ class CColor;
 using XCout = PCDC;
 
 extern class CColor dccr;
-extern PCDC* pcout;
+//extern PCDC* pcout;
 
 PCDC& com( PCDC& dc );
 PCDC& semi( PCDC& dc );
@@ -104,6 +104,14 @@ public:
 	COLORREF hlightblue = RGB( 105 , 105 , 255 );
 };
 
+template <typename T>
+concept isFunClass = requires( T t )
+{
+	std::is_class_v<T>;
+	T( );
+	T::operator()( );
+};
+
 template<typename T>
 concept enumc = requires( T a )
 {
@@ -122,20 +130,37 @@ public:
 	inline static vector<string> rin;
 	inline static bool rein = true;
 	inline static int llocation = 0;
+	inline static size_t inputcharcount = 0;
+	inline static unsigned int inputchar = 0;
 	inline static bool commandmod = false;
+	inline static char prvec = 0;
 	RIN( size_t size = 50 ) { }
 	int getlocation( ) {
 		return llocation;
 	}
+	inline void resetllocation( )
+	{
+		size_t upnstring = rin.size( ) - 1;
+		if ( llocation < 0 )
+			llocation = 0;
+		if ( llocation > ( upnstring ) )
+			llocation = upnstring;
+	}
 	RIN command( char c ) {
+		prvec = c;
 		size_t nstring = rin.size( );
 		size_t ntail = 0;
-		static char prvec { };
 		if ( c == 13 )
 		{
 			rein = true;
 			return *this;
 		}
+		if ( c == 'j' )
+			++llocation;
+		if ( c == 'k' )
+			--llocation;
+		resetllocation( );
+
 		if ( c == 8 )
 		{
 			if ( nstring > 0 )
@@ -156,57 +181,63 @@ public:
 		if ( ( c == 'd' ) && ( prvec == 'd' ) )
 			//if ( c == 12 )
 		{
-			if ( nstring >= 1 )
+			if ( ( nstring >= 1 ) && ( llocation < nstring ) )
 				rin.erase( rin.begin( ) + llocation );
-			--llocation;
+			resetllocation( );
 			prvec = 0;
 		}
-		else {
+		if ( c == 'i' ) {
 			prvec = c;
+			commandmod = false;
 		}
-		if ( c == 'j' )
-			++llocation;
-		if ( c == 'k' )
-			--llocation;
-
-		if ( llocation < 0 )
-			llocation = rin.size( ) - 1;
-		if ( llocation > ( rin.size( ) - 1 ) )
-			llocation = 0;
-		if ( c == 74 && ( llocation < nstring ) ) {
+		if ( c == 74 && ( llocation < nstring - 1 ) ) {
 			rin.at( llocation ) += ' ' + rin.at( llocation + 1 );
-			rin.erase( rin.begin( ) + llocation + 1 );
-			--llocation;
+			if ( ( llocation + 1 ) <= nstring - 1 )
+				rin.erase( rin.begin( ) + llocation + 1 );
+			resetllocation( );
 			prvec = { 0 };
 		}
 
 		return *this;
 	}
-	RIN input( char c ) {
+	RIN input( char c , bool tail = true )
+	{
 		if ( isprint( c ) )
 		{
-			if ( rein == true )
+			if ( tail == true )
 			{
-				rein = false;
-				rin.push_back( string( ) );
-				llocation = rin.size( ) - 1;
-			}
-			else {
-				if ( rin.size( ) == 0 )
+				if ( rein == true )
 				{
+					rein = false;
 					rin.push_back( string( ) );
 					llocation = rin.size( ) - 1;
 				}
+				else
+				{
+					if ( rin.size( ) == 0 )
+					{
+						rin.push_back( string( ) );
+						llocation = rin.size( ) - 1;
+					}
+				}
+			}
+			if ( prvec == 'i' ) {
+				auto p = rin.insert( rin.begin( ) + llocation , string( ) );
+				prvec = 0;
 			}
 			rin.at( llocation ) += c;
 		}
-		else {
+		else
+		{
 			command( c );
 		}
 		return *this;
 	}
-	RIN operator<<( char c )
+
+	RIN operator<<( unsigned int c )
 	{
+		inputchar = c;
+		++inputcharcount;
 		if ( c == 27 )
 			commandmod = !commandmod;
 		if ( commandmod )
@@ -218,6 +249,10 @@ public:
 			input( c );
 		}
 		return *this;
+	}
+	auto getchar( )
+	{
+		return inputchar;
 	}
 	size_t wordcount( string str )
 	{
@@ -248,6 +283,7 @@ public:
 			word += wordcount( i );
 		return { line,word };
 	}
+
 };
 
 class PCDC : public CDC
@@ -337,6 +373,13 @@ public:
 	{
 		return *this << wstring( s.data( ) );
 	};
+	template<typename T>
+	PCDC& operator<<( T& s ) requires requires ( T s ) { s.str( ); }
+	{
+		auto strs = s.str( );
+		s.str( "" );
+		return *this << strs;
+	};
 	PCDC& operator<<( const CString& s );
 	PCDC& operator<<( const CString&& s );
 	PCDC& operator<<( const CAtlString& s );
@@ -364,6 +407,7 @@ public:
 		*this << "ThreadID=[" << sidstr << "] ";
 		return *this;
 	}
+
 	PCDC& operator<<( PCDC& dc ) {
 		if ( this == &dc )
 		{
@@ -396,6 +440,22 @@ public:
 	PCDC& operator<< ( PCDC& ( *op ) ( PCDC& dc ) );
 
 public:
+	int count( bool ret = false )
+	{
+		static unsigned int icount = 0;
+		if ( ret )
+			return icount;
+		else
+			return ++icount;
+	}
+	void inputinfo( )
+	{
+		*this << "input char=: " << static_cast<char>( r.inputchar ) << sp << int( r.inputchar ) << sp;
+		*this << "input count=: " << r.inputcharcount << sp;
+		*this << tab << "line: " << r.count( ).first;
+		*this << sp << "word: " << r.count( ).second;
+		*this << sp << "current line: " << r.getlocation( ) << nl;
+	}
 	inline PCDC& printid( )
 	{
 		*this << this_thread::get_id( ) << tab << "PID:[" << _getpid( ) << "] ";
@@ -436,6 +496,10 @@ public:
 			size_t reline = maxcows - ( p.x - mrect.left - initalpos ) * cslen / msize.cx;
 			return reline;
 		}
+	}
+	inline const POINT& getpos( )const
+	{
+		return p;
 	}
 	inline CRect& resetmrect( )
 	{
@@ -591,6 +655,12 @@ public:
 		return cs;
 	}
 
+	CRect GetDCWindowsRect( )
+	{
+		CRect WindowsRect;
+		this->GetWindow( )->GetClientRect( WindowsRect );
+		return WindowsRect;
+	}
 	PCDC& settcolor( COLORREF tk );
 	PCDC& setcolor( COLORREF line , COLORREF bar , COLORREF bk , COLORREF tk );
 	PCDC& lmod( unsigned char imod = 30 );
@@ -792,7 +862,7 @@ public:
 	};
 	template <typename X> PCDC& operator <<( const shared_ptr<X>& ptr )
 	{
-		return *this << ptr.get( ) << "<-<"<<ptr.use_count( ) <<"> " ;
+		return *this << ptr.get( ) << "<-<" << ptr.use_count( ) << "> ";
 	};
 	template <typename X> PCDC& operator <<( const weak_ptr<X>& ptr )
 	{
@@ -1054,14 +1124,14 @@ public:
 			mark = 0;
 		}
 		else {
-			++mark;
-			if ( mark % mod == 0 )
+			if ( ( 1 + mark ) % mod == 0 )
 				*this << op;
 			else
 			{
 				NTIME( ntimes )
 					* this << tp;
 			}
+			++mark;
 		}
 		return *this;
 	}
@@ -1092,6 +1162,14 @@ public:
 	template <typename ...Args> PCDC& format( std::string_view str , Args&&... args )
 	{
 		return *this << std::vformat( str , std::make_format_args( args... ) );
+	}
+
+	template<isFunClass T>
+	PCDC& operator <<( isFunClass auto& a )
+	{
+		*this << "*isFunClass";
+		a( this );
+		return *this;
 	}
 };
 

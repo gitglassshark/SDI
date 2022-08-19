@@ -334,14 +334,26 @@ public:
 	}
 };
 
+inline bool wakeup( )
+{
+	MSG	msg;
+	if ( PeekMessage( &msg , (HWND)NULL , 0 , 0 , PM_REMOVE ) )
+	{
+		::SendMessage( msg.hwnd , msg.message , msg.wParam , msg.lParam );
+	}
+	return true;
+}
+
 inline bool sleep( size_t ms )
 {
+	wakeup( );
 	std::this_thread::sleep_for( std::chrono::milliseconds( ms ) );
 	return true;
 }
 
 inline bool wait( size_t ms )
 {
+	wakeup( );
 	return sleep( ms );
 }
 
