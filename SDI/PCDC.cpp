@@ -284,7 +284,7 @@ void PCDC::status_head( bool ishow , size_t nline , bool ishowtail )
 	auto& cout = *this;
 	LOGFONT l;
 	CAtlString str = _T( "显示设备XCout工作状态" );
-	size_t* pnstore = cout.storesms( false );
+	cout.storesms( false );
 	size_t cslen = cs.GetLength( );
 	size_t maxline = cout.getmaxline( ) - 6;
 	size_t logsize = cout.mvlogs.size( );
@@ -304,22 +304,22 @@ void PCDC::status_head( bool ishow , size_t nline , bool ishowtail )
 	cout << "当前占用内存" << (double)( totallength * size ) / ( 1024 * 1024 ) << "M" << sp;
 	cout << "字符" << totallength << sp;
 	cout << "单字符占用字节" << size << sp;
-	cout << "实际记录 " << pnstore[2];
+	cout << "实际记录 " << log_clock_count[L"记录调用"].count();
 
 	cout << newl << "XCout调用数据:" << tab;
-	cout << "记录调用 " << pnstore[0] << sp;
-	cout << "记录调整 " << pnstore[1] << sp;
-	cout << "空记录调用 " << pnstore[3] - pnstore[2] << sp;
-	cout << "空输出调用 " << pnstore[4] << sp;
-	cout << "行内输出 " << pnstore[5] << sp;
-	cout << "换行 " << pnstore[6] << sp;
-	cout << "满屏 " << pnstore[7] << sp;
-	cout << "分行打印 " << pnstore[8] << sp;
-	cout << "输出总调用 " << pnstore[9] << sp;
-	cout << "记录总耗时 " << pnstore[10] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
-	cout << "输出总耗时 " << pnstore[11] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
-	cout << "API总耗时 " << pnstore[12] * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
-	cout << "API调用 " << pnstore[13];
+	cout << "记录调用 " << log_clock_count[L"记录调用"].count() << sp;
+	cout << "记录调整 " << log_clock_count[L"记录调整 "].count() << sp;
+	cout << "空记录调用 " << log_clock_count[L"空记录3"].count() - log_clock_count[L"空记录2"].count() << sp;
+	cout << "空输出调用 " << log_clock_count[L"空输出调用"].count() << sp;
+	cout << "行内输出 " << log_clock_count[L"行内输出"].count() << sp;
+	cout << "换行 " << log_clock_count[L"换行"].count() << sp;
+	cout << "满屏 " << log_clock_count[L"满屏"].count() << sp;
+	cout << "分行打印 " << log_clock_count[L"分行打印"].count() << sp;
+	cout << "输出总调用 " << log_clock_count[L"输出总调用"].count() << sp;
+	cout << "记录总耗时 " << log_clock_count[L"记录总耗时"].count() * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "输出总耗时 " << log_clock_count[L"输出总耗时"].count() * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "API总耗时 " << log_clock_count[L"记录总耗时"].count() * 1000 / CLOCKS_PER_SEC << "\'ms" << sp;
+	cout << "API调用 " << log_clock_count[L"API调用"].count();
 
 	cout << newl << "XCout显示状态:" << tab;
 	cout << "单屏行数 " << cout.getmaxline( ) << sp;

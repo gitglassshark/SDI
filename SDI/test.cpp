@@ -395,21 +395,23 @@ namespace netsocket
 			else
 				seradd.sin_addr.S_un.S_addr = ADDR_ANY;
 
-			int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
-			equalerr( ret , SOCKET_ERROR , st( "socket bind is error(SOCKET_ERROR):" ) );
-
 			return log = "createServer";
 		}
-		int listen( int log = 128 )
+		SOCKET connectclinet( int log = 128 )
 		{
-			nlog = log;
-			return ::listen( sersock , nlog );
-		}
-		SOCKET accept( )
-		{
-			clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
-			equalerr( clientsock , INVALID_SOCKET , st( "socket accept error(INVALID_SOCKET):" ) );
-
+			clientsock = INVALID_SOCKET;
+			if ( isserver == 1 )
+			{
+				nlog = log;
+				int ret = ::bind( sersock , (sockaddr*)&seradd , addrsize );
+				equalerr( ret , SOCKET_ERROR , st( "socket bind is error(SOCKET_ERROR):" ) );
+				ret = ::listen( sersock , nlog );
+				equalerr( sersock , SOCKET_ERROR , st( "socket listen error(INVALID_SOCKET):" ) );
+				clientsock = ::accept( sersock , (sockaddr*)&clientadd , &addrsize );
+				equalerr( clientsock , INVALID_SOCKET , st( "socket accept error(INVALID_SOCKET):" ) );
+				closesocket( sersock );
+				sersock = INVALID_SOCKET;
+			}
 			return clientsock;
 		}
 		int senddata( const char* ibuf = nullptr , int len = size )
@@ -549,7 +551,9 @@ namespace netsocket
 	public:
 		SOCKET closeclientsocket( )
 		{
-			::closesocket( clientsock );
+			shutdown( clientsock , SD_SEND );
+			if ( clientsock != INVALID_SOCKET )
+				::closesocket( clientsock );
 			return clientsock = INVALID_SOCKET;
 		}
 		shared_ptr<pair<STARTUPINFO , PROCESS_INFORMATION>> wakeupLocalClinet( const wchar_t* name )
@@ -588,7 +592,7 @@ namespace netsocket
 	public:
 		~iSocket( )
 		{
-			if ( isserver == 1 )
+			if ( isserver == 1 && ( sersock != INVALID_SOCKET ) )
 				::closesocket( sersock );
 			clientsock = sersock = closeclientsocket( );
 			int ret = WSACleanup( );
@@ -605,30 +609,30 @@ void tclient( )
 	cout << "client is start......" << nl;
 
 	iSocket client( "127.0.0.1" , 27015 , false );
-	string message = "client:hello ,this is clinet aquest...";
-	client.sendmessage( message );
-	client.recvdata( );
-	client.printmessage( );
+	int num = rand( ) % 10;
+	string numstr = to_string( num );
+	string message = "client:hello ,this is client aquest...";
+	cout << "send " << numstr << " message to you, please recvive." << nl;
+	client.sendmessage( numstr );
+	cout << "send......" << nl;
 
-	NTIME( 10 )
+	NTIME( num )
 	{
 		message = string( to_string( rand( ) * ix + 1 ) );
-		cout << "Clinet:  " << message << nl;
+		cout << "Clinet:  " << message << tab( 2 );
 		client.sendmessage( message );
-
 		client.recvdata( );
-
 		cout << "Server:  ";
 		client.printmessage( );
-		sleep( 1000 );
+		sleep( 500 );
 	}
 	message = "this is last one message ,bye!have a nice day...";
 	client.sendmessage( message );
 	client.recvdata( );
 	client.printmessage( );
-	auto t = GetCommandLine( );
-	wstring str = t;
-	cout << t << tab << str << nl;
+	//auto t = GetCommandLine( );
+	//wstring str = t;
+	//cout << t << tab << str << nl;
 }
 
 

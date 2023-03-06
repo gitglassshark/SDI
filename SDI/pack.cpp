@@ -1,4 +1,46 @@
 #include "pch.h"
+sort( va.begin( ) , va.end( ) , [ ] ( int a , int b ) {return a > b; } );
+cout << va << nl;
+); rcode(
+sort( va.begin( ) , va.end( ) , [ ] ( int a , int b ) {return a < b; } );
+cout << va << nl;
+); rcode(
+	sort( va.begin( ) , va.end( ) , std::greater<int>( ) );
+cout << va << nl;
+); rcode(
+	sort( va.begin( ) , va.end( ) , std::less<int>( ) );
+cout << va << nl;
+); rcode(
+	cout << *begin( va ) << tab << *( --end( va ) ) << nl;
+); rcode(
+	cout << std::equal_to<int>( )( 3 , 3 ) << tab << std::equal_to<int>( )( 3 , 2 ) << nl;
+);
+auto bit = LoadBitmap( AfxGetInstanceHandle( ) , MAKEINTRESOURCE( IDB_BITMAP1 ) );
+auto memh = CreateCompatibleDC( cout.m_hDC );
+auto old = ::SelectObject( memh , bit );
+StretchBlt( cout.m_hDC , 110 , 110 , 1600 , 1600 , memh , 0 , 0 , 100 , 200 , SRCCOPY );
+SelectObject( memh , old );
+DeleteObject( bit );
+namespace stltest
+{
+	template<typename T>
+	class Dnode
+	{
+	public:
+		Dnode* pre;
+		T data;
+		Dnode* pnext;
+	};
+
+	template<typename T>
+	class Dlist
+	{
+	public:
+		Dnode<T>* head;
+		Dnode<T>* tail;
+	};
+}
+
 /*int iret = 0;
 		memset( recvbuf , 0 , sizeof( recvbuf ) );
 		if ( isserver == 1 )
